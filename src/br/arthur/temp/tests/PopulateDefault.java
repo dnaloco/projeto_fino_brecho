@@ -5,11 +5,11 @@ import java.util.HashSet;
 import org.hibernate.Session;
 
 import br.arthur.entities.Categoria;
-import br.arthur.entities.Condicao;
 import br.arthur.entities.Group;
 import br.arthur.entities.Marca;
 import br.arthur.entities.Permission;
 import br.arthur.entities.Status;
+import br.arthur.entities.Tipo;
 import br.arthur.utils.HibernateUtil;
 
 public class PopulateDefault {
@@ -21,7 +21,7 @@ public class PopulateDefault {
 	private static void populateToProdutos() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		
-		String[] condsStr = {
+		String[] tiposStr = {
 				"novo",
 				"semi novo",
 				"usado",
@@ -124,9 +124,9 @@ public class PopulateDefault {
 		
 		session.beginTransaction();
 		
-		for(String cond : condsStr) {
-			Condicao c = new Condicao(cond);
-			session.save(c);
+		for(String tipo : tiposStr) {
+			Tipo t = new Tipo(tipo);
+			session.save(t);
 		}
 		
 		for(String marca : marcasStr) {

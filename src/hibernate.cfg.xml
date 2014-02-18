@@ -29,8 +29,8 @@
 
 	<mapping class="br.arthur.entities.Categoria"/>
 	<mapping class="br.arthur.entities.Marca"/>
-	<mapping class="br.arthur.entities.Condicao"/>
-	<mapping class="br.arthur.entities.Produto"/>
+	<mapping class="br.arthur.entities.Tipo"/>
+	<mapping class="br.arthur.entities.Situacao"/>
 	
 	<mapping class="br.arthur.entities.Cliente"/>
 	

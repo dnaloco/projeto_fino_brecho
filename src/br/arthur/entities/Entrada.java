@@ -43,6 +43,7 @@ public class Entrada {
 	
 	@Column(name="quantidate")
 	private int quantidate;
+	
 	@Column(name="custo")
 	private double custo;
 	@Column(name="total")
@@ -58,8 +59,8 @@ public class Entrada {
 	
 
 	@ManyToOne
-	@JoinColumn(name="condicao_fk", nullable=false)
-	private Condicao condicao;
+	@JoinColumn(name="tipo_fk", nullable=false)
+	private Tipo tipo;
 	
 	@Column(name="observacao", columnDefinition="TEXT")
 	private String observacao;
@@ -73,7 +74,7 @@ public class Entrada {
 	    )  
 	    @JoinTable(  
 	        name="imagem_produto",  
-	        joinColumns=@JoinColumn(name="PRODUTO_ID"),  
+	        joinColumns=@JoinColumn(name="ENTRADA_ID"),  
 	        inverseJoinColumns=@JoinColumn(name="IMAGEM_ID")  
 	    )
 	private Set<Imagem> imagens = new HashSet<Imagem>();
@@ -186,12 +187,12 @@ public class Entrada {
 		this.situacao = situacao;
 	}
 
-	public Condicao getCondicao() {
-		return condicao;
+	public Tipo getTipo() {
+		return tipo;
 	}
 
-	public void setCondicao(Condicao condicao) {
-		this.condicao = condicao;
+	public void setTipo(Tipo tipo) {
+		this.tipo = tipo;
 	}
 
 	public String getObservacao() {
@@ -225,8 +226,6 @@ public class Entrada {
 		result = prime * result
 				+ ((categoria == null) ? 0 : categoria.hashCode());
 		result = prime * result
-				+ ((condicao == null) ? 0 : condicao.hashCode());
-		result = prime * result
 				+ ((consignatario == null) ? 0 : consignatario.hashCode());
 		result = prime * result + ((cor == null) ? 0 : cor.hashCode());
 		long temp;
@@ -244,6 +243,7 @@ public class Entrada {
 		result = prime * result
 				+ ((situacao == null) ? 0 : situacao.hashCode());
 		result = prime * result + ((tamanho == null) ? 0 : tamanho.hashCode());
+		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
 		result = prime * result + ((titulo == null) ? 0 : titulo.hashCode());
 		temp = Double.doubleToLongBits(total);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -265,11 +265,6 @@ public class Entrada {
 			if (other.categoria != null)
 				return false;
 		} else if (!categoria.equals(other.categoria))
-			return false;
-		if (condicao == null) {
-			if (other.condicao != null)
-				return false;
-		} else if (!condicao.equals(other.condicao))
 			return false;
 		if (consignatario == null) {
 			if (other.consignatario != null)
@@ -323,6 +318,11 @@ public class Entrada {
 				return false;
 		} else if (!tamanho.equals(other.tamanho))
 			return false;
+		if (tipo == null) {
+			if (other.tipo != null)
+				return false;
+		} else if (!tipo.equals(other.tipo))
+			return false;
 		if (titulo == null) {
 			if (other.titulo != null)
 				return false;
@@ -338,4 +338,6 @@ public class Entrada {
 			return false;
 		return true;
 	}
+
+	
 }

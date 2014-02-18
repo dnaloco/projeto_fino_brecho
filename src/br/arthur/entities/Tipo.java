@@ -9,8 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity  
-@Table(name = "condicoes")
-public class Condicao implements Comparator<Condicao> {
+@Table(name = "tipos")
+public class Tipo {
 	@Id
 	@Column(name="condicao_id")  
 	@GeneratedValue
@@ -18,11 +18,27 @@ public class Condicao implements Comparator<Condicao> {
 	@Column(name="name", nullable=false, unique=true)
 	private String name;
 	
-	public Condicao() {
+	public Tipo() {
 		
 	}
 	
-	public Condicao(String name) {
+	public Tipo(String name) {
+		this.name = name;
+	}
+
+	public short getId() {
+		return id;
+	}
+
+	public void setId(short id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -43,7 +59,7 @@ public class Condicao implements Comparator<Condicao> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Condicao other = (Condicao) obj;
+		Tipo other = (Tipo) obj;
 		if (id != other.id)
 			return false;
 		if (name == null) {
@@ -53,26 +69,6 @@ public class Condicao implements Comparator<Condicao> {
 			return false;
 		return true;
 	}
-
-	public short getId() {
-		return id;
-	}
-
-	public void setId(byte id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public int compare(Condicao o1, Condicao o2) {
-		return o1.getName().compareTo(o2.getName());
-	}
+	
 	
 }
