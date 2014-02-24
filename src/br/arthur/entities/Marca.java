@@ -14,7 +14,7 @@ public class Marca implements Comparator<Marca>{
 	@Id
 	@Column(name="marca_id")  
 	@GeneratedValue
-	private short id;
+	private int id;
 	@Column(name="name", nullable=false, unique=true)
 	private String name;
 	
@@ -54,11 +54,11 @@ public class Marca implements Comparator<Marca>{
 		return true;
 	}
 
-	public short getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(short id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

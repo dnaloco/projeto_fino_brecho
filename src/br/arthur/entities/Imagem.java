@@ -14,7 +14,7 @@ public class Imagem {
 	@Id
 	@GeneratedValue
 	@Column(name="imagem_id")
-	private long id;
+	private int id;
 	@Column(name="imagem_blob")
 	private Blob imagemBlob;
 	
@@ -46,10 +46,10 @@ public class Imagem {
 			return false;
 		return true;
 	}
-	public long getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public Blob getImagemBlob() {

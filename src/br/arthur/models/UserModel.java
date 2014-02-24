@@ -14,7 +14,7 @@ import br.arthur.utils.HibernateUtil;
 import br.arthur.utils.PasswordUtil;
 
 public class UserModel {
-	public long createUser(Map<String, Object> data) {
+	public int createUser(Map<String, Object> data) {
 		User u = new User();
 		
 		u.setUser((String)data.get("user"));

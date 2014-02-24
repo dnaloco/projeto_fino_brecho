@@ -16,7 +16,7 @@ public class Saida {
 	@Id
 	@GeneratedValue
 	@Column(name="saida_id")
-	private long id;
+	private int id;
 	
 	@ManyToOne
 	@JoinColumn(name="cliente_fk", nullable=false)
@@ -101,11 +101,11 @@ public class Saida {
 		return true;
 	}
 
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

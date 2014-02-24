@@ -1,0 +1,275 @@
+package br.arthur.interfaces.cadastros.dialogs;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.SpringLayout;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+
+import br.arthur.entities.Consignatario;
+import br.arthur.models.ConsignatarioModel;
+
+public class ConsignatarioDialog extends JDialog {
+
+	private final JPanel contentPanel = new JPanel();
+	private JTable table;
+	private JScrollPane scrollPane;
+	private int theId;
+	private TableModel model;
+	private JTextField txtNome;
+	private JTextField txtRG;
+	private JTextField txtCPF;
+
+	public int getTheId() {
+		return theId;
+	}
+
+	public void setTheId(int theId) {
+		this.theId = theId;
+	}
+	
+	public void filtroPorCPF() {
+
+	}
+	
+	public void filtroPorRG() {
+		
+	}
+	
+	public void filtroPorNome(final String nome) {
+		RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+		      public boolean include(Entry entry) {
+		    	String population = (String) entry.getValue(1);
+		        return population.contentEquals(nome);
+		      }
+		    };
+	    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+	    sorter.setRowFilter(filter);
+	    table.setRowSorter(sorter);
+	}
+
+	public ConsignatarioDialog() {
+		setTitle("Buscar Consignat\u00E1rio");
+		setModal(true);
+		setBounds(100, 100, 618, 431);
+		getContentPane().setLayout(new BorderLayout());
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		
+		Vector<String> colunas = new Vector();
+		colunas.add("ID");
+		colunas.add("Nome");
+		colunas.add("Telefone");
+		colunas.add("Celular");
+		colunas.add("E-mail");
+		colunas.add("Site");
+		colunas.add("CPF");
+		colunas.add("RG");
+		
+		Vector tableData = new Vector();
+		
+		for(Object o : ConsignatarioModel.findAll()) {
+			Consignatario c = (Consignatario) o;
+			Vector<Object> oneRow = new Vector<Object>();
+			oneRow.add(c.getId());
+			oneRow.add(c.getNome());
+			oneRow.add(c.getTelefone());
+			oneRow.add(c.getCelular());
+			oneRow.add(c.getEmail());
+			oneRow.add(c.getSite());
+			oneRow.add(c.getCpf());
+			oneRow.add(c.getRg());
+			tableData.add(oneRow);
+		}
+		
+		model = new DefaultTableModel(tableData, colunas) {
+				public Class<?> getColumnClass(int column) {
+					return getValueAt(0, column).getClass();
+				}
+		    	boolean[] columnEditables = new boolean[] {
+		    		false, false, false, false, false, false
+		    	};
+		    	public boolean isCellEditable(int row, int column) {
+		    		return columnEditables[column];
+		    	}
+
+		    };
+		
+		SpringLayout sl_contentPanel = new SpringLayout();
+		contentPanel.setLayout(sl_contentPanel);
+		{
+			table = new JTable(model);
+			
+			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			table.getColumnModel().getColumn(0).setPreferredWidth(32);
+			table.getColumnModel().getColumn(1).setPreferredWidth(120);
+			table.getColumnModel().getColumn(2).setPreferredWidth(80);
+			table.getColumnModel().getColumn(3).setPreferredWidth(80);
+			table.getColumnModel().getColumn(4).setPreferredWidth(120);
+			table.getColumnModel().getColumn(5).setPreferredWidth(120);
+			table.getColumnModel().getColumn(6).setPreferredWidth(100);
+			table.getColumnModel().getColumn(7).setPreferredWidth(90);
+			
+			table.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					int linha_selecionada = table.getSelectedRow();
+					theId = (int) table.getValueAt(linha_selecionada, 0);
+				}
+			});
+			
+			
+			RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+			      public boolean include(Entry entry) {
+			        Integer population = (Integer) entry.getValue(0);
+			        return population.intValue() > 0;
+			      }
+			    };
+		    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+		    sorter.setRowFilter(filter);
+		    table.setRowSorter(sorter);
+			scrollPane = new JScrollPane(table);
+			sl_contentPanel.putConstraint(SpringLayout.NORTH, scrollPane, 33, SpringLayout.NORTH, contentPanel);
+			sl_contentPanel.putConstraint(SpringLayout.WEST, scrollPane, 5, SpringLayout.WEST, contentPanel);
+			sl_contentPanel.putConstraint(SpringLayout.SOUTH, scrollPane, -8, SpringLayout.SOUTH, contentPanel);
+			sl_contentPanel.putConstraint(SpringLayout.EAST, scrollPane, -5, SpringLayout.EAST, contentPanel);
+			contentPanel.add(scrollPane);
+		}
+		
+		JButton btnFiltrar = new JButton("Filtrar");
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, btnFiltrar, -2, SpringLayout.NORTH, contentPanel);
+		btnFiltrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				HashMap<String, String> filter = new HashMap<String, String>();
+				
+				if(!txtNome.getText().trim().isEmpty()) {
+					filter.put("nome", txtNome.getText());
+				} else if (!txtCPF.getText().trim().isEmpty()) {
+					filter.put("cpf", txtCPF.getText());
+				} else if (!txtRG.getText().trim().isEmpty()) {
+					filter.put("rg", txtRG.getText());
+				} else {
+					RowFilter<Object, Object> f = new RowFilter<Object, Object>() {
+					      public boolean include(Entry entry) {
+					        Integer population = (Integer) entry.getValue(0);
+					        return population.intValue() > 0;
+					      }
+					    };
+				    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+				    sorter.setRowFilter(f);
+				    table.setRowSorter(sorter);
+				}
+				
+				if(filter.size() > 0) {
+					filtrar(filter);
+				}
+			}
+		});
+		contentPanel.add(btnFiltrar);
+		
+		txtNome = new JTextField();
+		sl_contentPanel.putConstraint(SpringLayout.WEST, txtNome, 42, SpringLayout.WEST, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtNome, -6, SpringLayout.NORTH, scrollPane);
+		contentPanel.add(txtNome);
+		txtNome.setColumns(10);
+		
+		JLabel lblNome = new JLabel("Nome:");
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblNome, 4, SpringLayout.NORTH, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, lblNome, -1, SpringLayout.WEST, contentPanel);
+		contentPanel.add(lblNome);
+		
+		JLabel lblRg = new JLabel("RG:");
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblRg, 6, SpringLayout.NORTH, btnFiltrar);
+		contentPanel.add(lblRg);
+		
+		txtRG = new JTextField();
+		sl_contentPanel.putConstraint(SpringLayout.EAST, lblRg, -6, SpringLayout.WEST, txtRG);
+		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtRG, -6, SpringLayout.NORTH, scrollPane);
+		contentPanel.add(txtRG);
+		txtRG.setColumns(10);
+		
+		txtCPF = new JTextField();
+		sl_contentPanel.putConstraint(SpringLayout.EAST, txtCPF, -68, SpringLayout.EAST, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, btnFiltrar, 6, SpringLayout.EAST, txtCPF);
+		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtCPF, -6, SpringLayout.NORTH, scrollPane);
+		contentPanel.add(txtCPF);
+		txtCPF.setColumns(10);
+		
+		JLabel lblCpf = new JLabel("CPF:");
+		sl_contentPanel.putConstraint(SpringLayout.EAST, txtRG, -33, SpringLayout.WEST, lblCpf);
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblCpf, 4, SpringLayout.NORTH, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, lblCpf, -6, SpringLayout.WEST, txtCPF);
+		contentPanel.add(lblCpf);
+		{
+			JPanel buttonPane = new JPanel();
+			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+			getContentPane().add(buttonPane, BorderLayout.SOUTH);
+			{
+				JButton okButton = new JButton("OK");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						dispose();
+					}
+				});
+				okButton.setActionCommand("OK");
+				buttonPane.add(okButton);
+				getRootPane().setDefaultButton(okButton);
+			}
+			{
+				JButton cancelButton = new JButton("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						theId = 0;
+						dispose();
+					}
+				});
+				cancelButton.setActionCommand("Cancel");
+				buttonPane.add(cancelButton);
+			}
+		}
+	}
+
+	protected void filtrar(final HashMap<String, String> filter) {
+		RowFilter<Object, Object> f = new RowFilter<Object, Object>() {
+		      public boolean include(Entry entry) {
+		    	  boolean isValid = true;
+//		    	String population = (String) entry.getValue(1);
+//		        return population.contentEquals(nome);
+		    	  if(filter.containsKey("nome")) {
+		    		  isValid = ((String)entry.getValue(1)).contains(filter.get("nome"));
+		    	  }
+		    	  
+		    	  if(filter.containsKey("cpf")) {
+		    		  isValid = ((String)entry.getValue(6)).contains(filter.get("cpf"));
+		    	  }
+		    	  
+		    	  if(filter.containsKey("rg")) {
+		    		  isValid = ((String)entry.getValue(7)).contains(filter.get("rg"));
+		    	  }
+		    	  
+		    	  return isValid;
+		      }
+		    };
+	    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+	    sorter.setRowFilter(f);
+	    table.setRowSorter(sorter);
+	}
+}

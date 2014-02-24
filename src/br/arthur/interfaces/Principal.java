@@ -25,23 +25,27 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
 import br.arthur.controllers.LoginController;
 import br.arthur.entities.User;
-import br.arthur.interfaces.cadastros.CadastroPedido;
+import br.arthur.interfaces.cadastros.CadastroConsignatario;
+// import br.arthur.interfaces.cadastros.CadastroPedido;
 import br.arthur.interfaces.cadastros.CadastroUsuario;
+import br.arthur.interfaces.cadastros.CadastroVenda;
 
 public class Principal extends JFrame {
 
 	private JDesktopPane jDesktopPanelPrincipal;
-
+	
 	/**
 	 * Create the frame.
 	 */
 	public Principal(LoginController login) {
-		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		User ulog = login.getLoggedUser();
+		
+		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		setTitle("Sitema de Loja Fino Brecho - [ ID: " + ulog.getId() + " | Usuário: " + ulog.getUser() + " | Grupo: " + ulog.getGroup().getName() +" ]");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 890, 733);
@@ -52,8 +56,8 @@ public class Principal extends JFrame {
 		
 		ImageIcon icon = new ImageIcon("images/finoBrechoBg.jpg");
 		final Image img = icon.getImage();
-		
-		final JDesktopPane jDesktopPanelPrincipal = new JDesktopPane() {
+
+		jDesktopPanelPrincipal = new JDesktopPane() {
 			@Override
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
@@ -67,15 +71,15 @@ public class Principal extends JFrame {
 		
 		JLabel lblSistemaLoja = new JLabel("Sistema de Loja - Fino Brech\u00F3");
 		lblSistemaLoja.setFont(new Font("Perpetua", Font.BOLD, 36));
-		lblSistemaLoja.setForeground(new Color(51, 0, 0));
+		lblSistemaLoja.setForeground(UIManager.getColor("MenuItem.foreground"));
 		lblSistemaLoja.setBounds(10, 11, 464, 48);
 		jDesktopPanelPrincipal.add(lblSistemaLoja);
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		panel.setOpaque(false);
-		panel.setBackground(new Color(204, 153, 102));
-		panel.setForeground(new Color(153, 102, 51));
+		panel.setBackground(UIManager.getColor("MenuItem[Enabled].textForeground"));
+		panel.setForeground(UIManager.getColor("MenuBar:Menu[Enabled].textForeground"));
 		panel.setBounds(486, 11, 201, 103);
 		jDesktopPanelPrincipal.add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
@@ -93,7 +97,7 @@ public class Principal extends JFrame {
 		panel.add(label, gbc_label);
 		
 		JLabel lblNewLabel = new JLabel("Usu\u00E1rio Logado");
-		lblNewLabel.setForeground(Color.DARK_GRAY);
+		lblNewLabel.setForeground(UIManager.getColor("MenuBar:Menu[Enabled].textForeground"));
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
@@ -104,7 +108,7 @@ public class Principal extends JFrame {
 		panel.add(lblNewLabel, gbc_lblNewLabel);
 		
 		JLabel lblUsurio = new JLabel("ID Usu\u00E1rio: ");
-		lblUsurio.setForeground(Color.DARK_GRAY);
+		lblUsurio.setForeground(UIManager.getColor("MenuBar:Menu[Enabled].textForeground"));
 		lblUsurio.setFont(new Font("Tahoma", Font.BOLD, 11));
 		GridBagConstraints gbc_lblUsurio = new GridBagConstraints();
 		gbc_lblUsurio.anchor = GridBagConstraints.EAST;
@@ -123,7 +127,7 @@ public class Principal extends JFrame {
 		panel.add(lblUserid, gbc_lblUserid);
 		
 		JLabel lblNomeUsurio = new JLabel("Nome Usu\u00E1rio:");
-		lblNomeUsurio.setForeground(Color.DARK_GRAY);
+		lblNomeUsurio.setForeground(UIManager.getColor("MenuBar:Menu[Enabled].textForeground"));
 		lblNomeUsurio.setFont(new Font("Tahoma", Font.BOLD, 11));
 		GridBagConstraints gbc_lblNomeUsurio = new GridBagConstraints();
 		gbc_lblNomeUsurio.insets = new Insets(0, 0, 5, 5);
@@ -141,7 +145,7 @@ public class Principal extends JFrame {
 		panel.add(lblUsername, gbc_lblUsername);
 		
 		JLabel lblGrupoUsurio = new JLabel("Grupo Usu\u00E1rio:");
-		lblGrupoUsurio.setForeground(Color.DARK_GRAY);
+		lblGrupoUsurio.setForeground(UIManager.getColor("MenuBar:Menu[Enabled].textForeground"));
 		lblGrupoUsurio.setFont(new Font("Tahoma", Font.BOLD, 11));
 		GridBagConstraints gbc_lblGrupoUsurio = new GridBagConstraints();
 		gbc_lblGrupoUsurio.insets = new Insets(0, 0, 0, 5);
@@ -190,9 +194,9 @@ public class Principal extends JFrame {
 		JButton btnNewButton = new JButton("Pedido");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				CadastroPedido obj = new CadastroPedido();				
-				jDesktopPanelPrincipal.add(obj);
-				obj.setVisible(true);
+//				CadastroPedido obj = new CadastroPedido();				
+//				jDesktopPanelPrincipal.add(obj);
+//				obj.setVisible(true);
 			}
 		});
 		btnNewButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -215,6 +219,13 @@ public class Principal extends JFrame {
 		jDesktopPanelPrincipal.add(btnBackup);
 		
 		JButton btnCaixa = new JButton("Caixa");
+		btnCaixa.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				CadastroVenda obj = new CadastroVenda();
+				jDesktopPanelPrincipal.add(obj);
+				obj.setVisible(true);
+			}
+		});
 		btnCaixa.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnCaixa.setBackground(new Color(255, 255, 255));
 		btnCaixa.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -228,13 +239,20 @@ public class Principal extends JFrame {
 		menuBar.add(mnCadastro);
 		
 		JMenuItem mntmConsignatrio = new JMenuItem("Consignat\u00E1rio");
+		mntmConsignatrio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				CadastroConsignatario obj = new CadastroConsignatario(0);
+				jDesktopPanelPrincipal.add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mnCadastro.add(mntmConsignatrio);
+		
+		JMenuItem mntmPedido = new JMenuItem("Pedido");
+		mnCadastro.add(mntmPedido);
 		
 		JSeparator separator_4 = new JSeparator();
 		mnCadastro.add(separator_4);
-		
-		JMenuItem mntmStatusProduto = new JMenuItem("Condi\u00E7\u00E3o");
-		mnCadastro.add(mntmStatusProduto);
 		
 		JMenuItem mntmCategoria = new JMenuItem("Categoria");
 		mnCadastro.add(mntmCategoria);
@@ -242,8 +260,8 @@ public class Principal extends JFrame {
 		JMenuItem mntmMarca = new JMenuItem("Marca");
 		mnCadastro.add(mntmMarca);
 		
-		JMenuItem mntmProduto = new JMenuItem("Produto");
-		mnCadastro.add(mntmProduto);
+		JMenuItem mntmStatusProduto = new JMenuItem("Tipo");
+		mnCadastro.add(mntmStatusProduto);
 		
 		JSeparator separator_5 = new JSeparator();
 		mnCadastro.add(separator_5);
@@ -259,7 +277,7 @@ public class Principal extends JFrame {
 					public void actionPerformed(ActionEvent e) {
 						CadastroUsuario obj = null;
 						try {
-							obj = new CadastroUsuario("Cadastrar Novo Usuario", "Novo Usuário");
+							obj = new CadastroUsuario(0);
 						} catch (PropertyVetoException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -300,9 +318,6 @@ public class Principal extends JFrame {
 		JSeparator separator_3 = new JSeparator();
 		mnVisualizar.add(separator_3);
 		
-		JMenuItem mntmVendedores = new JMenuItem("Vendedores");
-		mnVisualizar.add(mntmVendedores);
-		
 		JMenuItem mntmUsurios_1 = new JMenuItem("Usu\u00E1rios");
 		mnVisualizar.add(mntmUsurios_1);
 		
@@ -339,6 +354,9 @@ public class Principal extends JFrame {
 		JMenuItem mntmUsurios = new JMenuItem("Usu\u00E1rios");
 		mnManuteno.add(mntmUsurios);
 		
+		JMenuItem mntmEventos = new JMenuItem("Eventos");
+		mnManuteno.add(mntmEventos);
+		
 		JMenu mnRelatrio = new JMenu("Relat\u00F3rio");
 		menuBar.add(mnRelatrio);
 		
@@ -369,7 +387,7 @@ public class Principal extends JFrame {
 		JMenuItem mntmEcf = new JMenuItem("ECF");
 		mnConfigurao.add(mntmEcf);
 		
-		JMenuItem mntmSistema = new JMenuItem("Sistema");
+		JMenuItem mntmSistema = new JMenuItem("Trocar Fundo");
 		mnConfigurao.add(mntmSistema);
 		
 		JMenu mnSobre = new JMenu("Sobre");

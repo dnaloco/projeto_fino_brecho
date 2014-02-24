@@ -16,7 +16,7 @@ public class ContaPagar {
 	@Id
 	@GeneratedValue
 	@Column(name="contas_pagar_id")
-	private long id;
+	private int id;
 	
 	@ManyToOne
 	@JoinColumn(name="entrada_fk", nullable=false)
@@ -96,11 +96,11 @@ public class ContaPagar {
 		return true;
 	}
 
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

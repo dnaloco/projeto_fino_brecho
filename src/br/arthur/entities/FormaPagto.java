@@ -12,7 +12,7 @@ public class FormaPagto {
 	@Id
 	@GeneratedValue
 	@Column(name="formas_pagto_id")
-	private short id;
+	private int id;
 	@Column(name="name")
 	private String name;
 	
@@ -51,11 +51,11 @@ public class FormaPagto {
 		return true;
 	}
 
-	public short getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(byte id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

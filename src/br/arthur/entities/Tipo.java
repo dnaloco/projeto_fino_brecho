@@ -14,7 +14,7 @@ public class Tipo {
 	@Id
 	@Column(name="condicao_id")  
 	@GeneratedValue
-	private short id;
+	private int id;
 	@Column(name="name", nullable=false, unique=true)
 	private String name;
 	
@@ -26,11 +26,11 @@ public class Tipo {
 		this.name = name;
 	}
 
-	public short getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(short id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

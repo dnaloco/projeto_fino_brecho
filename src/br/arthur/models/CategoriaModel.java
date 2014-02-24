@@ -10,9 +10,9 @@ import br.arthur.entities.Group;
 import br.arthur.utils.HibernateUtil;
 
 public class CategoriaModel {
-	Session session;
+	static Session session;
 	
-	public short createCategoria(String categoria) {
+	public int createCategoria(String categoria) {
 		Categoria c = new Categoria(categoria);
 		
 		session = HibernateUtil.getSessionFactory().openSession();
@@ -24,13 +24,13 @@ public class CategoriaModel {
 		return c.getId();
 	}
 
-	public List findAll() {
+	public static List findAll() {
 		session = HibernateUtil.getSessionFactory().openSession();
 		List categorias = session.createQuery("FROM Categoria ORDER BY name").list();
 		return categorias;
 	}
 	
-	public Categoria findOneWhere(String prop, String val){
+	public static Categoria findOneWhere(String prop, String val){
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		
 		String hql =  "FROM Categoria where " + prop + " = " + val;

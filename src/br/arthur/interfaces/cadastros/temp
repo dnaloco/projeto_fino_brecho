@@ -1,0 +1,59 @@
+		List entradas = em.findWhere("pedido", "6");
+		
+		Vector<String> colunas = new Vector();
+		colunas.add("ID");
+		colunas.add("Produto");
+		colunas.add("Categoria");
+		colunas.add("Marca");
+		colunas.add("Tamanho");
+		colunas.add("Cor");
+		colunas.add("Quantidade");
+		
+		Vector tableData = new Vector();
+		
+		for(Object o : entradas) {
+			Entrada c = (Entrada) o;
+			Vector<Object> oneRow = new Vector<Object>();
+			oneRow.add(c.getId());
+			oneRow.add(c.getProduto());
+			oneRow.add(c.getCategoria());
+			oneRow.add(c.getMarca());
+			oneRow.add(c.getTamanho());
+			oneRow.add(c.getCor());
+			oneRow.add(c.getQuantidate());
+			tableData.add(oneRow);
+		}
+		
+		TableModel model = new DefaultTableModel(tableData, colunas) {
+				public Class<?> getColumnClass(int column) {
+					return getValueAt(0, column).getClass();
+				}
+		    	boolean[] columnEditables = new boolean[] {
+		    		false, false, false, false, false, false
+		    	};
+		    	public boolean isCellEditable(int row, int column) {
+		    		return columnEditables[column];
+		    	}
+
+		    };
+		    
+	    produtosTable = new JTable(model);
+	    produtosTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				int linha_selecionada = produtosTable.getSelectedRow();
+				entradaId = (int) produtosTable.getValueAt(linha_selecionada, 0);
+				// Popular...
+			}
+		});
+		
+		
+		RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+		      public boolean include(Entry entry) {
+		        Integer population = (Integer) entry.getValue(0);
+		        return population.intValue() > 0;
+		      }
+		    };
+	    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+	    sorter.setRowFilter(filter);
+	    produtosTable.setRowSorter(sorter);

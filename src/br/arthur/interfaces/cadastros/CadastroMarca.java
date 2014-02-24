@@ -33,7 +33,7 @@ public class CadastroMarca extends JInternalFrame {
 	 */
 	public CadastroMarca() {
 		setTitle("Cadastro de Categoria");
-		setBounds(100, 100, 260, 125);
+		setBounds(100, 100, 260, 133);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 		
@@ -56,9 +56,14 @@ public class CadastroMarca extends JInternalFrame {
 		getContentPane().add(lblMarca);
 		
 		JButton btnSalvar = new JButton("Salvar");
-		springLayout.putConstraint(SpringLayout.NORTH, btnSalvar, 10, SpringLayout.SOUTH, txtMarca);
+		springLayout.putConstraint(SpringLayout.NORTH, btnSalvar, 6, SpringLayout.SOUTH, txtMarca);
 		springLayout.putConstraint(SpringLayout.EAST, btnSalvar, 0, SpringLayout.EAST, txtMarca);
 		getContentPane().add(btnSalvar);
+		
+		JButton btnBuscar = new JButton("Buscar");
+		springLayout.putConstraint(SpringLayout.NORTH, btnBuscar, -5, SpringLayout.NORTH, lblMarcaID);
+		springLayout.putConstraint(SpringLayout.EAST, btnBuscar, 0, SpringLayout.EAST, txtMarca);
+		getContentPane().add(btnBuscar);
 
 	}
 

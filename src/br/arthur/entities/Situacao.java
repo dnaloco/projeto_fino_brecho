@@ -12,7 +12,7 @@ public class Situacao {
 	@Id
 	@GeneratedValue
 	@Column(name="situacao_id")
-	private short id;
+	private int id;
 	@Column(name="name")
 	private String name;
 	
@@ -24,11 +24,11 @@ public class Situacao {
 		this.name = name;
 	}
 
-	public short getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(short id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

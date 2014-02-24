@@ -1,40 +1,61 @@
 package br.arthur.interfaces.cadastros;
 
 import java.awt.EventQueue;
-
-import javax.swing.JInternalFrame;
-import javax.swing.SpringLayout;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-
 import java.awt.Font;
-
-import javax.swing.border.TitledBorder;
-import javax.swing.JTextField;
-
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.beans.PropertyVetoException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Iterator;
 
-import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
-import javax.swing.UIManager;
+import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.TitledBorder;
+
+import org.hibernate.exception.ConstraintViolationException;
+
+import br.arthur.entities.Consignatario;
+import br.arthur.entities.Estado;
+import br.arthur.interfaces.cadastros.dialogs.ConsignatarioDialog;
+import br.arthur.models.ConsignatarioModel;
+import br.arthur.models.EstadoModel;
+
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 public class CadastroConsignatario extends JInternalFrame {
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
-	private JTextField textField_7;
-	private JTextField textField_9;
-	private JTextField textField_6;
-	private JTextField textField_8;
-	private JTextField textField_10;
-
+	private JTextField txtCelular;
+	private JTextField txtTelefone;
+	private JTextField txtEmail;
+	private JTextField txtSite;
+	private JTextField txtNome;
+	private JTextField txtLogra;
+	private JTextField txtComplem;
+	private JTextField txtNumero;
+	private JTextField txtCep;
+	private JTextField txtBairro;
+	private JTextField txtCidade;
+	private JComboBox cmbEstado;
+	private JLabel lblSubtitle;
+	private JButton btnCancelar;
+	private JButton btnExcluir;
+	
+	private static int theId;
+	
+	private ConsignatarioModel cm = new ConsignatarioModel();
+	private JTextField txtCpf;
+	private JTextField txtRg;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -42,7 +63,7 @@ public class CadastroConsignatario extends JInternalFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CadastroConsignatario frame = new CadastroConsignatario();
+					CadastroConsignatario frame = new CadastroConsignatario(theId);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -54,38 +75,35 @@ public class CadastroConsignatario extends JInternalFrame {
 	/**
 	 * Create the frame.
 	 */
-	public CadastroConsignatario() {
+	public CadastroConsignatario(int id) {
+		this.theId = id;
 		setClosable(true);
 		setIconifiable(true);
-		try {
-			setIcon(true);
-		} catch (PropertyVetoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		setTitle("Cadastro de Consignat\u00E1rio");
-		setBounds(100, 100, 426, 327);
+		setInheritsPopupMenu(true);
+		setIgnoreRepaint(true);
+		setTitle("Cadastro de Consignatário");
+		setBounds(100, 100, 484, 433);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
-		
-		JLabel lblConsignatrio = new JLabel("Novo Consignat\u00E1rio");
-		lblConsignatrio.setFont(new Font("Tahoma", Font.BOLD, 14));
-		springLayout.putConstraint(SpringLayout.NORTH, lblConsignatrio, 10, SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, lblConsignatrio, 10, SpringLayout.WEST, getContentPane());
-		getContentPane().add(lblConsignatrio);
+
+		lblSubtitle = new JLabel("Cadastrando Novo Consignatário");
+		lblSubtitle.setFont(new Font("Tahoma", Font.BOLD, 14));
+		springLayout.putConstraint(SpringLayout.NORTH, lblSubtitle, 10, SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, lblSubtitle, 10, SpringLayout.WEST, getContentPane());
+		getContentPane().add(lblSubtitle);
 		
 		JPanel panel = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel, 6, SpringLayout.SOUTH, lblConsignatrio);
+		springLayout.putConstraint(SpringLayout.NORTH, panel, 6, SpringLayout.SOUTH, lblSubtitle);
 		springLayout.putConstraint(SpringLayout.WEST, panel, 10, SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, panel, 99, SpringLayout.SOUTH, lblConsignatrio);
-		springLayout.putConstraint(SpringLayout.EAST, panel, 403, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel, 165, SpringLayout.SOUTH, lblSubtitle);
+		springLayout.putConstraint(SpringLayout.EAST, panel, 468, SpringLayout.WEST, getContentPane());
 		panel.setBorder(new TitledBorder(null, "Contato", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		getContentPane().add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0};
 		gbl_panel.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
 		JLabel lblNome = new JLabel("Nome:");
@@ -96,15 +114,15 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblNome.gridy = 0;
 		panel.add(lblNome, gbc_lblNome);
 		
-		textField_4 = new JTextField();
-		GridBagConstraints gbc_textField_4 = new GridBagConstraints();
-		gbc_textField_4.gridwidth = 3;
-		gbc_textField_4.insets = new Insets(0, 0, 5, 0);
-		gbc_textField_4.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_4.gridx = 2;
-		gbc_textField_4.gridy = 0;
-		panel.add(textField_4, gbc_textField_4);
-		textField_4.setColumns(10);
+		txtNome = new JTextField();
+		GridBagConstraints gbc_txtNome = new GridBagConstraints();
+		gbc_txtNome.gridwidth = 3;
+		gbc_txtNome.insets = new Insets(0, 0, 5, 0);
+		gbc_txtNome.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtNome.gridx = 2;
+		gbc_txtNome.gridy = 0;
+		panel.add(txtNome, gbc_txtNome);
+		txtNome.setColumns(10);
 		
 		JLabel lblTelefone = new JLabel("Telefone:");
 		GridBagConstraints gbc_lblTelefone = new GridBagConstraints();
@@ -114,14 +132,15 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblTelefone.gridy = 1;
 		panel.add(lblTelefone, gbc_lblTelefone);
 		
-		textField_1 = new JTextField();
-		GridBagConstraints gbc_textField_1 = new GridBagConstraints();
-		gbc_textField_1.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_1.gridx = 2;
-		gbc_textField_1.gridy = 1;
-		panel.add(textField_1, gbc_textField_1);
-		textField_1.setColumns(10);
+		txtTelefone = new JTextField();
+		GridBagConstraints gbc_txtTelefone = new GridBagConstraints();
+		gbc_txtTelefone.anchor = GridBagConstraints.NORTH;
+		gbc_txtTelefone.insets = new Insets(0, 0, 5, 5);
+		gbc_txtTelefone.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtTelefone.gridx = 2;
+		gbc_txtTelefone.gridy = 1;
+		panel.add(txtTelefone, gbc_txtTelefone);
+		txtTelefone.setColumns(10);
 		
 		JLabel lblCelular = new JLabel("Celular:");
 		GridBagConstraints gbc_lblCelular = new GridBagConstraints();
@@ -131,51 +150,53 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblCelular.gridy = 1;
 		panel.add(lblCelular, gbc_lblCelular);
 		
-		textField = new JTextField();
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.insets = new Insets(0, 0, 5, 0);
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.gridx = 4;
-		gbc_textField.gridy = 1;
-		panel.add(textField, gbc_textField);
-		textField.setColumns(10);
+		txtCelular = new JTextField();
+		GridBagConstraints gbc_txtCelular = new GridBagConstraints();
+		gbc_txtCelular.insets = new Insets(0, 0, 5, 0);
+		gbc_txtCelular.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtCelular.gridx = 4;
+		gbc_txtCelular.gridy = 1;
+		panel.add(txtCelular, gbc_txtCelular);
+		txtCelular.setColumns(10);
 		
 		JLabel lblEmail = new JLabel("E-mail:");
 		GridBagConstraints gbc_lblEmail = new GridBagConstraints();
-		gbc_lblEmail.insets = new Insets(0, 0, 0, 5);
+		gbc_lblEmail.insets = new Insets(0, 0, 5, 5);
 		gbc_lblEmail.anchor = GridBagConstraints.EAST;
 		gbc_lblEmail.gridx = 1;
 		gbc_lblEmail.gridy = 2;
 		panel.add(lblEmail, gbc_lblEmail);
 		
-		textField_2 = new JTextField();
-		textField_2.setColumns(10);
-		GridBagConstraints gbc_textField_2 = new GridBagConstraints();
-		gbc_textField_2.insets = new Insets(0, 0, 0, 5);
-		gbc_textField_2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_2.gridx = 2;
-		gbc_textField_2.gridy = 2;
-		panel.add(textField_2, gbc_textField_2);
+		txtEmail = new JTextField();
+		txtEmail.setColumns(10);
+		GridBagConstraints gbc_txtEmail = new GridBagConstraints();
+		gbc_txtEmail.insets = new Insets(0, 0, 5, 5);
+		gbc_txtEmail.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtEmail.gridx = 2;
+		gbc_txtEmail.gridy = 2;
+		panel.add(txtEmail, gbc_txtEmail);
 		
 		JLabel lblSite = new JLabel("Site:");
 		GridBagConstraints gbc_lblSite = new GridBagConstraints();
 		gbc_lblSite.anchor = GridBagConstraints.EAST;
-		gbc_lblSite.insets = new Insets(0, 0, 0, 5);
+		gbc_lblSite.insets = new Insets(0, 0, 5, 5);
 		gbc_lblSite.gridx = 3;
 		gbc_lblSite.gridy = 2;
 		panel.add(lblSite, gbc_lblSite);
 		
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
-		GridBagConstraints gbc_textField_3 = new GridBagConstraints();
-		gbc_textField_3.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_3.gridx = 4;
-		gbc_textField_3.gridy = 2;
-		panel.add(textField_3, gbc_textField_3);
+		txtSite = new JTextField();
+		txtSite.setColumns(10);
+		GridBagConstraints gbc_txtSite = new GridBagConstraints();
+		gbc_txtSite.insets = new Insets(0, 0, 5, 0);
+		gbc_txtSite.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtSite.gridx = 4;
+		gbc_txtSite.gridy = 2;
+		panel.add(txtSite, gbc_txtSite);
 		
 		JPanel panel_1 = new JPanel();
 		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 6, SpringLayout.SOUTH, panel);
 		springLayout.putConstraint(SpringLayout.WEST, panel_1, 10, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -44, SpringLayout.SOUTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, panel_1, 0, SpringLayout.EAST, panel);
 		panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Endereco", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		getContentPane().add(panel_1);
@@ -194,15 +215,15 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblLogradouro.gridy = 0;
 		panel_1.add(lblLogradouro, gbc_lblLogradouro);
 		
-		textField_5 = new JTextField();
-		textField_5.setColumns(10);
-		GridBagConstraints gbc_textField_5 = new GridBagConstraints();
-		gbc_textField_5.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_5.gridwidth = 3;
-		gbc_textField_5.insets = new Insets(0, 0, 5, 0);
-		gbc_textField_5.gridx = 2;
-		gbc_textField_5.gridy = 0;
-		panel_1.add(textField_5, gbc_textField_5);
+		txtLogra = new JTextField();
+		txtLogra.setColumns(10);
+		GridBagConstraints gbc_txtLogra = new GridBagConstraints();
+		gbc_txtLogra.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtLogra.gridwidth = 3;
+		gbc_txtLogra.insets = new Insets(0, 0, 5, 0);
+		gbc_txtLogra.gridx = 2;
+		gbc_txtLogra.gridy = 0;
+		panel_1.add(txtLogra, gbc_txtLogra);
 		
 		JLabel lblNmero = new JLabel("N\u00FAmero:");
 		GridBagConstraints gbc_lblNmero = new GridBagConstraints();
@@ -212,14 +233,14 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblNmero.gridy = 1;
 		panel_1.add(lblNmero, gbc_lblNmero);
 		
-		textField_6 = new JTextField();
-		GridBagConstraints gbc_textField_6 = new GridBagConstraints();
-		gbc_textField_6.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_6.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_6.gridx = 2;
-		gbc_textField_6.gridy = 1;
-		panel_1.add(textField_6, gbc_textField_6);
-		textField_6.setColumns(10);
+		txtNumero = new JTextField();
+		GridBagConstraints gbc_txtNumero = new GridBagConstraints();
+		gbc_txtNumero.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtNumero.insets = new Insets(0, 0, 5, 5);
+		gbc_txtNumero.gridx = 2;
+		gbc_txtNumero.gridy = 1;
+		panel_1.add(txtNumero, gbc_txtNumero);
+		txtNumero.setColumns(10);
 		
 		JLabel lblComplem = new JLabel("Complem.:");
 		GridBagConstraints gbc_lblComplem = new GridBagConstraints();
@@ -229,14 +250,14 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblComplem.gridy = 1;
 		panel_1.add(lblComplem, gbc_lblComplem);
 		
-		textField_7 = new JTextField();
-		textField_7.setColumns(10);
-		GridBagConstraints gbc_textField_7 = new GridBagConstraints();
-		gbc_textField_7.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_7.insets = new Insets(0, 0, 5, 0);
-		gbc_textField_7.gridx = 4;
-		gbc_textField_7.gridy = 1;
-		panel_1.add(textField_7, gbc_textField_7);
+		txtComplem = new JTextField();
+		txtComplem.setColumns(10);
+		GridBagConstraints gbc_txtComplem = new GridBagConstraints();
+		gbc_txtComplem.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtComplem.insets = new Insets(0, 0, 5, 0);
+		gbc_txtComplem.gridx = 4;
+		gbc_txtComplem.gridy = 1;
+		panel_1.add(txtComplem, gbc_txtComplem);
 		
 		JLabel lblBairro = new JLabel("Bairro:");
 		GridBagConstraints gbc_lblBairro = new GridBagConstraints();
@@ -246,14 +267,14 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblBairro.gridy = 2;
 		panel_1.add(lblBairro, gbc_lblBairro);
 		
-		textField_8 = new JTextField();
-		GridBagConstraints gbc_textField_8 = new GridBagConstraints();
-		gbc_textField_8.insets = new Insets(0, 0, 5, 5);
-		gbc_textField_8.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_8.gridx = 2;
-		gbc_textField_8.gridy = 2;
-		panel_1.add(textField_8, gbc_textField_8);
-		textField_8.setColumns(10);
+		txtBairro = new JTextField();
+		GridBagConstraints gbc_txtBairro = new GridBagConstraints();
+		gbc_txtBairro.insets = new Insets(0, 0, 5, 5);
+		gbc_txtBairro.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtBairro.gridx = 2;
+		gbc_txtBairro.gridy = 2;
+		panel_1.add(txtBairro, gbc_txtBairro);
+		txtBairro.setColumns(10);
 		
 		JLabel lblCep = new JLabel("CEP:");
 		GridBagConstraints gbc_lblCep = new GridBagConstraints();
@@ -263,14 +284,15 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblCep.gridy = 2;
 		panel_1.add(lblCep, gbc_lblCep);
 		
-		textField_9 = new JTextField();
-		textField_9.setColumns(10);
-		GridBagConstraints gbc_textField_9 = new GridBagConstraints();
-		gbc_textField_9.insets = new Insets(0, 0, 5, 0);
-		gbc_textField_9.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_9.gridx = 4;
-		gbc_textField_9.gridy = 2;
-		panel_1.add(textField_9, gbc_textField_9);
+		txtCep = new JTextField();
+		txtCep.setColumns(10);
+		GridBagConstraints gbc_txtCep = new GridBagConstraints();
+		gbc_txtCep.anchor = GridBagConstraints.NORTH;
+		gbc_txtCep.insets = new Insets(0, 0, 5, 0);
+		gbc_txtCep.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtCep.gridx = 4;
+		gbc_txtCep.gridy = 2;
+		panel_1.add(txtCep, gbc_txtCep);
 		
 		JLabel lblCidade = new JLabel("Cidade:");
 		GridBagConstraints gbc_lblCidade = new GridBagConstraints();
@@ -280,14 +302,14 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblCidade.gridy = 3;
 		panel_1.add(lblCidade, gbc_lblCidade);
 		
-		textField_10 = new JTextField();
-		GridBagConstraints gbc_textField_10 = new GridBagConstraints();
-		gbc_textField_10.insets = new Insets(0, 0, 0, 5);
-		gbc_textField_10.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField_10.gridx = 2;
-		gbc_textField_10.gridy = 3;
-		panel_1.add(textField_10, gbc_textField_10);
-		textField_10.setColumns(10);
+		txtCidade = new JTextField();
+		GridBagConstraints gbc_txtCidade = new GridBagConstraints();
+		gbc_txtCidade.insets = new Insets(0, 0, 0, 5);
+		gbc_txtCidade.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtCidade.gridx = 2;
+		gbc_txtCidade.gridy = 3;
+		panel_1.add(txtCidade, gbc_txtCidade);
+		txtCidade.setColumns(10);
 		
 		JLabel lblEstado = new JLabel("Estado:");
 		GridBagConstraints gbc_lblEstado = new GridBagConstraints();
@@ -297,25 +319,217 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblEstado.gridy = 3;
 		panel_1.add(lblEstado, gbc_lblEstado);
 		
-		JComboBox comboBox = new JComboBox();
-		GridBagConstraints gbc_comboBox = new GridBagConstraints();
-		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
-		gbc_comboBox.gridx = 4;
-		gbc_comboBox.gridy = 3;
-		panel_1.add(comboBox, gbc_comboBox);
+		cmbEstado = new JComboBox();
+		
+		Iterator estados = EstadoModel.findAll().iterator();
+		
+		while(estados.hasNext()) {
+			Estado e = (Estado) estados.next();
+			cmbEstado.addItem(e.getName());
+		}
+		
+		cmbEstado.setSelectedItem("SP");
+		
+		GridBagConstraints gbc_cmbEstado = new GridBagConstraints();
+		gbc_cmbEstado.fill = GridBagConstraints.HORIZONTAL;
+		gbc_cmbEstado.gridx = 4;
+		gbc_cmbEstado.gridy = 3;
+		panel_1.add(cmbEstado, gbc_cmbEstado);
 		
 		JButton btnSalvar = new JButton("Salvar");
-		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -6, SpringLayout.NORTH, btnSalvar);
-		springLayout.putConstraint(SpringLayout.EAST, btnSalvar, -7, SpringLayout.EAST, getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, btnSalvar, -10, SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, btnSalvar, 6, SpringLayout.SOUTH, panel_1);
+		springLayout.putConstraint(SpringLayout.WEST, btnSalvar, 371, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, btnSalvar, -4, SpringLayout.EAST, getContentPane());
+		btnSalvar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				HashMap<String, Object> data = new HashMap();
+				String msgErro = "";
+				
+				boolean isValid = true;
+				
+				if(txtNome.getText().trim().isEmpty()) {
+					msgErro += "O campo 'nome' deve ser informado!\n";
+					isValid = false;
+				}
+				
+				if(txtTelefone.getText().trim().isEmpty() && txtCelular.getText().trim().isEmpty()) {
+					msgErro += "Um número de 'celular' ou 'telefone' deve ser informado\n";
+					isValid = false;
+				}
+
+				if(isValid) {
+					data.put("nome", txtNome.getText());
+					data.put("telefone", txtTelefone.getText());
+					data.put("celular", txtCelular.getText());
+					data.put("email", txtEmail.getText());
+					data.put("site", txtSite.getText());
+					data.put("logra", txtLogra.getText());
+					data.put("num", txtNumero.getText());
+					data.put("complem", txtComplem.getText());
+					data.put("bairro", txtBairro.getText());
+					data.put("cep", txtCep.getText());
+					data.put("cidade", txtCidade.getText());
+					Estado ee = EstadoModel.findOneWhere("name", "'" + cmbEstado.getSelectedItem() + "'");
+					data.put("estado", ee);
+					data.put("cpf", txtCpf.getText());
+					data.put("rg", txtRg.getText());
+	
+					String msgSuccess = "";
+					if(theId > 0) {
+						cm.saveConsignatario(theId, data);
+						msgSuccess = "Consignatário salvo com sucesso!";
+					} else {
+						theId = cm.createConsignatario(data);
+						lblSubtitle.setText("Usuário ID: " + theId);
+						msgSuccess = "Consignatário inserido com sucesso!";
+						btnCancelar.setEnabled(true);
+						btnExcluir.setEnabled(true);
+					}	
+					if(theId > 0) {
+						JOptionPane.showMessageDialog(null, msgSuccess);
+					} else {
+						JOptionPane.showMessageDialog(null, "Não foi possível inserir o consignatário.");
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, msgErro);
+				}
+			}
+		});
 		getContentPane().add(btnSalvar);
 		
-		JButton btnCancelar = new JButton("Cancelar");
+		btnCancelar = new JButton("Cancelar");
 		springLayout.putConstraint(SpringLayout.NORTH, btnCancelar, 6, SpringLayout.SOUTH, panel_1);
-		springLayout.putConstraint(SpringLayout.WEST, btnSalvar, 6, SpringLayout.EAST, btnCancelar);
-		springLayout.putConstraint(SpringLayout.WEST, btnCancelar, 0, SpringLayout.WEST, lblConsignatrio);
-		springLayout.putConstraint(SpringLayout.EAST, btnCancelar, -207, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, btnCancelar, 10, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, btnCancelar, -365, SpringLayout.EAST, getContentPane());
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				theId = 0;
+				limparCampos();
+			}
+		});
+		btnCancelar.setEnabled(false);
 		getContentPane().add(btnCancelar);
+		
+		JButton button = new JButton((Icon) null);
+		springLayout.putConstraint(SpringLayout.WEST, button, 34, SpringLayout.EAST, lblSubtitle);
+		springLayout.putConstraint(SpringLayout.SOUTH, button, 0, SpringLayout.NORTH, panel);
+		
+		JLabel lblCpf = new JLabel("CPF:");
+		GridBagConstraints gbc_lblCpf = new GridBagConstraints();
+		gbc_lblCpf.anchor = GridBagConstraints.EAST;
+		gbc_lblCpf.insets = new Insets(0, 0, 0, 5);
+		gbc_lblCpf.gridx = 1;
+		gbc_lblCpf.gridy = 3;
+		panel.add(lblCpf, gbc_lblCpf);
+		
+		txtCpf = new JTextField();
+		GridBagConstraints gbc_txtCpf = new GridBagConstraints();
+		gbc_txtCpf.insets = new Insets(0, 0, 0, 5);
+		gbc_txtCpf.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtCpf.gridx = 2;
+		gbc_txtCpf.gridy = 3;
+		panel.add(txtCpf, gbc_txtCpf);
+		txtCpf.setColumns(10);
+		
+		JLabel lblRg = new JLabel("R.G.:");
+		GridBagConstraints gbc_lblRg = new GridBagConstraints();
+		gbc_lblRg.anchor = GridBagConstraints.EAST;
+		gbc_lblRg.insets = new Insets(0, 0, 0, 5);
+		gbc_lblRg.gridx = 3;
+		gbc_lblRg.gridy = 3;
+		panel.add(lblRg, gbc_lblRg);
+		
+		txtRg = new JTextField();
+		GridBagConstraints gbc_txtRg = new GridBagConstraints();
+		gbc_txtRg.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtRg.gridx = 4;
+		gbc_txtRg.gridy = 3;
+		panel.add(txtRg, gbc_txtRg);
+		txtRg.setColumns(10);
+		springLayout.putConstraint(SpringLayout.EAST, button, -10, SpringLayout.EAST, getContentPane());
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				ConsignatarioDialog cDiag = new ConsignatarioDialog();
+				cDiag.setVisible(true);
+				
+				theId = cDiag.getTheId();
+				
+				if (theId > 0) {
+					populateMe();
+				}
+			}
+		});
+		button.setText("Buscar Consignat\u00E1rio");
+		button.setHorizontalTextPosition(SwingConstants.LEFT);
+		getContentPane().add(button);
+		
+		btnExcluir = new JButton("Excluir");
+		btnExcluir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					cm.deleteById(theId);
+					limparCampos();
+					JOptionPane.showMessageDialog(null, "Registro excluido");
+				} catch (MySQLIntegrityConstraintViolationException e1) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "Não é possível excluir este consignatário. A pedidos ligados ao mesmo.");
+					e1.printStackTrace();
+				} catch (ConstraintViolationException ex) {
+					JOptionPane.showMessageDialog(null, "Não é possível excluir este consignatário. A pedidos ligados ao mesmo.");
+					ex.printStackTrace();
+				}
+				
+			}
+		});
+		btnExcluir.setEnabled(false);
+		springLayout.putConstraint(SpringLayout.NORTH, btnExcluir, 6, SpringLayout.SOUTH, panel_1);
+		springLayout.putConstraint(SpringLayout.WEST, btnExcluir, 6, SpringLayout.EAST, btnCancelar);
+		springLayout.putConstraint(SpringLayout.EAST, btnExcluir, -161, SpringLayout.WEST, btnSalvar);
+		getContentPane().add(btnExcluir);
+		
+		if (theId >  0) {
+			populateMe();
+		}
+	}
+	
+	private void limparCampos() {
+		lblSubtitle.setText("Cadastrando Novo Consignatário");
+		
+		txtNome.setText("");
+		txtTelefone.setText("");
+		txtCelular.setText("");
+		txtEmail.setText("");
+		txtSite.setText("");
+		txtLogra.setText("");
+		txtNumero.setText("");
+		txtBairro.setText("");
+		txtComplem.setText("");
+		txtCep.setText("");
+		txtCidade.setText("");
+		txtCpf.setText("");
+		txtRg.setText("");
+		btnCancelar.setEnabled(false);
+		btnExcluir.setEnabled(false);
+	}
 
+	protected void populateMe() {		
+		Consignatario c = ConsignatarioModel.findOneWhere("id", String.valueOf(this.theId));
+		lblSubtitle.setText("Usuário ID: " + c.getId());
+		txtNome.setText(c.getNome());
+		txtTelefone.setText(c.getTelefone());
+		txtCelular.setText(c.getCelular());
+		txtEmail.setText(c.getEmail());
+		txtSite.setText(c.getSite());
+		txtLogra.setText(c.getLogradouro());
+		txtNumero.setText(c.getBairro());
+		txtBairro.setText(c.getNumero());
+		txtComplem.setText(c.getComplemento());
+		txtCep.setText(c.getCep());
+		txtCidade.setText(c.getCidade());
+		txtCpf.setText(c.getCpf());
+		txtRg.setText(c.getRg());
+		cmbEstado.setSelectedItem(c.getEstado().getName());
+		btnCancelar.setEnabled(true);
+		btnExcluir.setEnabled(true);
 	}
 }

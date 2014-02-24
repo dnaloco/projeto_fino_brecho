@@ -5,9 +5,11 @@ import java.util.HashSet;
 import org.hibernate.Session;
 
 import br.arthur.entities.Categoria;
+import br.arthur.entities.Estado;
 import br.arthur.entities.Group;
 import br.arthur.entities.Marca;
 import br.arthur.entities.Permission;
+import br.arthur.entities.Situacao;
 import br.arthur.entities.Status;
 import br.arthur.entities.Tipo;
 import br.arthur.utils.HibernateUtil;
@@ -15,11 +17,64 @@ import br.arthur.utils.HibernateUtil;
 public class PopulateDefault {
 	public static void main(String[] args) {
 		populateToUsers();
+		populateToConsigs();
 		populateToProdutos();
 	}
 	
+	private static void populateToConsigs() {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		
+		String[] UFs = {
+				"RO",
+				"AC",
+				"AM",
+				"RR",
+				"PA",
+				"AP",
+				"TO",
+				"MA",
+				"PI",
+				"CE",
+				"RN",
+				"PB",
+				"PE",
+				"AL",
+				"SE",
+				"BA",
+				"MG",
+				"ES",
+				"RJ",
+				"SP",
+				"PR",
+				"SC",
+				"RS",
+				"MS",
+				"MT",
+				"GO",
+				"DF"
+		};
+		
+		session.beginTransaction();
+		
+		for(String uf : UFs) {
+			Estado e = new Estado(uf);
+			session.save(e);
+		}
+		
+		session.getTransaction().commit();
+		session.close();
+	}
+
 	private static void populateToProdutos() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
+		
+		String[] situacoesStr = {
+			"avaliando",
+			"indisponível",
+			"reservado",
+			"disponível",
+			"devolvido"
+		};
 		
 		String[] tiposStr = {
 				"novo",
@@ -123,6 +178,11 @@ public class PopulateDefault {
 		};
 		
 		session.beginTransaction();
+		
+		for(String situacao : situacoesStr) {
+			Situacao s = new Situacao(situacao);
+			session.save(s);
+		}
 		
 		for(String tipo : tiposStr) {
 			Tipo t = new Tipo(tipo);

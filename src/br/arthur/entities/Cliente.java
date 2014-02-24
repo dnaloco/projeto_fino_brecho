@@ -15,7 +15,7 @@ public class Cliente {
 	@Id
 	@GeneratedValue
 	@Column(name="cliente_id")
-	private long id;
+	private int id;
 	@Column(length=100)
 	private String nome;
 	@Column(length=12)
@@ -107,10 +107,10 @@ public class Cliente {
 			return false;
 		return true;
 	}
-	public long getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public String getNome() {

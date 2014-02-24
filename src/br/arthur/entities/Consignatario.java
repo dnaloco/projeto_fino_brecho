@@ -31,21 +31,28 @@ public class Consignatario {
 	@Column(length=150)
 	private String logradouro;
 	@Column(name="numero")
-	private byte numero;
+	private String numero;
 	@Column(length=50)
 	private String complemento;
 	@Column(length=50)
 	private String bairro;
 	@Column(name="cep")
-	private byte cep;
+	private String cep;
 	@Column(name="cidade")
 	private String cidade;
 	
 	@ManyToOne
 	@JoinColumn(name="estado_fk", nullable=false)
 	private Estado estado;
+	
+	@Column(name="cpf")
+	private String cpf;
+	
+	@Column(name="rg")
+	private String rg;
+	
 	@ManyToOne
-	@JoinColumn(name="ultima_entrada_fk", nullable=false)
+	@JoinColumn(name="ultima_entrada_fk")
 	private Entrada ultimaEntrada;
 	
 	@Column(name="saldo")
@@ -64,7 +71,6 @@ public class Consignatario {
 		int result = 1;
 		result = prime * result + ((bairro == null) ? 0 : bairro.hashCode());
 		result = prime * result + ((celular == null) ? 0 : celular.hashCode());
-		result = prime * result + cep;
 		result = prime * result + ((cidade == null) ? 0 : cidade.hashCode());
 		result = prime * result
 				+ ((complemento == null) ? 0 : complemento.hashCode());
@@ -76,7 +82,6 @@ public class Consignatario {
 		result = prime * result
 				+ ((logradouro == null) ? 0 : logradouro.hashCode());
 		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
-		result = prime * result + numero;
 		long temp;
 		temp = Double.doubleToLongBits(saldo);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -218,11 +223,11 @@ public class Consignatario {
 		this.logradouro = logradouro;
 	}
 
-	public byte getNumero() {
+	public String getNumero() {
 		return numero;
 	}
 
-	public void setNumero(byte numero) {
+	public void setNumero(String numero) {
 		this.numero = numero;
 	}
 
@@ -242,11 +247,11 @@ public class Consignatario {
 		this.bairro = bairro;
 	}
 
-	public byte getCep() {
+	public String getCep() {
 		return cep;
 	}
 
-	public void setCep(byte cep) {
+	public void setCep(String cep) {
 		this.cep = cep;
 	}
 
@@ -280,6 +285,24 @@ public class Consignatario {
 
 	public void setUltimaEntrada(Entrada ultimaEntrada) {
 		this.ultimaEntrada = ultimaEntrada;
+	}
+	
+	
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public String getRg() {
+		return rg;
+	}
+
+	public void setRg(String rg) {
+		this.rg = rg;
 	}
 
 	public double getSaldo() {

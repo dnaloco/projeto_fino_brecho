@@ -12,7 +12,7 @@ public class Estado {
 	@Id
 	@GeneratedValue
 	@Column(name="estado_id")
-	private short id;
+	private int id;
 	
 	@Column(length=50)
 	private String name;
@@ -53,11 +53,11 @@ public class Estado {
 		return true;
 	}
 
-	public short getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(byte id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

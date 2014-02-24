@@ -40,6 +40,7 @@
 	<mapping class="br.arthur.entities.FormaPagto"/>
 	
 	<mapping class="br.arthur.entities.Consignatario"/>
+	<mapping class="br.arthur.entities.Pedido"/>
 	<mapping class="br.arthur.entities.Entrada"/>
 	<mapping class="br.arthur.entities.Saida"/>
 	

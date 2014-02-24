@@ -17,6 +17,27 @@ import br.arthur.models.CategoriaModel;
 
 public class CadastroCategoria extends JInternalFrame {
 	private JTextField txtCategoria;
+	
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					CadastroCategoria frame = new CadastroCategoria();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
 
 	public CadastroCategoria() {
 		setClosable(true);
@@ -61,7 +82,7 @@ public class CadastroCategoria extends JInternalFrame {
 				
 				if(isValid) {
 					CategoriaModel cm = new CategoriaModel();
-					short id = 0;
+					int id = 0;
 					try {
 						id = cm.createCategoria(txtCategoria.getText());
 					} catch(Exception ex) {
@@ -82,8 +103,9 @@ public class CadastroCategoria extends JInternalFrame {
 		springLayout.putConstraint(SpringLayout.EAST, btnSalvar, 0, SpringLayout.EAST, txtCategoria);
 		getContentPane().add(btnSalvar);
 		
-		setVisible(true);
-
+		JButton btnBuscar = new JButton("Buscar");
+		springLayout.putConstraint(SpringLayout.NORTH, btnBuscar, 0, SpringLayout.NORTH, lblCategoriaID);
+		springLayout.putConstraint(SpringLayout.EAST, btnBuscar, -10, SpringLayout.EAST, getContentPane());
+		getContentPane().add(btnBuscar);
 	}
-
 }

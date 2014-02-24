@@ -46,17 +46,36 @@ public class CadastroUsuario extends JInternalFrame {
 	private UserModel um; 
 	private JTextField txtMobile;
 	private JTextField txtPhone;
+	
+	private static long theId;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					CadastroUsuario frame = new CadastroUsuario(theId);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	/**
 	 * Create the frame.
 	 */
-	public CadastroUsuario(String title, String id) throws PropertyVetoException {
+	public CadastroUsuario(long id) throws PropertyVetoException {
+		theId = id;
 		setClosable(true);
 		setIconifiable(true);
-		setTitle(title);
+		setTitle("Cadastro de Usuário");
 		setInheritsPopupMenu(true);
 		setIgnoreRepaint(true);
-		setBounds(100, 100, 276, 355);
+		setBounds(100, 100, 357, 426);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -67,15 +86,17 @@ public class CadastroUsuario extends JInternalFrame {
 		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
-		JLabel lblId = new JLabel(id);
-		lblId.setForeground(Color.BLUE);
-		lblId.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		GridBagConstraints gbc_lblId = new GridBagConstraints();
-		gbc_lblId.gridwidth = 2;
-		gbc_lblId.insets = new Insets(0, 0, 5, 0);
-		gbc_lblId.gridx = 0;
-		gbc_lblId.gridy = 0;
-		contentPane.add(lblId, gbc_lblId);
+		String subtitle = id > 0 ? "Usuário ID: " + String.valueOf(id) : "Cadastrando um Novo Usuário.";
+		
+		JLabel lblSubtitle = new JLabel(subtitle);
+		lblSubtitle.setForeground(Color.BLUE);
+		lblSubtitle.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		GridBagConstraints gbc_lblSubtitle = new GridBagConstraints();
+		gbc_lblSubtitle.gridwidth = 2;
+		gbc_lblSubtitle.insets = new Insets(0, 0, 5, 0);
+		gbc_lblSubtitle.gridx = 0;
+		gbc_lblSubtitle.gridy = 0;
+		contentPane.add(lblSubtitle, gbc_lblSubtitle);
 		
 		JLabel lblUsuario = new JLabel("Usu\u00E1rio");
 		lblUsuario.setHorizontalAlignment(SwingConstants.LEFT);
@@ -236,7 +257,7 @@ public class CadastroUsuario extends JInternalFrame {
 					isValid = false;
 				}
 				if(txtMobile.getText().trim().isEmpty() && txtPhone.getText().trim().isEmpty()) {
-					msgErro += "Um número de celular ou telefone deve ser informado\n";
+					msgErro += "Um número de 'celular' ou 'telefone' deve ser informado!\n";
 					isValid = false;
 				}
 
@@ -251,11 +272,15 @@ public class CadastroUsuario extends JInternalFrame {
 					dataUser.put("group", ge);
 					dataUser.put("mobile", txtMobile.getText());
 					dataUser.put("phone", txtPhone.getText());
-					System.out.println(dataUser.get("user"));
+
 					um = new UserModel();
-					long id = 0;
+					int id = 0;
 					try {
-						id = um.createUser(dataUser);
+						if(theId > 0) {
+							
+						} else {
+							id = um.createUser(dataUser);
+						}						
 					} catch(Exception ex) {
 						ex.printStackTrace();
 					}
@@ -360,8 +385,6 @@ public class CadastroUsuario extends JInternalFrame {
 		contentPane.add(btnNewButton, gbc_btnNewButton);
 		
 		checkPermissions();
-		
-		setVisible(true);
 	}
 	
 	public void checkPermissions() {

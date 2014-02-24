@@ -1,6 +1,7 @@
 package br.arthur.entities;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,11 +22,11 @@ public class Entrada {
 	@Id
 	@GeneratedValue
 	@Column(name="entrada_id")
-	private long id;
+	private int id;
 	
 	@ManyToOne
-	@JoinColumn(name="consignatario_fk", nullable=false)
-	private Consignatario consignatario;
+	@JoinColumn(name="pedido_fk", nullable=false)
+	private Pedido pedido;
 
 	@Column(name="titulo")
 	private String titulo;
@@ -40,18 +41,28 @@ public class Entrada {
 	private String cor;
 	@Column(length=30)
 	private String tamanho;
-	
-	@Column(name="quantidate")
-	private int quantidate;
-	
+
 	@Column(name="custo")
 	private double custo;
-	@Column(name="total")
+	@Column(name="quantidate")
+	private int quantidate;
+	@Column(name="margem_venda")
+	private String margemVenda;
+	@Column(name="margem_comissao")
+	private String margemComissao;
+	
+	@Column(name="revenda")
+	private double revenda;
+	@Column(name="comissao")
+	private double comissao;
+	
+	
+	@Column(name="total_custo_qtde")
 	private double total;	
 	@Column(name="data_entrada")
-	private Date dataEntrada;
-	@Column(name="validade")
-	private Date validade;
+	private Timestamp dataEntrada;
+	@Column(name="data_validade")
+	private Timestamp validade;
 	
 	@ManyToOne
 	@JoinColumn(name="situacao_fk", nullable=false)
@@ -59,14 +70,11 @@ public class Entrada {
 	
 
 	@ManyToOne
-	@JoinColumn(name="tipo_fk", nullable=false)
+	@JoinColumn(name="tipo_fk")
 	private Tipo tipo;
 	
 	@Column(name="observacao", columnDefinition="TEXT")
 	private String observacao;
-	
-	@Column(name="margem")
-	private String margem;
 
 	@ManyToMany(  
 	        targetEntity=br.arthur.entities.Imagem.class,  
@@ -83,28 +91,28 @@ public class Entrada {
 		
 	}
 
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
-	public Consignatario getConsignatario() {
-		return consignatario;
+	public Pedido getPedido() {
+		return pedido;
 	}
 
-	public void setConsignatario(Consignatario consignatario) {
-		this.consignatario = consignatario;
+	public void setPedido(Pedido pedido) {
+		this.pedido = pedido;
 	}
 
-	public String getTitulo() {
+	public String getProduto() {
 		return titulo;
 	}
 
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
+	public void setProduto(String produto) {
+		this.titulo = produto;
 	}
 
 	public Categoria getCategoria() {
@@ -139,6 +147,14 @@ public class Entrada {
 		this.tamanho = tamanho;
 	}
 
+	public double getCusto() {
+		return custo;
+	}
+
+	public void setCusto(double custo) {
+		this.custo = custo;
+	}
+
 	public int getQuantidate() {
 		return quantidate;
 	}
@@ -147,12 +163,36 @@ public class Entrada {
 		this.quantidate = quantidate;
 	}
 
-	public double getCusto() {
-		return custo;
+	public String getMargemVenda() {
+		return margemVenda;
 	}
 
-	public void setCusto(double custo) {
-		this.custo = custo;
+	public void setMargemVenda(String margemVenda) {
+		this.margemVenda = margemVenda;
+	}
+
+	public String getMargemComissao() {
+		return margemComissao;
+	}
+
+	public void setMargemComissao(String margemComissao) {
+		this.margemComissao = margemComissao;
+	}
+
+	public double getRevenda() {
+		return revenda;
+	}
+
+	public void setRevenda(double revenda) {
+		this.revenda = revenda;
+	}
+
+	public double getComissao() {
+		return comissao;
+	}
+
+	public void setComissao(double comissao) {
+		this.comissao = comissao;
 	}
 
 	public double getTotal() {
@@ -163,19 +203,19 @@ public class Entrada {
 		this.total = total;
 	}
 
-	public Date getDataEntrada() {
+	public Timestamp getDataEntrada() {
 		return dataEntrada;
 	}
 
-	public void setDataEntrada(Date dataEntrada) {
-		this.dataEntrada = dataEntrada;
+	public void setDataEntrada(Timestamp timestamp) {
+		this.dataEntrada = timestamp;
 	}
 
-	public Date getValidade() {
+	public Timestamp getValidade() {
 		return validade;
 	}
 
-	public void setValidade(Date validade) {
+	public void setValidade(Timestamp validade) {
 		this.validade = validade;
 	}
 
@@ -203,14 +243,6 @@ public class Entrada {
 		this.observacao = observacao;
 	}
 
-	public String getMargem() {
-		return margem;
-	}
-
-	public void setMargem(String margem) {
-		this.margem = margem;
-	}
-
 	public Set<Imagem> getImagens() {
 		return imagens;
 	}
@@ -225,26 +257,32 @@ public class Entrada {
 		int result = 1;
 		result = prime * result
 				+ ((categoria == null) ? 0 : categoria.hashCode());
-		result = prime * result
-				+ ((consignatario == null) ? 0 : consignatario.hashCode());
-		result = prime * result + ((cor == null) ? 0 : cor.hashCode());
 		long temp;
+		temp = Double.doubleToLongBits(comissao);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((cor == null) ? 0 : cor.hashCode());
 		temp = Double.doubleToLongBits(custo);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
 				+ ((dataEntrada == null) ? 0 : dataEntrada.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + id;
 		result = prime * result + ((imagens == null) ? 0 : imagens.hashCode());
 		result = prime * result + ((marca == null) ? 0 : marca.hashCode());
-		result = prime * result + ((margem == null) ? 0 : margem.hashCode());
+		result = prime * result
+				+ ((margemComissao == null) ? 0 : margemComissao.hashCode());
+		result = prime * result
+				+ ((margemVenda == null) ? 0 : margemVenda.hashCode());
 		result = prime * result
 				+ ((observacao == null) ? 0 : observacao.hashCode());
+		result = prime * result + ((pedido == null) ? 0 : pedido.hashCode());
+		result = prime * result + ((titulo == null) ? 0 : titulo.hashCode());
 		result = prime * result + quantidate;
+		temp = Double.doubleToLongBits(revenda);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
 				+ ((situacao == null) ? 0 : situacao.hashCode());
 		result = prime * result + ((tamanho == null) ? 0 : tamanho.hashCode());
 		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
-		result = prime * result + ((titulo == null) ? 0 : titulo.hashCode());
 		temp = Double.doubleToLongBits(total);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
@@ -266,10 +304,8 @@ public class Entrada {
 				return false;
 		} else if (!categoria.equals(other.categoria))
 			return false;
-		if (consignatario == null) {
-			if (other.consignatario != null)
-				return false;
-		} else if (!consignatario.equals(other.consignatario))
+		if (Double.doubleToLongBits(comissao) != Double
+				.doubleToLongBits(other.comissao))
 			return false;
 		if (cor == null) {
 			if (other.cor != null)
@@ -296,17 +332,35 @@ public class Entrada {
 				return false;
 		} else if (!marca.equals(other.marca))
 			return false;
-		if (margem == null) {
-			if (other.margem != null)
+		if (margemComissao == null) {
+			if (other.margemComissao != null)
 				return false;
-		} else if (!margem.equals(other.margem))
+		} else if (!margemComissao.equals(other.margemComissao))
+			return false;
+		if (margemVenda == null) {
+			if (other.margemVenda != null)
+				return false;
+		} else if (!margemVenda.equals(other.margemVenda))
 			return false;
 		if (observacao == null) {
 			if (other.observacao != null)
 				return false;
 		} else if (!observacao.equals(other.observacao))
 			return false;
+		if (pedido == null) {
+			if (other.pedido != null)
+				return false;
+		} else if (!pedido.equals(other.pedido))
+			return false;
+		if (titulo == null) {
+			if (other.titulo != null)
+				return false;
+		} else if (!titulo.equals(other.titulo))
+			return false;
 		if (quantidate != other.quantidate)
+			return false;
+		if (Double.doubleToLongBits(revenda) != Double
+				.doubleToLongBits(other.revenda))
 			return false;
 		if (situacao == null) {
 			if (other.situacao != null)
@@ -323,11 +377,6 @@ public class Entrada {
 				return false;
 		} else if (!tipo.equals(other.tipo))
 			return false;
-		if (titulo == null) {
-			if (other.titulo != null)
-				return false;
-		} else if (!titulo.equals(other.titulo))
-			return false;
 		if (Double.doubleToLongBits(total) != Double
 				.doubleToLongBits(other.total))
 			return false;
@@ -338,6 +387,4 @@ public class Entrada {
 			return false;
 		return true;
 	}
-
-	
 }

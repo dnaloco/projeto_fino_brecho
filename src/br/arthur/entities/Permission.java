@@ -12,7 +12,7 @@ public class Permission {
 	@Id  
 	@Column(name="permission_id")  
 	@GeneratedValue  
-	private short id;
+	private int id;
 	
 	@Column(name="name", nullable=false, unique=true)
 	private String name;
@@ -54,11 +54,11 @@ public class Permission {
 		return true;
 	}
 
-	public short getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(byte id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
