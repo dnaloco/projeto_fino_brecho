@@ -411,7 +411,7 @@ public class CadastroConsignatario extends JInternalFrame {
 		getContentPane().add(btnCancelar);
 		
 		JButton button = new JButton((Icon) null);
-		springLayout.putConstraint(SpringLayout.WEST, button, 34, SpringLayout.EAST, lblSubtitle);
+		springLayout.putConstraint(SpringLayout.WEST, button, 6, SpringLayout.EAST, lblSubtitle);
 		springLayout.putConstraint(SpringLayout.SOUTH, button, 0, SpringLayout.NORTH, panel);
 		
 		JLabel lblCpf = new JLabel("CPF:");

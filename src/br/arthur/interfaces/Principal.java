@@ -31,6 +31,7 @@ import javax.swing.border.BevelBorder;
 import br.arthur.controllers.LoginController;
 import br.arthur.entities.User;
 import br.arthur.interfaces.cadastros.CadastroConsignatario;
+import br.arthur.interfaces.cadastros.CadastroPedido;
 // import br.arthur.interfaces.cadastros.CadastroPedido;
 import br.arthur.interfaces.cadastros.CadastroUsuario;
 import br.arthur.interfaces.cadastros.CadastroVenda;
@@ -194,9 +195,9 @@ public class Principal extends JFrame {
 		JButton btnNewButton = new JButton("Pedido");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-//				CadastroPedido obj = new CadastroPedido();				
-//				jDesktopPanelPrincipal.add(obj);
-//				obj.setVisible(true);
+				CadastroPedido obj = new CadastroPedido();				
+				jDesktopPanelPrincipal.add(obj);
+				obj.setVisible(true);
 			}
 		});
 		btnNewButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

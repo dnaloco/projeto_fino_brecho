@@ -97,7 +97,7 @@ public class EntradaModel {
 		entity.setMarca((Marca) data.get("marca"));
 		entity.setTamanho((String) data.get("tamanho"));
 		entity.setCor((String) data.get("cor"));
-		entity.setQuantidate((Integer) data.get("quantidade"));
+		entity.setQuantidate((Integer) data.get("qtde"));
 		entity.setSituacao((Situacao) data.get("situacao"));
 	}
 
