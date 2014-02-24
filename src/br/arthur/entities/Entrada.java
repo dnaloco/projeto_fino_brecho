@@ -253,8 +253,6 @@ public class Entrada {
 
 	public void addImagem(Imagem img) {
 		this.imagens.add(img);
-		
-		
 	}
 	
 	@Override

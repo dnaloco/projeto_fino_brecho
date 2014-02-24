@@ -1,6 +1,7 @@
 package br.arthur.interfaces.cadastros;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -10,18 +11,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -31,21 +40,24 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.RowFilter;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import javax.swing.text.MaskFormatter;
 
 import org.hibernate.LobHelper;
+import org.hibernate.Session;
 
 import br.arthur.entities.Categoria;
 import br.arthur.entities.Consignatario;
+import br.arthur.entities.Entrada;
 import br.arthur.entities.Estado;
+import br.arthur.entities.Imagem;
 import br.arthur.entities.Marca;
 import br.arthur.entities.Situacao;
 import br.arthur.entities.Tipo;
@@ -59,6 +71,8 @@ import br.arthur.models.MarcaModel;
 import br.arthur.models.PedidoModel;
 import br.arthur.models.SituacaoModel;
 import br.arthur.models.TipoModel;
+import br.arthur.utils.HibernateUtil;
+import br.arthur.utils.JNumericField;
 
 public class CadastroEntrada extends JInternalFrame {
 	private JTabbedPane tabbedPanePedido;
@@ -80,15 +94,16 @@ public class CadastroEntrada extends JInternalFrame {
 	private JTextField txtCor;
 	private JTextField txtTamanho;
 	private JTextField txtDescricao;
-	private JTextField txtComissao;
-	private JTextField txtMargem;
-	private JTextField txtCusto;
+	private JNumericField txtComissao;
+	private JNumericField txtMargem;
+	private JNumericField txtCusto;
 	private JTextField txtEntrada;
 	private JTextField txtCep;
 	
 	private JLabel lblNovoConsig;
 	private JButton btnCancelarConsig;
 	private JButton btnExcluirConsig;
+	private JLabel lblProdutoSelecionado;
 	
 	private JLabel lblNovoProduto;
 	private JLabel lblNovoPedido;
@@ -98,6 +113,9 @@ public class CadastroEntrada extends JInternalFrame {
 	private JComboBox cmbCategoria;
 	private JComboBox cmbMarca;
 	private JComboBox cmbSituacao;
+	
+	private JPanel panelPicture;
+	private JLabel picture;
 	
 	String[] colunasProduto = new String []{"Código (ID)", "Produto", "Categoria", "Marca", "Tamanho", "Cor", "Qtde", "Situação"};
 	String[] colunasAvaliar = new String []{"Código (ID)", "Produto", "Custo", "Margem", "Comissão", "Situação", "Entrada", "Validade", "Tipo", "Valor Venda", "Valor Comissão"};
@@ -138,6 +156,8 @@ public class CadastroEntrada extends JInternalFrame {
 	private int imagemId = 0;
 	private int linhaSelecionadaProduto;
 	private int linhaSelecionadaAvaliar;
+	
+	private int countListaImg;
 	
 	private ConsignatarioModel cm = new ConsignatarioModel();
 	private PedidoModel pm = new PedidoModel();
@@ -879,33 +899,61 @@ public class CadastroEntrada extends JInternalFrame {
 		SpringLayout sl_imgPanel = new SpringLayout();
 		imgPanel.setLayout(sl_imgPanel);
 
-		JPanel panel_4 = new JPanel();
-		sl_imgPanel.putConstraint(SpringLayout.NORTH, panel_4, 23, SpringLayout.NORTH, imgPanel);
-		sl_imgPanel.putConstraint(SpringLayout.WEST, panel_4, 10, SpringLayout.WEST, imgPanel);
-		sl_imgPanel.putConstraint(SpringLayout.EAST, panel_4, 465, SpringLayout.WEST, imgPanel);
-		panel_4.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		imgPanel.add(panel_4);
+		panelPicture = new JPanel();
+		sl_imgPanel.putConstraint(SpringLayout.NORTH, panelPicture, 23, SpringLayout.NORTH, imgPanel);
+		sl_imgPanel.putConstraint(SpringLayout.WEST, panelPicture, 10, SpringLayout.WEST, imgPanel);
+		sl_imgPanel.putConstraint(SpringLayout.EAST, panelPicture, 465, SpringLayout.WEST, imgPanel);
+		panelPicture.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		imgPanel.add(panelPicture);
 
 		JButton btnInserirImg = new JButton("Inserir", new ImageIcon("images/add-icon.png"));
 		btnInserirImg.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				File file = new File("D:/facebook-fotos-gif-81baf8.gif");  
-				long fileSize = file.length();
-				try {
-					InputStream fileStream = new FileInputStream(file);
-					//LobHelper lobHelper = session.getLobHelper();
-					//Blob dataBlob = lobHelper.createBlob(fileStream, fileSize);
-					//p1.setImage(dataBlob);
-				} catch (FileNotFoundException ex) {
-					// TODO Auto-generated catch block
-					ex.printStackTrace();
+				JFileChooser arquivo = new JFileChooser();
+				
+				int retorno = arquivo.showOpenDialog(null);
+				String caminhoArquivo = "";
+				if(retorno == JFileChooser.APPROVE_OPTION && countListaImg <= 5) {
+					System.out.println("Abriu");
+					caminhoArquivo = arquivo.getSelectedFile().getAbsolutePath();
+					File file = new File(caminhoArquivo);
+					long fileSize = file.length();
+					System.out.println(fileSize);
+					if ((fileSize / 1024) > (long) 1 * 1024) {
+						String erro = "Não foi possível carregar o arquivo: o tamanho máximo permitido é de 1mb.";
+						JOptionPane.showMessageDialog(null, erro, "Erro ao carregar o arquivo!", JOptionPane.ERROR_MESSAGE);						
+					} else {
+						try {
+							HashSet<Imagem> img = new HashSet<Imagem>();
+							BufferedImage testeImage = ImageIO.read(file);
+							picture.setIcon(new ImageIcon(testeImage));
+							Session session = HibernateUtil.getSessionFactory().openSession();
+							try {
+								InputStream fileStream = new FileInputStream(file);
+								LobHelper lobHelper = session.getLobHelper();
+								Blob dataBlob = lobHelper.createBlob(fileStream, fileSize);
+								imagemId = im.createImagem(dataBlob);
+								Imagem ie = im.findOneWhere("id", String.valueOf(imagemId));
+								img.add(ie);
+								em.addImagem(entradaProdutoId, img);
+								countListaImg +=1 ;
+							} catch (FileNotFoundException ex) {
+								// TODO Auto-generated catch block
+								ex.printStackTrace();
+							}
+						} catch (IOException ex) {
+							// TODO Auto-generated catch block
+							ex.printStackTrace();
+						}
+					}
+				} else {
+					System.out.println("Não Abriu");
 				}
 				
 			}
 		});
-		btnInserirImg.setEnabled(false);
 		sl_imgPanel.putConstraint(SpringLayout.WEST, btnInserirImg, 10, SpringLayout.WEST, imgPanel);
-		sl_imgPanel.putConstraint(SpringLayout.SOUTH, panel_4, -6, SpringLayout.NORTH, btnInserirImg);
+		sl_imgPanel.putConstraint(SpringLayout.SOUTH, panelPicture, -6, SpringLayout.NORTH, btnInserirImg);
 		sl_imgPanel.putConstraint(SpringLayout.SOUTH, btnInserirImg, -10, SpringLayout.SOUTH, imgPanel);
 		imgPanel.add(btnInserirImg);
 
@@ -922,12 +970,12 @@ public class CadastroEntrada extends JInternalFrame {
 		imgPanel.add(btnExcluirImg);
 
 		JButton btnFirstImg = new JButton(new ImageIcon("images/first-view-icon.png"));
-		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnFirstImg, 6, SpringLayout.SOUTH, panel_4);
+		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnFirstImg, 6, SpringLayout.SOUTH, panelPicture);
 		sl_imgPanel.putConstraint(SpringLayout.WEST, btnFirstImg, 6, SpringLayout.EAST, btnExcluirImg);
 		imgPanel.add(btnFirstImg);
 
 		JButton btnPreviousImg = new JButton(new ImageIcon("images/previous-view-icon.png"));
-		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnPreviousImg, 6, SpringLayout.SOUTH, panel_4);
+		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnPreviousImg, 6, SpringLayout.SOUTH, panelPicture);
 		sl_imgPanel.putConstraint(SpringLayout.WEST, btnPreviousImg, 6, SpringLayout.EAST, btnFirstImg);
 		imgPanel.add(btnPreviousImg);
 
@@ -944,17 +992,21 @@ public class CadastroEntrada extends JInternalFrame {
 		JLabel lblCountImg = new JLabel("1/5");
 		sl_imgPanel.putConstraint(SpringLayout.NORTH, lblCountImg, 0, SpringLayout.NORTH, imgPanel);
 		sl_imgPanel.putConstraint(SpringLayout.WEST, lblCountImg, 24, SpringLayout.WEST, btnNextImg);
-		sl_imgPanel.putConstraint(SpringLayout.EAST, lblCountImg, 0, SpringLayout.EAST, panel_4);
+		sl_imgPanel.putConstraint(SpringLayout.EAST, lblCountImg, 0, SpringLayout.EAST, panelPicture);
 		lblCountImg.setFont(new Font("SansSerif", Font.BOLD, 14));
 		lblCountImg.setHorizontalAlignment(SwingConstants.RIGHT);
 		imgPanel.add(lblCountImg);
 		
-		JLabel lblNenhumProdutoSelecionadoselecione = new JLabel("Nenhum Produto Selecionado(selecione na aba produto)");
-		sl_imgPanel.putConstraint(SpringLayout.WEST, lblNenhumProdutoSelecionadoselecione, 10, SpringLayout.WEST, imgPanel);
-		sl_imgPanel.putConstraint(SpringLayout.EAST, lblNenhumProdutoSelecionadoselecione, -6, SpringLayout.WEST, lblCountImg);
-		lblNenhumProdutoSelecionadoselecione.setFont(new Font("SansSerif", Font.BOLD, 14));
-		sl_imgPanel.putConstraint(SpringLayout.SOUTH, lblNenhumProdutoSelecionadoselecione, -6, SpringLayout.NORTH, panel_4);
-		imgPanel.add(lblNenhumProdutoSelecionadoselecione);
+		lblProdutoSelecionado = new JLabel("Nenhum Produto Selecionado(selecione na aba produto)");
+		sl_imgPanel.putConstraint(SpringLayout.WEST, lblProdutoSelecionado, 10, SpringLayout.WEST, imgPanel);
+		sl_imgPanel.putConstraint(SpringLayout.EAST, lblProdutoSelecionado, -6, SpringLayout.WEST, lblCountImg);
+		lblProdutoSelecionado.setFont(new Font("SansSerif", Font.BOLD, 14));
+		sl_imgPanel.putConstraint(SpringLayout.SOUTH, lblProdutoSelecionado, -6, SpringLayout.NORTH, panelPicture);
+		panelPicture.setLayout(new CardLayout(0, 0));
+		
+		picture = new JLabel("");
+		panelPicture.add(picture, "name_30957025553916");
+		imgPanel.add(lblProdutoSelecionado);
 		
 		JPanel panel_6 = new JPanel();
 		tabbedPanePedido.addTab("Avaliar", null, panel_6, null);
@@ -983,7 +1035,12 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblCusto.gridy = 0;
 		panel_7.add(lblCusto, gbc_lblCusto);
 		
-		txtCusto = new JTextField();
+		NumberFormat f = NumberFormat.getNumberInstance(); 
+		
+		txtCusto = new JNumericField();
+		txtCusto.setMaxLength(6);
+		txtCusto.setText("0");
+		txtCusto.setHorizontalAlignment(SwingConstants.RIGHT);
 		GridBagConstraints gbc_txtCusto = new GridBagConstraints();
 		gbc_txtCusto.insets = new Insets(0, 0, 5, 5);
 		gbc_txtCusto.fill = GridBagConstraints.HORIZONTAL;
@@ -1000,7 +1057,10 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblMargem.gridy = 0;
 		panel_7.add(lblMargem, gbc_lblMargem);
 		
-		txtMargem = new JTextField();
+		txtMargem = new JNumericField();
+		txtMargem.setMaxLength(2);
+		txtMargem.setHorizontalAlignment(SwingConstants.RIGHT);
+		txtMargem.setText("40");
 		GridBagConstraints gbc_txtMargem = new GridBagConstraints();
 		gbc_txtMargem.insets = new Insets(0, 0, 5, 5);
 		gbc_txtMargem.fill = GridBagConstraints.HORIZONTAL;
@@ -1017,7 +1077,11 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblComisso.gridy = 0;
 		panel_7.add(lblComisso, gbc_lblComisso);
 		
-		txtComissao = new JTextField();
+		txtComissao = new JNumericField();
+		txtComissao.setMaxLength(2);
+		txtComissao.setHorizontalAlignment(SwingConstants.RIGHT);
+		txtComissao.setText("8");
+		txtComissao.setToolTipText("");
 		GridBagConstraints gbc_txtComissao = new GridBagConstraints();
 		gbc_txtComissao.insets = new Insets(0, 0, 5, 0);
 		gbc_txtComissao.fill = GridBagConstraints.HORIZONTAL;
@@ -1034,7 +1098,12 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblEntrada.gridy = 1;
 		panel_7.add(lblEntrada, gbc_lblEntrada);
 		
-		txtEntrada = new JTextField();
+		try {
+			txtEntrada = new JFormattedTextField(new MaskFormatter("##/##/####"));
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		};
 		GridBagConstraints gbc_txtEntrada = new GridBagConstraints();
 		gbc_txtEntrada.gridwidth = 2;
 		gbc_txtEntrada.insets = new Insets(0, 0, 5, 5);
@@ -1242,6 +1311,17 @@ public class CadastroEntrada extends JInternalFrame {
 		tabbedPanePedido.setEnabledAt(2, false);
 		tabbedPanePedido.setEnabledAt(3, false);
 		tabbedPanePedido.setEnabledAt(4, false);
+		
+		tabbedPanePedido.addChangeListener(new ChangeListener() {
+		    public void stateChanged(ChangeEvent e) {
+		    	if(tabbedPanePedido.getSelectedIndex() == 2) {
+		    		Entrada entSelect = em.findOneWhere("id", String.valueOf(entradaProdutoId));
+		    		lblProdutoSelecionado.setText("ID: " + entSelect.getId() + " - " + entSelect.getDescricao());
+		    	}
+		    }
+		});
+		
+		
 	}
 
 

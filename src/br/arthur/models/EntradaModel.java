@@ -3,13 +3,14 @@ package br.arthur.models;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.hibernate.Session;
 
 import br.arthur.entities.Categoria;
-import br.arthur.entities.Consignatario;
 import br.arthur.entities.Entrada;
+import br.arthur.entities.Imagem;
 import br.arthur.entities.Marca;
 import br.arthur.entities.Pedido;
 import br.arthur.entities.Situacao;
@@ -21,6 +22,21 @@ public class EntradaModel {
 
 	public void saveEntrada(int entradaId, HashMap<String, Object> data) {
 		
+	}
+	
+	public void addImagem(int entradaId, HashSet<Imagem> img) {
+		entity = findOneWhere("id", String.valueOf(entradaId));
+		
+		entity.setImagens(img);
+		
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+		
+		session.update(entity);
+		
+		session.getTransaction().commit();
+		
+		session.close();
 	}
 
 	public int createEntrada(HashMap<String, Object> data) {
