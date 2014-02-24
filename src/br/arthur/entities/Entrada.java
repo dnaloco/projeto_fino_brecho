@@ -28,8 +28,8 @@ public class Entrada {
 	@JoinColumn(name="pedido_fk", nullable=false)
 	private Pedido pedido;
 
-	@Column(name="titulo")
-	private String titulo;
+	@Column(name="descricao")
+	private String descricao;
 	
 	@ManyToOne
 	@JoinColumn(name="categoria_fk", nullable=false)
@@ -107,12 +107,12 @@ public class Entrada {
 		this.pedido = pedido;
 	}
 
-	public String getProduto() {
-		return titulo;
+	public String getDescricao() {
+		return descricao;
 	}
 
-	public void setProduto(String produto) {
-		this.titulo = produto;
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
 	public Categoria getCategoria() {
@@ -251,6 +251,12 @@ public class Entrada {
 		this.imagens = imagens;
 	}
 
+	public void addImagem(Imagem img) {
+		this.imagens.add(img);
+		
+		
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -275,7 +281,7 @@ public class Entrada {
 		result = prime * result
 				+ ((observacao == null) ? 0 : observacao.hashCode());
 		result = prime * result + ((pedido == null) ? 0 : pedido.hashCode());
-		result = prime * result + ((titulo == null) ? 0 : titulo.hashCode());
+		result = prime * result + ((descricao == null) ? 0 : descricao.hashCode());
 		result = prime * result + quantidate;
 		temp = Double.doubleToLongBits(revenda);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -352,10 +358,10 @@ public class Entrada {
 				return false;
 		} else if (!pedido.equals(other.pedido))
 			return false;
-		if (titulo == null) {
-			if (other.titulo != null)
+		if (descricao == null) {
+			if (other.descricao != null)
 				return false;
-		} else if (!titulo.equals(other.titulo))
+		} else if (!descricao.equals(other.descricao))
 			return false;
 		if (quantidate != other.quantidate)
 			return false;

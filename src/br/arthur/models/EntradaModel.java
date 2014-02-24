@@ -92,7 +92,7 @@ public class EntradaModel {
 	
 	private void setProduto(HashMap<String, Object> data) {
 		entity.setPedido((Pedido) data.get("pedido"));
-		entity.setProduto((String) data.get("produto"));
+		entity.setDescricao((String) data.get("descricao"));
 		entity.setCategoria((Categoria) data.get("categoria"));
 		entity.setMarca((Marca) data.get("marca"));
 		entity.setTamanho((String) data.get("tamanho"));

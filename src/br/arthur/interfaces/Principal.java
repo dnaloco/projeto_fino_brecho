@@ -31,7 +31,7 @@ import javax.swing.border.BevelBorder;
 import br.arthur.controllers.LoginController;
 import br.arthur.entities.User;
 import br.arthur.interfaces.cadastros.CadastroConsignatario;
-import br.arthur.interfaces.cadastros.CadastroPedido;
+import br.arthur.interfaces.cadastros.CadastroEntrada;
 // import br.arthur.interfaces.cadastros.CadastroPedido;
 import br.arthur.interfaces.cadastros.CadastroUsuario;
 import br.arthur.interfaces.cadastros.CadastroVenda;
@@ -71,15 +71,16 @@ public class Principal extends JFrame {
 		jDesktopPanelPrincipal.setLayout(null);
 		
 		JLabel lblSistemaLoja = new JLabel("Sistema de Loja - Fino Brech\u00F3");
+		lblSistemaLoja.setBackground(new Color(102, 51, 0));
 		lblSistemaLoja.setFont(new Font("Perpetua", Font.BOLD, 36));
-		lblSistemaLoja.setForeground(UIManager.getColor("MenuItem.foreground"));
+		lblSistemaLoja.setForeground(new Color(51, 0, 0));
 		lblSistemaLoja.setBounds(10, 11, 464, 48);
 		jDesktopPanelPrincipal.add(lblSistemaLoja);
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		panel.setOpaque(false);
-		panel.setBackground(UIManager.getColor("MenuItem[Enabled].textForeground"));
+		panel.setBackground(new Color(204, 153, 51));
 		panel.setForeground(UIManager.getColor("MenuBar:Menu[Enabled].textForeground"));
 		panel.setBounds(486, 11, 201, 103);
 		jDesktopPanelPrincipal.add(panel);
@@ -192,10 +193,10 @@ public class Principal extends JFrame {
 		btnNewButton_1.setBounds(659, 151, 122, 109);
 		jDesktopPanelPrincipal.add(btnNewButton_1);
 		
-		JButton btnNewButton = new JButton("Pedido");
+		JButton btnNewButton = new JButton("Entrada");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				CadastroPedido obj = new CadastroPedido();				
+				CadastroEntrada obj = new CadastroEntrada();				
 				jDesktopPanelPrincipal.add(obj);
 				obj.setVisible(true);
 			}
@@ -219,7 +220,7 @@ public class Principal extends JFrame {
 		btnBackup.setBounds(528, 277, 122, 109);
 		jDesktopPanelPrincipal.add(btnBackup);
 		
-		JButton btnCaixa = new JButton("Caixa");
+		JButton btnCaixa = new JButton("Venda");
 		btnCaixa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				CadastroVenda obj = new CadastroVenda();

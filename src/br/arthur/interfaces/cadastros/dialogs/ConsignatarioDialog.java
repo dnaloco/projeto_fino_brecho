@@ -254,7 +254,7 @@ public class ConsignatarioDialog extends JDialog {
 //		    	String population = (String) entry.getValue(1);
 //		        return population.contentEquals(nome);
 		    	  if(filter.containsKey("nome")) {
-		    		  isValid = ((String)entry.getValue(1)).contains(filter.get("nome"));
+		    		  isValid = ((String)entry.getValue(1)).toLowerCase().contains(filter.get("nome").toLowerCase());
 		    	  }
 		    	  
 		    	  if(filter.containsKey("cpf")) {
