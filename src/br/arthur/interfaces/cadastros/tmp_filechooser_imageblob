@@ -1,0 +1,40 @@
+				JFileChooser arquivo = new JFileChooser();
+				
+				int retorno = arquivo.showOpenDialog(null);
+				String caminhoArquivo = "";
+				if(retorno == JFileChooser.APPROVE_OPTION && countListaImg <= 5) {
+					System.out.println("Abriu");
+					caminhoArquivo = arquivo.getSelectedFile().getAbsolutePath();
+					File file = new File(caminhoArquivo);
+					long fileSize = file.length();
+					System.out.println(fileSize);
+					if ((fileSize / 1024) > (long) 1 * 1024) {
+						String erro = "Não foi possível carregar o arquivo: o tamanho máximo permitido é de 1mb.";
+						JOptionPane.showMessageDialog(null, erro, "Erro ao carregar o arquivo!", JOptionPane.ERROR_MESSAGE);						
+					} else {
+						try {
+							HashSet<Imagem> img = new HashSet<Imagem>();
+							BufferedImage testeImage = ImageIO.read(file);
+							picture.setIcon(new ImageIcon(testeImage));
+							Session session = HibernateUtil.getSessionFactory().openSession();
+							try {
+								InputStream fileStream = new FileInputStream(file);
+								LobHelper lobHelper = session.getLobHelper();
+								Blob dataBlob = lobHelper.createBlob(fileStream, fileSize);
+								imagemId = im.createImagem(dataBlob);
+								Imagem ie = im.findOneWhere("id", String.valueOf(imagemId));
+								img.add(ie);
+								em.addImagem(entradaProdutoId, img);
+								countListaImg +=1 ;
+							} catch (FileNotFoundException ex) {
+								// TODO Auto-generated catch block
+								ex.printStackTrace();
+							}
+						} catch (IOException ex) {
+							// TODO Auto-generated catch block
+							ex.printStackTrace();
+						}
+					}
+				} else {
+					System.out.println("Não Abriu");
+				}

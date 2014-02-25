@@ -11,25 +11,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Blob;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.ListIterator;
 
-import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -50,9 +42,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
-import org.hibernate.LobHelper;
-import org.hibernate.Session;
-
 import br.arthur.entities.Categoria;
 import br.arthur.entities.Consignatario;
 import br.arthur.entities.Entrada;
@@ -71,10 +60,14 @@ import br.arthur.models.MarcaModel;
 import br.arthur.models.PedidoModel;
 import br.arthur.models.SituacaoModel;
 import br.arthur.models.TipoModel;
-import br.arthur.utils.HibernateUtil;
 import br.arthur.utils.JNumericField;
 
 public class CadastroEntrada extends JInternalFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private JTabbedPane tabbedPanePedido;
 	
 	private JTextField txtCelular;
@@ -116,6 +109,15 @@ public class CadastroEntrada extends JInternalFrame {
 	
 	private JPanel panelPicture;
 	private JLabel picture;
+	private JLabel lblCountImg;
+	private int imgCount = 0;
+	private JButton btnInserirImg;
+	private JButton btnTrocarImg;
+	private JButton btnExcluirImg;
+	private JButton btnFirstImg;
+	private JButton btnPreviousImg;
+	private JButton btnNextImg;
+	private JButton btnLastImg;
 	
 	String[] colunasProduto = new String []{"Código (ID)", "Produto", "Categoria", "Marca", "Tamanho", "Cor", "Qtde", "Situação"};
 	String[] colunasAvaliar = new String []{"Código (ID)", "Produto", "Custo", "Margem", "Comissão", "Situação", "Entrada", "Validade", "Tipo", "Valor Venda", "Valor Comissão"};
@@ -906,50 +908,49 @@ public class CadastroEntrada extends JInternalFrame {
 		panelPicture.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		imgPanel.add(panelPicture);
 
-		JButton btnInserirImg = new JButton("Inserir", new ImageIcon("images/add-icon.png"));
+		btnInserirImg = new JButton("Inserir", new ImageIcon("images/add-icon.png"));
+		
 		btnInserirImg.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser arquivo = new JFileChooser();
+				Entrada ee = EntradaModel.findOneWhere("id", String.valueOf(entradaProdutoId));
 				
-				int retorno = arquivo.showOpenDialog(null);
-				String caminhoArquivo = "";
-				if(retorno == JFileChooser.APPROVE_OPTION && countListaImg <= 5) {
-					System.out.println("Abriu");
-					caminhoArquivo = arquivo.getSelectedFile().getAbsolutePath();
-					File file = new File(caminhoArquivo);
-					long fileSize = file.length();
-					System.out.println(fileSize);
-					if ((fileSize / 1024) > (long) 1 * 1024) {
-						String erro = "Não foi possível carregar o arquivo: o tamanho máximo permitido é de 1mb.";
-						JOptionPane.showMessageDialog(null, erro, "Erro ao carregar o arquivo!", JOptionPane.ERROR_MESSAGE);						
-					} else {
-						try {
-							HashSet<Imagem> img = new HashSet<Imagem>();
-							BufferedImage testeImage = ImageIO.read(file);
-							picture.setIcon(new ImageIcon(testeImage));
-							Session session = HibernateUtil.getSessionFactory().openSession();
-							try {
-								InputStream fileStream = new FileInputStream(file);
-								LobHelper lobHelper = session.getLobHelper();
-								Blob dataBlob = lobHelper.createBlob(fileStream, fileSize);
-								imagemId = im.createImagem(dataBlob);
-								Imagem ie = im.findOneWhere("id", String.valueOf(imagemId));
-								img.add(ie);
-								em.addImagem(entradaProdutoId, img);
-								countListaImg +=1 ;
-							} catch (FileNotFoundException ex) {
-								// TODO Auto-generated catch block
-								ex.printStackTrace();
-							}
-						} catch (IOException ex) {
-							// TODO Auto-generated catch block
-							ex.printStackTrace();
-						}
-					}
-				} else {
-					System.out.println("Não Abriu");
+				int imgTotalCount = ee.getImagens().size();
+				
+				Iterator imgIter = ee.getImagens().iterator();
+				
+				ArrayList<Imagem> imgList = new ArrayList<Imagem>();
+				
+				while(imgIter.hasNext()) {
+					imgList.add((Imagem) imgIter.next());
 				}
 				
+				ListIterator imgListIter = imgList.listIterator();
+				
+				
+				if(imgTotalCount > 0) {
+					lblCountImg.setText(imgCount + "/" + imgTotalCount);
+					
+					if (imgListIter.hasNext()) {
+						btnNextImg.setEnabled(true);
+						btnLastImg.setEnabled(true);
+					}
+					
+					if (imgListIter.hasPrevious()) {
+						btnFirstImg.setEnabled(true);
+						btnPreviousImg.setEnabled(true);
+					}
+				} else {
+					System.out.println("Nenhuma imagem inserida!");
+					
+					lblCountImg.setText("0/0");
+					
+					btnTrocarImg.setEnabled(false);
+					btnExcluirImg.setEnabled(false);
+					btnFirstImg.setEnabled(false);
+					btnPreviousImg.setEnabled(false);
+					btnNextImg.setEnabled(false);
+					btnLastImg.setEnabled(false);
+				}
 			}
 		});
 		sl_imgPanel.putConstraint(SpringLayout.WEST, btnInserirImg, 10, SpringLayout.WEST, imgPanel);
@@ -957,39 +958,39 @@ public class CadastroEntrada extends JInternalFrame {
 		sl_imgPanel.putConstraint(SpringLayout.SOUTH, btnInserirImg, -10, SpringLayout.SOUTH, imgPanel);
 		imgPanel.add(btnInserirImg);
 
-		JButton btnTrocarImg = new JButton("Trocar", new ImageIcon("images/switch-img-icon.png"));
+		btnTrocarImg = new JButton("Trocar", new ImageIcon("images/switch-img-icon.png"));
 		btnTrocarImg.setEnabled(false);
 		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnTrocarImg, 0, SpringLayout.NORTH, btnInserirImg);
 		sl_imgPanel.putConstraint(SpringLayout.WEST, btnTrocarImg, 6, SpringLayout.EAST, btnInserirImg);
 		imgPanel.add(btnTrocarImg);
 
-		JButton btnExcluirImg = new JButton("Excluir", new ImageIcon("images/delete-icon.png"));
+		btnExcluirImg = new JButton("Excluir", new ImageIcon("images/delete-icon.png"));
 		btnExcluirImg.setEnabled(false);
 		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnExcluirImg, 0, SpringLayout.NORTH, btnInserirImg);
 		sl_imgPanel.putConstraint(SpringLayout.WEST, btnExcluirImg, 6, SpringLayout.EAST, btnTrocarImg);
 		imgPanel.add(btnExcluirImg);
 
-		JButton btnFirstImg = new JButton(new ImageIcon("images/first-view-icon.png"));
+		btnFirstImg = new JButton(new ImageIcon("images/first-view-icon.png"));
 		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnFirstImg, 6, SpringLayout.SOUTH, panelPicture);
 		sl_imgPanel.putConstraint(SpringLayout.WEST, btnFirstImg, 6, SpringLayout.EAST, btnExcluirImg);
 		imgPanel.add(btnFirstImg);
 
-		JButton btnPreviousImg = new JButton(new ImageIcon("images/previous-view-icon.png"));
+		btnPreviousImg = new JButton(new ImageIcon("images/previous-view-icon.png"));
 		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnPreviousImg, 6, SpringLayout.SOUTH, panelPicture);
 		sl_imgPanel.putConstraint(SpringLayout.WEST, btnPreviousImg, 6, SpringLayout.EAST, btnFirstImg);
 		imgPanel.add(btnPreviousImg);
 
-		JButton btnNextImg = new JButton(new ImageIcon("images/next-view-icon.png"));
+		btnNextImg = new JButton(new ImageIcon("images/next-view-icon.png"));
 		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnNextImg, 0, SpringLayout.NORTH, btnInserirImg);
 		imgPanel.add(btnNextImg);
 
-		JButton btnLastiMG = new JButton(new ImageIcon("images/last-view-icon.png"));
-		sl_imgPanel.putConstraint(SpringLayout.EAST, btnLastiMG, -10, SpringLayout.EAST, imgPanel);
-		sl_imgPanel.putConstraint(SpringLayout.EAST, btnNextImg, -6, SpringLayout.WEST, btnLastiMG);
-		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnLastiMG, 0, SpringLayout.NORTH, btnInserirImg);
-		imgPanel.add(btnLastiMG);
+		btnLastImg = new JButton(new ImageIcon("images/last-view-icon.png"));
+		sl_imgPanel.putConstraint(SpringLayout.EAST, btnLastImg, -10, SpringLayout.EAST, imgPanel);
+		sl_imgPanel.putConstraint(SpringLayout.EAST, btnNextImg, -6, SpringLayout.WEST, btnLastImg);
+		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnLastImg, 0, SpringLayout.NORTH, btnInserirImg);
+		imgPanel.add(btnLastImg);
 
-		JLabel lblCountImg = new JLabel("1/5");
+		lblCountImg = new JLabel("0/0");
 		sl_imgPanel.putConstraint(SpringLayout.NORTH, lblCountImg, 0, SpringLayout.NORTH, imgPanel);
 		sl_imgPanel.putConstraint(SpringLayout.WEST, lblCountImg, 24, SpringLayout.WEST, btnNextImg);
 		sl_imgPanel.putConstraint(SpringLayout.EAST, lblCountImg, 0, SpringLayout.EAST, panelPicture);
@@ -1101,7 +1102,6 @@ public class CadastroEntrada extends JInternalFrame {
 		try {
 			txtEntrada = new JFormattedTextField(new MaskFormatter("##/##/####"));
 		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		};
 		GridBagConstraints gbc_txtEntrada = new GridBagConstraints();
@@ -1327,7 +1327,6 @@ public class CadastroEntrada extends JInternalFrame {
 
 
 	protected void populateProduto() {
-		// TODO Auto-generated method stub
 		entradaProdutoId = Integer.parseInt((String) jtableProdutos.getValueAt(linhaSelecionadaProduto, 0));
 		lblNovoProduto.setText("Produto ID: " + entradaProdutoId);
 		
