@@ -315,7 +315,9 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblTelefone.gridy = 1;
 		panel.add(lblTelefone, gbc_lblTelefone);
 
-		txtTelefone = new JTextField();
+		MaskFormatter frmtTefelone = formatString("####-####");  
+
+		txtTelefone = new javax.swing.JFormattedTextField(frmtTefelone);
 		GridBagConstraints gbc_txtTelefone = new GridBagConstraints();
 		gbc_txtTelefone.anchor = GridBagConstraints.NORTH;
 		gbc_txtTelefone.insets = new Insets(0, 0, 5, 5);
@@ -324,7 +326,7 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_txtTelefone.gridy = 1;
 		panel.add(txtTelefone, gbc_txtTelefone);
 		txtTelefone.setColumns(10);
-
+		
 		JLabel lblCelular = new JLabel("Celular");
 		GridBagConstraints gbc_lblCelular = new GridBagConstraints();
 		gbc_lblCelular.anchor = GridBagConstraints.EAST;
@@ -333,7 +335,7 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblCelular.gridy = 1;
 		panel.add(lblCelular, gbc_lblCelular);
 
-		txtCelular = new JTextField();
+		txtCelular = new javax.swing.JFormattedTextField(frmtTefelone);
 		GridBagConstraints gbc_txtCelular = new GridBagConstraints();
 		gbc_txtCelular.insets = new Insets(0, 0, 5, 0);
 		gbc_txtCelular.fill = GridBagConstraints.HORIZONTAL;
@@ -384,7 +386,9 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblCpf.gridy = 3;
 		panel.add(lblCpf, gbc_lblCpf);
 
-		txtCpf = new JTextField();
+		MaskFormatter frmtCpf = formatString("###.###.###-##");  
+		
+		txtCpf = new javax.swing.JFormattedTextField(frmtCpf);
 		GridBagConstraints gbc_txtCpf = new GridBagConstraints();
 		gbc_txtCpf.insets = new Insets(0, 0, 0, 5);
 		gbc_txtCpf.fill = GridBagConstraints.HORIZONTAL;
@@ -511,7 +515,9 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblCep.gridy = 2;
 		panel_1.add(lblCep, gbc_lblCep);
 
-		txtCep = new JTextField();
+		MaskFormatter frmtCep = formatString("#####-###");  
+		
+		txtCep = new javax.swing.JFormattedTextField(frmtCep);
 		GridBagConstraints gbc_txtCep = new GridBagConstraints();
 		gbc_txtCep.insets = new Insets(0, 0, 5, 0);
 		gbc_txtCep.fill = GridBagConstraints.HORIZONTAL;
@@ -1081,7 +1087,7 @@ public class CadastroEntrada extends JInternalFrame {
 				} else {
 					System.out.println("Não Abriu");
 				}
-				
+
 			}
 		});
 		sl_imgPanel.putConstraint(SpringLayout.WEST, btnInserirImg, 10,
@@ -1545,13 +1551,24 @@ public class CadastroEntrada extends JInternalFrame {
 					if (imgTotalCount > 0) {
 						imgCount = 0;
 						setFirstImage();
-						
+
 					}
 				}
 			}
 		});
 
 	}
+
+	private MaskFormatter formatString(String fomater) {
+		MaskFormatter frmtTefelone = null;  
+        try {  
+        	frmtTefelone = new MaskFormatter(fomater);  
+        } catch (ParseException ex) {  
+                ex.printStackTrace();  
+        }
+		return frmtTefelone;
+	}
+
 
 	protected void populateProduto() {
 		entradaProdutoId = Integer.parseInt((String) jtableProdutos.getValueAt(
@@ -1766,13 +1783,13 @@ public class CadastroEntrada extends JInternalFrame {
 
 	private void setFirstImage() {
 		imgListIter = getImageIterator();
-		
+
 		setNextImage();
 	}
 
 	private void setNextImage() {
 		ifHasPrevAndNext();
-		
+
 		Blob blob_img = ((Imagem) imgListIter.next()).getImagemBlob();
 
 		try {
@@ -1786,14 +1803,12 @@ public class CadastroEntrada extends JInternalFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 
 	}
 
 	private void setPreviousImage() {
 		ifHasPrevAndNext();
-		
+
 		Blob blob_img = ((Imagem) imgListIter.previous()).getImagemBlob();
 
 		try {
@@ -1804,11 +1819,9 @@ public class CadastroEntrada extends JInternalFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 
 	private void ifHasPrevAndNext() {
@@ -1819,7 +1832,7 @@ public class CadastroEntrada extends JInternalFrame {
 			btnFirstImg.setEnabled(false);
 			btnPreviousImg.setEnabled(false);
 		}
-		
+
 		if (imgListIter.hasNext()) {
 			btnLastImg.setEnabled(true);
 			btnNextImg.setEnabled(true);
