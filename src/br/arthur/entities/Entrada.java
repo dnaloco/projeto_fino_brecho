@@ -1,19 +1,17 @@
 package br.arthur.entities;
 
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -75,18 +73,11 @@ public class Entrada {
 	
 	@Column(name="observacao", columnDefinition="TEXT")
 	private String observacao;
-
-	@ManyToMany(  
-	        targetEntity=br.arthur.entities.Imagem.class,  
-	        cascade={CascadeType.PERSIST, CascadeType.MERGE}  
-	    )  
-	    @JoinTable(  
-	        name="imagem_produto",  
-	        joinColumns=@JoinColumn(name="ENTRADA_ID"),  
-	        inverseJoinColumns=@JoinColumn(name="IMAGEM_ID")  
-	    )
-	private Set<Imagem> imagens = new HashSet<Imagem>();
 	
+	@OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name="entrada_id")
+	private List<Imagem> imagens = new ArrayList<Imagem>();
+
 	public Entrada() {
 		
 	}
@@ -95,166 +86,239 @@ public class Entrada {
 		return id;
 	}
 
+
+
 	public void setId(int id) {
 		this.id = id;
 	}
+
+
 
 	public Pedido getPedido() {
 		return pedido;
 	}
 
+
+
 	public void setPedido(Pedido pedido) {
 		this.pedido = pedido;
 	}
+
+
 
 	public String getDescricao() {
 		return descricao;
 	}
 
+
+
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
+
+
 
 	public Categoria getCategoria() {
 		return categoria;
 	}
 
+
+
 	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
+
+
 
 	public Marca getMarca() {
 		return marca;
 	}
 
+
+
 	public void setMarca(Marca marca) {
 		this.marca = marca;
 	}
+
+
 
 	public String getCor() {
 		return cor;
 	}
 
+
+
 	public void setCor(String cor) {
 		this.cor = cor;
 	}
+
+
 
 	public String getTamanho() {
 		return tamanho;
 	}
 
+
+
 	public void setTamanho(String tamanho) {
 		this.tamanho = tamanho;
 	}
+
+
 
 	public double getCusto() {
 		return custo;
 	}
 
+
+
 	public void setCusto(double custo) {
 		this.custo = custo;
 	}
+
+
 
 	public int getQuantidate() {
 		return quantidate;
 	}
 
+
+
 	public void setQuantidate(int quantidate) {
 		this.quantidate = quantidate;
 	}
+
+
 
 	public String getMargemVenda() {
 		return margemVenda;
 	}
 
+
+
 	public void setMargemVenda(String margemVenda) {
 		this.margemVenda = margemVenda;
 	}
+
+
 
 	public String getMargemComissao() {
 		return margemComissao;
 	}
 
+
+
 	public void setMargemComissao(String margemComissao) {
 		this.margemComissao = margemComissao;
 	}
+
+
 
 	public double getRevenda() {
 		return revenda;
 	}
 
+
+
 	public void setRevenda(double revenda) {
 		this.revenda = revenda;
 	}
+
+
 
 	public double getComissao() {
 		return comissao;
 	}
 
+
+
 	public void setComissao(double comissao) {
 		this.comissao = comissao;
 	}
+
+
 
 	public double getTotal() {
 		return total;
 	}
 
+
+
 	public void setTotal(double total) {
 		this.total = total;
 	}
+
+
 
 	public Timestamp getDataEntrada() {
 		return dataEntrada;
 	}
 
-	public void setDataEntrada(Timestamp timestamp) {
-		this.dataEntrada = timestamp;
+
+
+	public void setDataEntrada(Timestamp dataEntrada) {
+		this.dataEntrada = dataEntrada;
 	}
+
+
 
 	public Timestamp getValidade() {
 		return validade;
 	}
 
+
+
 	public void setValidade(Timestamp validade) {
 		this.validade = validade;
 	}
+
+
 
 	public Situacao getSituacao() {
 		return situacao;
 	}
 
+
+
 	public void setSituacao(Situacao situacao) {
 		this.situacao = situacao;
 	}
+
+
 
 	public Tipo getTipo() {
 		return tipo;
 	}
 
+
+
 	public void setTipo(Tipo tipo) {
 		this.tipo = tipo;
 	}
+
+
 
 	public String getObservacao() {
 		return observacao;
 	}
 
+
+
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
 	}
 
-	public Set<Imagem> getImagens() {
-		return imagens;
-	}
 
-	public void setImagens(Set<Imagem> imagens) {
+
+	public void setImagens(List<Imagem> imagens) {
 		this.imagens = imagens;
 	}
 
-	public void addImagem(Imagem img) {
-		this.imagens.add(img);
-	}
 	
+	public List<Imagem> getImagens() {
+		return imagens;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -269,6 +333,8 @@ public class Entrada {
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
 				+ ((dataEntrada == null) ? 0 : dataEntrada.hashCode());
+		result = prime * result
+				+ ((descricao == null) ? 0 : descricao.hashCode());
 		result = prime * result + id;
 		result = prime * result + ((imagens == null) ? 0 : imagens.hashCode());
 		result = prime * result + ((marca == null) ? 0 : marca.hashCode());
@@ -279,7 +345,6 @@ public class Entrada {
 		result = prime * result
 				+ ((observacao == null) ? 0 : observacao.hashCode());
 		result = prime * result + ((pedido == null) ? 0 : pedido.hashCode());
-		result = prime * result + ((descricao == null) ? 0 : descricao.hashCode());
 		result = prime * result + quantidate;
 		temp = Double.doubleToLongBits(revenda);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -324,6 +389,11 @@ public class Entrada {
 				return false;
 		} else if (!dataEntrada.equals(other.dataEntrada))
 			return false;
+		if (descricao == null) {
+			if (other.descricao != null)
+				return false;
+		} else if (!descricao.equals(other.descricao))
+			return false;
 		if (id != other.id)
 			return false;
 		if (imagens == null) {
@@ -356,11 +426,6 @@ public class Entrada {
 				return false;
 		} else if (!pedido.equals(other.pedido))
 			return false;
-		if (descricao == null) {
-			if (other.descricao != null)
-				return false;
-		} else if (!descricao.equals(other.descricao))
-			return false;
 		if (quantidate != other.quantidate)
 			return false;
 		if (Double.doubleToLongBits(revenda) != Double
@@ -391,4 +456,11 @@ public class Entrada {
 			return false;
 		return true;
 	}
+
+	public void addImage(Imagem ie) {
+		// TODO Auto-generated method stub
+		this.imagens.add(ie);
+	}
+	
+	
 }

@@ -2,15 +2,26 @@ package br.arthur.interfaces.cadastros;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -18,10 +29,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -42,6 +55,10 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
+import org.hibernate.LazyInitializationException;
+import org.hibernate.LobHelper;
+import org.hibernate.Session;
+
 import br.arthur.entities.Categoria;
 import br.arthur.entities.Consignatario;
 import br.arthur.entities.Entrada;
@@ -60,6 +77,7 @@ import br.arthur.models.MarcaModel;
 import br.arthur.models.PedidoModel;
 import br.arthur.models.SituacaoModel;
 import br.arthur.models.TipoModel;
+import br.arthur.utils.HibernateUtil;
 import br.arthur.utils.JNumericField;
 
 public class CadastroEntrada extends JInternalFrame {
@@ -69,7 +87,7 @@ public class CadastroEntrada extends JInternalFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JTabbedPane tabbedPanePedido;
-	
+
 	private JTextField txtCelular;
 	private JTextField txtTelefone;
 	private JTextField txtEmail;
@@ -92,25 +110,26 @@ public class CadastroEntrada extends JInternalFrame {
 	private JNumericField txtCusto;
 	private JTextField txtEntrada;
 	private JTextField txtCep;
-	
+
 	private JLabel lblNovoConsig;
 	private JButton btnCancelarConsig;
 	private JButton btnExcluirConsig;
 	private JLabel lblProdutoSelecionado;
-	
+
 	private JLabel lblNovoProduto;
 	private JLabel lblNovoPedido;
 	private JButton btnCancelarProduto;
 	private JButton btnExcluirProd;
-	
+
 	private JComboBox cmbCategoria;
 	private JComboBox cmbMarca;
 	private JComboBox cmbSituacao;
-	
+
 	private JPanel panelPicture;
 	private JLabel picture;
 	private JLabel lblCountImg;
 	private int imgCount = 0;
+	private int imgTotalCount;
 	private JButton btnInserirImg;
 	private JButton btnTrocarImg;
 	private JButton btnExcluirImg;
@@ -118,39 +137,47 @@ public class CadastroEntrada extends JInternalFrame {
 	private JButton btnPreviousImg;
 	private JButton btnNextImg;
 	private JButton btnLastImg;
-	
-	String[] colunasProduto = new String []{"Código (ID)", "Produto", "Categoria", "Marca", "Tamanho", "Cor", "Qtde", "Situação"};
-	String[] colunasAvaliar = new String []{"Código (ID)", "Produto", "Custo", "Margem", "Comissão", "Situação", "Entrada", "Validade", "Tipo", "Valor Venda", "Valor Comissão"};
-	String[][] dataProdutoTable = new String [][] {};  
-	
-	DefaultTableModel modelProduto = new DefaultTableModel(dataProdutoTable , colunasProduto ) {
+
+	private ListIterator imgListIter;
+
+	String[] colunasProduto = new String[] { "Código (ID)", "Produto",
+			"Categoria", "Marca", "Tamanho", "Cor", "Qtde", "Situação" };
+	String[] colunasAvaliar = new String[] { "Código (ID)", "Produto", "Custo",
+			"Margem", "Comissão", "Situação", "Entrada", "Validade", "Tipo",
+			"Valor Venda", "Valor Comissão" };
+	String[][] dataProdutoTable = new String[][] {};
+
+	DefaultTableModel modelProduto = new DefaultTableModel(dataProdutoTable,
+			colunasProduto) {
 		public Class<?> getColumnClass(int column) {
 			return getValueAt(0, column).getClass();
 		}
-    	boolean[] columnEditables = new boolean[] {
-    		false, false, false, false, false, false, false, false
-    	};
-    	public boolean isCellEditable(int row, int column) {
-    		return columnEditables[column];
-    	}
 
-    };
-	DefaultTableModel modelAvaliar = new DefaultTableModel(dataProdutoTable , colunasAvaliar ) {
+		boolean[] columnEditables = new boolean[] { false, false, false, false,
+				false, false, false, false };
+
+		public boolean isCellEditable(int row, int column) {
+			return columnEditables[column];
+		}
+
+	};
+	DefaultTableModel modelAvaliar = new DefaultTableModel(dataProdutoTable,
+			colunasAvaliar) {
 		public Class<?> getColumnClass(int column) {
 			return getValueAt(0, column).getClass();
 		}
-    	boolean[] columnEditables = new boolean[] {
-    		false, false, false, false, false, false, false, false, false, false, false
-    	};
-    	public boolean isCellEditable(int row, int column) {
-    		return columnEditables[column];
-    	}
 
-    };
+		boolean[] columnEditables = new boolean[] { false, false, false, false,
+				false, false, false, false, false, false, false };
+
+		public boolean isCellEditable(int row, int column) {
+			return columnEditables[column];
+		}
+
+	};
 	JTable jtableProdutos = new JTable(modelProduto);
 	JTable jtableAvaliar = new JTable(modelAvaliar);
 
-		
 	private int consigId = 0;
 	private int pedidoId = 0;
 	private int entradaProdutoId = 0;
@@ -158,15 +185,16 @@ public class CadastroEntrada extends JInternalFrame {
 	private int imagemId = 0;
 	private int linhaSelecionadaProduto;
 	private int linhaSelecionadaAvaliar;
-	
+
 	private int countListaImg;
-	
+
 	private ConsignatarioModel cm = new ConsignatarioModel();
 	private PedidoModel pm = new PedidoModel();
 	private EntradaModel em = new EntradaModel();
 	private ImagemModel im = new ImagemModel();
-	
+
 	private JLabel lblNumPedido;
+
 	/**
 	 * Launch the application.
 	 */
@@ -197,53 +225,68 @@ public class CadastroEntrada extends JInternalFrame {
 		getContentPane().add(tabbedPanePedido);
 
 		JPanel consigPanel = new JPanel();
-		consigPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		consigPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
+				null, null));
 		tabbedPanePedido.addTab("Consignatário", null, consigPanel, null);
 		SpringLayout sl_consigPanel = new SpringLayout();
 		consigPanel.setLayout(sl_consigPanel);
 
 		lblNovoConsig = new JLabel("Novo Consignat\u00E1rio");
-		sl_consigPanel.putConstraint(SpringLayout.NORTH, lblNovoConsig, 13, SpringLayout.NORTH, consigPanel);
+		sl_consigPanel.putConstraint(SpringLayout.NORTH, lblNovoConsig, 13,
+				SpringLayout.NORTH, consigPanel);
 		lblNovoConsig.setFont(new Font("Tahoma", Font.BOLD, 14));
 		consigPanel.add(lblNovoConsig);
-		
-		JButton btnBuscarConsig = new JButton(new ImageIcon("images/Zoom-icon.png"));
-		sl_consigPanel.putConstraint(SpringLayout.WEST, btnBuscarConsig, 83, SpringLayout.EAST, lblNovoConsig);
-		sl_consigPanel.putConstraint(SpringLayout.EAST, btnBuscarConsig, -2, SpringLayout.EAST, consigPanel);
+
+		JButton btnBuscarConsig = new JButton(new ImageIcon(
+				"images/Zoom-icon.png"));
+		sl_consigPanel.putConstraint(SpringLayout.WEST, btnBuscarConsig, 83,
+				SpringLayout.EAST, lblNovoConsig);
+		sl_consigPanel.putConstraint(SpringLayout.EAST, btnBuscarConsig, -2,
+				SpringLayout.EAST, consigPanel);
 		btnBuscarConsig.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(cm.findAll().size() > 0) {
+				if (cm.findAll().size() > 0) {
 					ConsignatarioDialog cDiag = new ConsignatarioDialog();
 					cDiag.setVisible(true);
-					
+
 					consigId = cDiag.getTheId();
-					
+
 					if (consigId > 0) {
 						populateConsignatario();
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "Não existe ainda nenhum consignatário registrado no sistema!");
+					JOptionPane
+							.showMessageDialog(null,
+									"Não existe ainda nenhum consignatário registrado no sistema!");
 				}
-				
+
 			}
 		});
-		sl_consigPanel.putConstraint(SpringLayout.NORTH, btnBuscarConsig, 8, SpringLayout.NORTH, consigPanel);
+		sl_consigPanel.putConstraint(SpringLayout.NORTH, btnBuscarConsig, 8,
+				SpringLayout.NORTH, consigPanel);
 		btnBuscarConsig.setText("Buscar Consignat\u00E1rio");
 		btnBuscarConsig.setHorizontalTextPosition(SwingConstants.LEFT);
 		consigPanel.add(btnBuscarConsig);
 
 		JPanel panel = new JPanel();
-		sl_consigPanel.putConstraint(SpringLayout.NORTH, panel, 6, SpringLayout.SOUTH, btnBuscarConsig);
-		sl_consigPanel.putConstraint(SpringLayout.WEST, lblNovoConsig, 0, SpringLayout.WEST, panel);
-		sl_consigPanel.putConstraint(SpringLayout.WEST, panel, 10, SpringLayout.WEST, consigPanel);
-		sl_consigPanel.putConstraint(SpringLayout.EAST, panel, -2, SpringLayout.EAST, consigPanel);
-		panel.setBorder(new TitledBorder(null, "Contato", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		sl_consigPanel.putConstraint(SpringLayout.NORTH, panel, 6,
+				SpringLayout.SOUTH, btnBuscarConsig);
+		sl_consigPanel.putConstraint(SpringLayout.WEST, lblNovoConsig, 0,
+				SpringLayout.WEST, panel);
+		sl_consigPanel.putConstraint(SpringLayout.WEST, panel, 10,
+				SpringLayout.WEST, consigPanel);
+		sl_consigPanel.putConstraint(SpringLayout.EAST, panel, -2,
+				SpringLayout.EAST, consigPanel);
+		panel.setBorder(new TitledBorder(null, "Contato", TitledBorder.LEADING,
+				TitledBorder.TOP, null, null));
 		consigPanel.add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.columnWidths = new int[] { 0, 0, 0, 0, 0 };
+		gbl_panel.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+		gbl_panel.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0,
+				Double.MIN_VALUE };
+		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0,
+				Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
 
 		JLabel lblNome = new JLabel("Nome:");
@@ -367,17 +410,25 @@ public class CadastroEntrada extends JInternalFrame {
 		txtRg.setColumns(10);
 
 		JPanel panel_1 = new JPanel();
-		sl_consigPanel.putConstraint(SpringLayout.NORTH, panel_1, 209, SpringLayout.NORTH, consigPanel);
-		sl_consigPanel.putConstraint(SpringLayout.WEST, panel_1, 10, SpringLayout.WEST, consigPanel);
-		sl_consigPanel.putConstraint(SpringLayout.EAST, panel_1, -2, SpringLayout.EAST, consigPanel);
-		sl_consigPanel.putConstraint(SpringLayout.SOUTH, panel, -6, SpringLayout.NORTH, panel_1);
-		panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Endere\u00E7o", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		sl_consigPanel.putConstraint(SpringLayout.NORTH, panel_1, 209,
+				SpringLayout.NORTH, consigPanel);
+		sl_consigPanel.putConstraint(SpringLayout.WEST, panel_1, 10,
+				SpringLayout.WEST, consigPanel);
+		sl_consigPanel.putConstraint(SpringLayout.EAST, panel_1, -2,
+				SpringLayout.EAST, consigPanel);
+		sl_consigPanel.putConstraint(SpringLayout.SOUTH, panel, -6,
+				SpringLayout.NORTH, panel_1);
+		panel_1.setBorder(new TitledBorder(UIManager
+				.getBorder("TitledBorder.border"), "Endere\u00E7o",
+				TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		consigPanel.add(panel_1);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
-		gbl_panel_1.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
-		gbl_panel_1.rowHeights = new int[]{0, 0, 0, 0, 0};
-		gbl_panel_1.columnWeights = new double[]{0.0, 1.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
-		gbl_panel_1.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_1.columnWidths = new int[] { 0, 0, 0, 0, 0, 0 };
+		gbl_panel_1.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+		gbl_panel_1.columnWeights = new double[] { 0.0, 1.0, 1.0, 1.0, 1.0,
+				Double.MIN_VALUE };
+		gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0,
+				Double.MIN_VALUE };
 		panel_1.setLayout(gbl_panel_1);
 
 		JLabel lblLogradouro = new JLabel("Logradouro:");
@@ -496,43 +547,46 @@ public class CadastroEntrada extends JInternalFrame {
 		panel_1.add(lblUf, gbc_lblUf);
 
 		cmbUf = new JComboBox();
-		
+
 		Iterator estados = EstadoModel.findAll().iterator();
-		
-		while(estados.hasNext()) {
+
+		while (estados.hasNext()) {
 			Estado e = (Estado) estados.next();
 			cmbUf.addItem(e.getName());
 		}
-		
+
 		cmbUf.setSelectedItem("SP");
-		
+
 		GridBagConstraints gbc_cmbUf = new GridBagConstraints();
 		gbc_cmbUf.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cmbUf.gridx = 4;
 		gbc_cmbUf.gridy = 3;
 		panel_1.add(cmbUf, gbc_cmbUf);
 
-		JButton btnSalvarConsig = new JButton("Salvar", new ImageIcon("images/Save-icon.png"));
-		sl_consigPanel.putConstraint(SpringLayout.EAST, btnSalvarConsig, -2, SpringLayout.EAST, consigPanel);
+		JButton btnSalvarConsig = new JButton("Salvar", new ImageIcon(
+				"images/Save-icon.png"));
+		sl_consigPanel.putConstraint(SpringLayout.EAST, btnSalvarConsig, -2,
+				SpringLayout.EAST, consigPanel);
 		btnSalvarConsig.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				HashMap<String, Object> data = new HashMap();
-				
+
 				String msgErro = "";
-				
+
 				boolean isValid = true;
-				
-				if(txtNome.getText().trim().isEmpty()) {
-					msgErro +=  "O campo 'nome' deve ser informado!\n";
+
+				if (txtNome.getText().trim().isEmpty()) {
+					msgErro += "O campo 'nome' deve ser informado!\n";
 					isValid = false;
 				}
-				
-				if(txtTelefone.getText().trim().isEmpty() && txtCelular.getText().trim().isEmpty()) {
+
+				if (txtTelefone.getText().trim().isEmpty()
+						&& txtCelular.getText().trim().isEmpty()) {
 					msgErro += "Um número de 'celular' ou 'telefone' deve ser informado\n";
 					isValid = false;
 				}
-				
-				if(isValid) {
+
+				if (isValid) {
 					data.put("nome", txtNome.getText());
 					data.put("telefone", txtTelefone.getText());
 					data.put("celular", txtCelular.getText());
@@ -546,10 +600,11 @@ public class CadastroEntrada extends JInternalFrame {
 					data.put("bairro", txtBairro.getText());
 					data.put("cep", txtCep.getText());
 					data.put("cidade", txtCidade.getText());
-					Estado ee = EstadoModel.findOneWhere("name", "'" + cmbUf.getSelectedItem() + "'");
+					Estado ee = EstadoModel.findOneWhere("name",
+							"'" + cmbUf.getSelectedItem() + "'");
 					data.put("estado", ee);
 					String msgSuccess = "";
-					if(consigId > 0) {
+					if (consigId > 0) {
 						cm.saveConsignatario(consigId, data);
 						msgSuccess = "Consignatário salvo com sucesso!";
 					} else {
@@ -558,36 +613,45 @@ public class CadastroEntrada extends JInternalFrame {
 						btnCancelarConsig.setEnabled(true);
 						btnExcluirConsig.setEnabled(true);
 						populateConsignatario();
-					}	
-					if(consigId > 0) {
+					}
+					if (consigId > 0) {
 						JOptionPane.showMessageDialog(null, msgSuccess);
 					} else {
-						JOptionPane.showMessageDialog(null, "Não foi possível inserir o consignatário.");
+						JOptionPane.showMessageDialog(null,
+								"Não foi possível inserir o consignatário.");
 					}
 				} else {
 					JOptionPane.showMessageDialog(null, msgErro);
 				}
 			}
 		});
-		sl_consigPanel.putConstraint(SpringLayout.SOUTH, panel_1, -12, SpringLayout.NORTH, btnSalvarConsig);
-		sl_consigPanel.putConstraint(SpringLayout.SOUTH, btnSalvarConsig, -10, SpringLayout.SOUTH, consigPanel);
+		sl_consigPanel.putConstraint(SpringLayout.SOUTH, panel_1, -12,
+				SpringLayout.NORTH, btnSalvarConsig);
+		sl_consigPanel.putConstraint(SpringLayout.SOUTH, btnSalvarConsig, -10,
+				SpringLayout.SOUTH, consigPanel);
 		consigPanel.add(btnSalvarConsig);
-		
-		btnCancelarConsig = new JButton("Cancelar", new ImageIcon("images/cancel-icon.png"));
+
+		btnCancelarConsig = new JButton("Cancelar", new ImageIcon(
+				"images/cancel-icon.png"));
 		btnCancelarConsig.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				limparConsignatario();
 			}
 		});
 		btnCancelarConsig.setEnabled(false);
-		sl_consigPanel.putConstraint(SpringLayout.WEST, btnCancelarConsig, 10, SpringLayout.WEST, consigPanel);
-		sl_consigPanel.putConstraint(SpringLayout.SOUTH, btnCancelarConsig, 0, SpringLayout.SOUTH, btnSalvarConsig);
+		sl_consigPanel.putConstraint(SpringLayout.WEST, btnCancelarConsig, 10,
+				SpringLayout.WEST, consigPanel);
+		sl_consigPanel.putConstraint(SpringLayout.SOUTH, btnCancelarConsig, 0,
+				SpringLayout.SOUTH, btnSalvarConsig);
 		consigPanel.add(btnCancelarConsig);
-		
-		btnExcluirConsig = new JButton("Excluir", new ImageIcon("images/delete-icon.png"));
+
+		btnExcluirConsig = new JButton("Excluir", new ImageIcon(
+				"images/delete-icon.png"));
 		btnExcluirConsig.setEnabled(false);
-		sl_consigPanel.putConstraint(SpringLayout.WEST, btnExcluirConsig, 6, SpringLayout.EAST, btnCancelarConsig);
-		sl_consigPanel.putConstraint(SpringLayout.SOUTH, btnExcluirConsig, 0, SpringLayout.SOUTH, btnSalvarConsig);
+		sl_consigPanel.putConstraint(SpringLayout.WEST, btnExcluirConsig, 6,
+				SpringLayout.EAST, btnCancelarConsig);
+		sl_consigPanel.putConstraint(SpringLayout.SOUTH, btnExcluirConsig, 0,
+				SpringLayout.SOUTH, btnSalvarConsig);
 		consigPanel.add(btnExcluirConsig);
 
 		JPanel pecarPanel = new JPanel();
@@ -596,23 +660,31 @@ public class CadastroEntrada extends JInternalFrame {
 		pecarPanel.setLayout(sl_pecarPanel);
 
 		lblNovoProduto = new JLabel("Novo Produto");
-		sl_pecarPanel.putConstraint(SpringLayout.NORTH, lblNovoProduto, 10, SpringLayout.NORTH, pecarPanel);
-		sl_pecarPanel.putConstraint(SpringLayout.WEST, lblNovoProduto, 10, SpringLayout.WEST, pecarPanel);
+		sl_pecarPanel.putConstraint(SpringLayout.NORTH, lblNovoProduto, 10,
+				SpringLayout.NORTH, pecarPanel);
+		sl_pecarPanel.putConstraint(SpringLayout.WEST, lblNovoProduto, 10,
+				SpringLayout.WEST, pecarPanel);
 		lblNovoProduto.setFont(new Font("SansSerif", Font.BOLD, 14));
 		pecarPanel.add(lblNovoProduto);
 
 		JPanel panel_2 = new JPanel();
-		sl_pecarPanel.putConstraint(SpringLayout.NORTH, panel_2, 6, SpringLayout.SOUTH, lblNovoProduto);
-		sl_pecarPanel.putConstraint(SpringLayout.WEST, panel_2, 10, SpringLayout.WEST, pecarPanel);
-		sl_pecarPanel.putConstraint(SpringLayout.SOUTH, panel_2, 130, SpringLayout.SOUTH, lblNovoProduto);
-		sl_pecarPanel.putConstraint(SpringLayout.EAST, panel_2, 465, SpringLayout.WEST, pecarPanel);
-		panel_2.setBorder(new TitledBorder(null, "Produto", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		sl_pecarPanel.putConstraint(SpringLayout.NORTH, panel_2, 6,
+				SpringLayout.SOUTH, lblNovoProduto);
+		sl_pecarPanel.putConstraint(SpringLayout.WEST, panel_2, 10,
+				SpringLayout.WEST, pecarPanel);
+		sl_pecarPanel.putConstraint(SpringLayout.SOUTH, panel_2, 130,
+				SpringLayout.SOUTH, lblNovoProduto);
+		sl_pecarPanel.putConstraint(SpringLayout.EAST, panel_2, 465,
+				SpringLayout.WEST, pecarPanel);
+		panel_2.setBorder(new TitledBorder(null, "Produto",
+				TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pecarPanel.add(panel_2);
 		GridBagLayout gbl_panel_2 = new GridBagLayout();
-		gbl_panel_2.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel_2.rowHeights = new int[]{0, 0, 0, 0};
-		gbl_panel_2.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
-		gbl_panel_2.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_2.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel_2.rowHeights = new int[] { 0, 0, 0, 0 };
+		gbl_panel_2.columnWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0,
+				1.0, 1.0, 1.0, Double.MIN_VALUE };
+		gbl_panel_2.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel_2.setLayout(gbl_panel_2);
 
 		JLabel lblTtulo = new JLabel("Descri\u00E7\u00E3o:");
@@ -642,14 +714,14 @@ public class CadastroEntrada extends JInternalFrame {
 		panel_2.add(lblCategoria, gbc_lblCategoria);
 
 		cmbCategoria = new JComboBox();
-		
+
 		Iterator categorias = CategoriaModel.findAll().iterator();
-		
-		while(categorias.hasNext()) {
+
+		while (categorias.hasNext()) {
 			Categoria c = (Categoria) categorias.next();
 			cmbCategoria.addItem(c.getName());
 		}
-		
+
 		GridBagConstraints gbc_cmbCategoria = new GridBagConstraints();
 		gbc_cmbCategoria.gridwidth = 4;
 		gbc_cmbCategoria.insets = new Insets(0, 0, 5, 5);
@@ -667,14 +739,14 @@ public class CadastroEntrada extends JInternalFrame {
 		panel_2.add(lblMarca, gbc_lblMarca);
 
 		cmbMarca = new JComboBox();
-		
+
 		Iterator marcas = MarcaModel.findAll().iterator();
-		
-		while(marcas.hasNext()) {
+
+		while (marcas.hasNext()) {
 			Marca m = (Marca) marcas.next();
 			cmbMarca.addItem(m.getName());
 		}
-		
+
 		GridBagConstraints gbc_cmbMarca = new GridBagConstraints();
 		gbc_cmbMarca.gridwidth = 2;
 		gbc_cmbMarca.insets = new Insets(0, 0, 5, 0);
@@ -736,98 +808,122 @@ public class CadastroEntrada extends JInternalFrame {
 		panel_2.add(txtQtde, gbc_txtQtde);
 		txtQtde.setColumns(10);
 
-		JButton btnSalvarProduto = new JButton("Salvar",  new ImageIcon("images/Save-icon.png"));
+		JButton btnSalvarProduto = new JButton("Salvar", new ImageIcon(
+				"images/Save-icon.png"));
 		btnSalvarProduto.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {			
-				
-				Consignatario ce = cm.findOneWhere("id", String.valueOf(consigId));
-				
+			public void actionPerformed(ActionEvent e) {
+
+				Consignatario ce = cm.findOneWhere("id",
+						String.valueOf(consigId));
+
 				if (pedidoId == 0) {
 					pedidoId = pm.createPedido(ce);
 				}
-				
+
 				if (pedidoId > 0) {
 					lblNovoPedido.setText("Pedido ID: " + pedidoId);
-					
+
 					HashMap<String, Object> data = new HashMap();
-					
+
 					String msgErro = "";
-					
+
 					boolean isValid = true;
-					
-					if(txtDescricao.getText().trim().isEmpty()) {
-						msgErro +=  "O campo 'título' deve ser informado!\n";
+
+					if (txtDescricao.getText().trim().isEmpty()) {
+						msgErro += "O campo 'título' deve ser informado!\n";
 						isValid = false;
 					}
-					
-					if(txtQtde.getText().trim().isEmpty()) {
-						msgErro +=  "O campo 'quantidade' deve ser informado!\n";
+
+					if (txtQtde.getText().trim().isEmpty()) {
+						msgErro += "O campo 'quantidade' deve ser informado!\n";
 						isValid = false;
 					}
-					
-					if(isValid) {
-						data.put("pedido", pm.findOneWhere("id", String.valueOf(pedidoId)));
-						
+
+					if (isValid) {
+						data.put("pedido",
+								pm.findOneWhere("id", String.valueOf(pedidoId)));
+
 						data.put("descricao", txtDescricao.getText());
-						
-						Categoria cate = CategoriaModel.findOneWhere("name", "'" + cmbCategoria.getSelectedItem() + "'");
+
+						Categoria cate = CategoriaModel.findOneWhere("name",
+								"'" + cmbCategoria.getSelectedItem() + "'");
 						data.put("categoria", cate);
-						
-						Marca me = MarcaModel.findOneWhere("name", "'" + cmbMarca.getSelectedItem() + "'");
+
+						Marca me = MarcaModel.findOneWhere("name", "'"
+								+ cmbMarca.getSelectedItem() + "'");
 						data.put("marca", me);
-						
+
 						data.put("tamanho", txtTamanho.getText());
 						data.put("cor", txtCor.getText());
 						data.put("qtde", Integer.parseInt(txtQtde.getText()));
-						
-						data.put("situacao", SituacaoModel.findOneWhere("name", "'" + cmbSituacao.getSelectedItem() + "'"));
-						
+
+						data.put(
+								"situacao",
+								SituacaoModel.findOneWhere("name", "'"
+										+ cmbSituacao.getSelectedItem() + "'"));
+
 						String msgSuccess = "";
-						
-						if(entradaProdutoId > 0) {
+
+						if (entradaProdutoId > 0) {
 							em.saveProduto(entradaProdutoId, data);
 							msgSuccess = "Produto salvo com sucesso!";
-							updateTProduto(txtDescricao.getText(), (String) cmbCategoria.getSelectedItem(), (String) cmbMarca.getSelectedItem(), txtTamanho.getText(), txtCor.getText(), txtQtde.getText(), (String) cmbSituacao.getSelectedItem());
+							updateTProduto(txtDescricao.getText(),
+									(String) cmbCategoria.getSelectedItem(),
+									(String) cmbMarca.getSelectedItem(),
+									txtTamanho.getText(), txtCor.getText(),
+									txtQtde.getText(),
+									(String) cmbSituacao.getSelectedItem());
 							limparProduto();
 						} else {
 							entradaProdutoId = em.createEntrada(data);
-							msgSuccess = "Produto inserido com sucesso com o ID: " + entradaProdutoId;
+							msgSuccess = "Produto inserido com sucesso com o ID: "
+									+ entradaProdutoId;
 							// btnCancelarConsig.setEnabled(true);
 							// btnExcluirConsig.setEnabled(true);
-							addTProduto(txtDescricao.getText(), (String) cmbCategoria.getSelectedItem(), (String) cmbMarca.getSelectedItem(), txtTamanho.getText(), txtCor.getText(), txtQtde.getText(), (String) cmbSituacao.getSelectedItem());
+							addTProduto(txtDescricao.getText(),
+									(String) cmbCategoria.getSelectedItem(),
+									(String) cmbMarca.getSelectedItem(),
+									txtTamanho.getText(), txtCor.getText(),
+									txtQtde.getText(),
+									(String) cmbSituacao.getSelectedItem());
 							limparProduto();
-						}	
-						if(consigId > 0) {
+						}
+						if (consigId > 0) {
 							JOptionPane.showMessageDialog(null, msgSuccess);
 							tabbedPanePedido.setEnabledAt(3, true);
 							tabbedPanePedido.setEnabledAt(4, true);
 						} else {
-							JOptionPane.showMessageDialog(null, "Não foi possível inserir o produto.");
+							JOptionPane.showMessageDialog(null,
+									"Não foi possível inserir o produto.");
 						}
 					} else {
 						JOptionPane.showMessageDialog(null, msgErro);
 					}
 				}
-				
-				if(jtableProdutos.getRowCount() > 0) {
+
+				if (jtableProdutos.getRowCount() > 0) {
 					tabbedPanePedido.setEnabledAt(3, true);
 					tabbedPanePedido.setEnabledAt(4, true);
 				}
-				
+
 			}
 		});
-		sl_pecarPanel.putConstraint(SpringLayout.EAST, btnSalvarProduto, 0, SpringLayout.EAST, panel_2);
+		sl_pecarPanel.putConstraint(SpringLayout.EAST, btnSalvarProduto, 0,
+				SpringLayout.EAST, panel_2);
 		pecarPanel.add(btnSalvarProduto);
 
-		btnCancelarProduto = new JButton("Cancelar",  new ImageIcon("images/cancel-icon.png"));
+		btnCancelarProduto = new JButton("Cancelar", new ImageIcon(
+				"images/cancel-icon.png"));
 		btnCancelarProduto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				limparProduto();
 			}
 		});
 		btnCancelarProduto.setEnabled(false);
-		sl_pecarPanel.putConstraint(SpringLayout.NORTH, btnCancelarProduto, 0, SpringLayout.NORTH, btnSalvarProduto);
-		sl_pecarPanel.putConstraint(SpringLayout.WEST, btnCancelarProduto, 0, SpringLayout.WEST, lblNovoProduto);
+		sl_pecarPanel.putConstraint(SpringLayout.NORTH, btnCancelarProduto, 0,
+				SpringLayout.NORTH, btnSalvarProduto);
+		sl_pecarPanel.putConstraint(SpringLayout.WEST, btnCancelarProduto, 0,
+				SpringLayout.WEST, lblNovoProduto);
 		pecarPanel.add(btnCancelarProduto);
 		jtableProdutos.addMouseListener(new MouseAdapter() {
 			@Override
@@ -836,9 +932,9 @@ public class CadastroEntrada extends JInternalFrame {
 				populateProduto();
 			}
 		});
-		
+
 		jtableProdutos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
+
 		jtableProdutos.getColumnModel().getColumn(0).setPreferredWidth(90);
 		jtableProdutos.getColumnModel().getColumn(1).setPreferredWidth(120);
 		jtableProdutos.getColumnModel().getColumn(2).setPreferredWidth(100);
@@ -847,44 +943,61 @@ public class CadastroEntrada extends JInternalFrame {
 		jtableProdutos.getColumnModel().getColumn(5).setPreferredWidth(90);
 		jtableProdutos.getColumnModel().getColumn(6).setPreferredWidth(70);
 		jtableProdutos.getColumnModel().getColumn(7).setPreferredWidth(90);
-		
+
 		JScrollPane scrollPaneProdutos = new JScrollPane(jtableProdutos);
-		sl_pecarPanel.putConstraint(SpringLayout.NORTH, btnSalvarProduto, 6, SpringLayout.SOUTH, scrollPaneProdutos);
-		sl_pecarPanel.putConstraint(SpringLayout.SOUTH, scrollPaneProdutos, -44, SpringLayout.SOUTH, pecarPanel);
-		sl_pecarPanel.putConstraint(SpringLayout.WEST, scrollPaneProdutos, 10, SpringLayout.WEST, pecarPanel);
-		sl_pecarPanel.putConstraint(SpringLayout.EAST, scrollPaneProdutos, 0, SpringLayout.EAST, panel_2);
+		sl_pecarPanel.putConstraint(SpringLayout.NORTH, btnSalvarProduto, 6,
+				SpringLayout.SOUTH, scrollPaneProdutos);
+		sl_pecarPanel.putConstraint(SpringLayout.SOUTH, scrollPaneProdutos,
+				-44, SpringLayout.SOUTH, pecarPanel);
+		sl_pecarPanel.putConstraint(SpringLayout.WEST, scrollPaneProdutos, 10,
+				SpringLayout.WEST, pecarPanel);
+		sl_pecarPanel.putConstraint(SpringLayout.EAST, scrollPaneProdutos, 0,
+				SpringLayout.EAST, panel_2);
 		pecarPanel.add(scrollPaneProdutos);
-		
-		JLabel lblListaDosProdudosclique = new JLabel("Lista dos Produdos(clique para editar)");
-		sl_pecarPanel.putConstraint(SpringLayout.SOUTH, lblListaDosProdudosclique, -239, SpringLayout.SOUTH, pecarPanel);
-		sl_pecarPanel.putConstraint(SpringLayout.NORTH, scrollPaneProdutos, 6, SpringLayout.SOUTH, lblListaDosProdudosclique);
-		sl_pecarPanel.putConstraint(SpringLayout.WEST, lblListaDosProdudosclique, -465, SpringLayout.EAST, pecarPanel);
-		sl_pecarPanel.putConstraint(SpringLayout.EAST, lblListaDosProdudosclique, -254, SpringLayout.EAST, pecarPanel);
+
+		JLabel lblListaDosProdudosclique = new JLabel(
+				"Lista dos Produdos(clique para editar)");
+		sl_pecarPanel
+				.putConstraint(SpringLayout.SOUTH, lblListaDosProdudosclique,
+						-239, SpringLayout.SOUTH, pecarPanel);
+		sl_pecarPanel.putConstraint(SpringLayout.NORTH, scrollPaneProdutos, 6,
+				SpringLayout.SOUTH, lblListaDosProdudosclique);
+		sl_pecarPanel.putConstraint(SpringLayout.WEST,
+				lblListaDosProdudosclique, -465, SpringLayout.EAST, pecarPanel);
+		sl_pecarPanel.putConstraint(SpringLayout.EAST,
+				lblListaDosProdudosclique, -254, SpringLayout.EAST, pecarPanel);
 		pecarPanel.add(lblListaDosProdudosclique);
-		
-		JButton btnRecuperarPedido = new JButton("Recuperar Pedido", new ImageIcon("images/Documents-icon.png"));
+
+		JButton btnRecuperarPedido = new JButton("Recuperar Pedido",
+				new ImageIcon("images/Documents-icon.png"));
 		btnRecuperarPedido.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		sl_pecarPanel.putConstraint(SpringLayout.WEST, btnRecuperarPedido, 6, SpringLayout.EAST, lblNovoProduto);
-		sl_pecarPanel.putConstraint(SpringLayout.SOUTH, btnRecuperarPedido, -1, SpringLayout.NORTH, panel_2);
+		sl_pecarPanel.putConstraint(SpringLayout.WEST, btnRecuperarPedido, 6,
+				SpringLayout.EAST, lblNovoProduto);
+		sl_pecarPanel.putConstraint(SpringLayout.SOUTH, btnRecuperarPedido, -1,
+				SpringLayout.NORTH, panel_2);
 		pecarPanel.add(btnRecuperarPedido);
-		
+
 		lblNovoPedido = new JLabel("Novo Pedido");
-		sl_pecarPanel.putConstraint(SpringLayout.EAST, btnRecuperarPedido, -6, SpringLayout.WEST, lblNovoPedido);
+		sl_pecarPanel.putConstraint(SpringLayout.EAST, btnRecuperarPedido, -6,
+				SpringLayout.WEST, lblNovoPedido);
 		lblNovoPedido.setFont(new Font("SansSerif", Font.BOLD, 14));
-		sl_pecarPanel.putConstraint(SpringLayout.NORTH, lblNovoPedido, 0, SpringLayout.NORTH, lblNovoProduto);
-		sl_pecarPanel.putConstraint(SpringLayout.EAST, lblNovoPedido, 0, SpringLayout.EAST, panel_2);
+		sl_pecarPanel.putConstraint(SpringLayout.NORTH, lblNovoPedido, 0,
+				SpringLayout.NORTH, lblNovoProduto);
+		sl_pecarPanel.putConstraint(SpringLayout.EAST, lblNovoPedido, 0,
+				SpringLayout.EAST, panel_2);
 		pecarPanel.add(lblNovoPedido);
-		
-		btnExcluirProd = new JButton("Excluir", new ImageIcon("images/delete-icon.png"));
+
+		btnExcluirProd = new JButton("Excluir", new ImageIcon(
+				"images/delete-icon.png"));
 		btnExcluirProd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				removeTProduto();
 				try {
 					em.deleteById(entradaProdutoId);
-				} catch(Exception ex) {
+				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 				limparProduto();
@@ -892,8 +1005,10 @@ public class CadastroEntrada extends JInternalFrame {
 			}
 		});
 		btnExcluirProd.setEnabled(false);
-		sl_pecarPanel.putConstraint(SpringLayout.NORTH, btnExcluirProd, 0, SpringLayout.NORTH, btnSalvarProduto);
-		sl_pecarPanel.putConstraint(SpringLayout.WEST, btnExcluirProd, 6, SpringLayout.EAST, btnCancelarProduto);
+		sl_pecarPanel.putConstraint(SpringLayout.NORTH, btnExcluirProd, 0,
+				SpringLayout.NORTH, btnSalvarProduto);
+		sl_pecarPanel.putConstraint(SpringLayout.WEST, btnExcluirProd, 6,
+				SpringLayout.EAST, btnCancelarProduto);
 		pecarPanel.add(btnExcluirProd);
 
 		JPanel imgPanel = new JPanel();
@@ -902,132 +1017,205 @@ public class CadastroEntrada extends JInternalFrame {
 		imgPanel.setLayout(sl_imgPanel);
 
 		panelPicture = new JPanel();
-		sl_imgPanel.putConstraint(SpringLayout.NORTH, panelPicture, 23, SpringLayout.NORTH, imgPanel);
-		sl_imgPanel.putConstraint(SpringLayout.WEST, panelPicture, 10, SpringLayout.WEST, imgPanel);
-		sl_imgPanel.putConstraint(SpringLayout.EAST, panelPicture, 465, SpringLayout.WEST, imgPanel);
-		panelPicture.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		sl_imgPanel.putConstraint(SpringLayout.NORTH, panelPicture, 23,
+				SpringLayout.NORTH, imgPanel);
+		sl_imgPanel.putConstraint(SpringLayout.WEST, panelPicture, 10,
+				SpringLayout.WEST, imgPanel);
+		sl_imgPanel.putConstraint(SpringLayout.EAST, panelPicture, 465,
+				SpringLayout.WEST, imgPanel);
+		panelPicture.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
+				null, null));
 		imgPanel.add(panelPicture);
 
-		btnInserirImg = new JButton("Inserir", new ImageIcon("images/add-icon.png"));
-		
+		btnInserirImg = new JButton("Inserir", new ImageIcon(
+				"images/add-icon.png"));
+
 		btnInserirImg.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Entrada ee = EntradaModel.findOneWhere("id", String.valueOf(entradaProdutoId));
-				
-				int imgTotalCount = ee.getImagens().size();
-				
-				Iterator imgIter = ee.getImagens().iterator();
-				
-				ArrayList<Imagem> imgList = new ArrayList<Imagem>();
-				
-				while(imgIter.hasNext()) {
-					imgList.add((Imagem) imgIter.next());
-				}
-				
-				ListIterator imgListIter = imgList.listIterator();
-				
-				
-				if(imgTotalCount > 0) {
-					lblCountImg.setText(imgCount + "/" + imgTotalCount);
-					
-					if (imgListIter.hasNext()) {
-						btnNextImg.setEnabled(true);
-						btnLastImg.setEnabled(true);
-					}
-					
-					if (imgListIter.hasPrevious()) {
-						btnFirstImg.setEnabled(true);
-						btnPreviousImg.setEnabled(true);
+				Entrada ee = EntradaModel.findOneWhere("id",
+						String.valueOf(entradaProdutoId));
+
+				JFileChooser arquivo = new JFileChooser();
+
+				int retorno = arquivo.showOpenDialog(null);
+				String caminhoArquivo = "";
+				if (retorno == JFileChooser.APPROVE_OPTION) {
+					System.out.println("Abriu");
+					caminhoArquivo = arquivo.getSelectedFile()
+							.getAbsolutePath();
+					File file = new File(caminhoArquivo);
+					long fileSize = file.length();
+					System.out.println(fileSize);
+					if ((fileSize / 1024) > (long) 1 * 1024) {
+						String erro = "Não foi possível carregar o arquivo: o tamanho máximo permitido é de 1mb.";
+						JOptionPane.showMessageDialog(null, erro,
+								"Erro ao carregar o arquivo!",
+								JOptionPane.ERROR_MESSAGE);
+					} else {
+
+						Session session = HibernateUtil.getSessionFactory()
+								.openSession();
+						try {
+							InputStream fileStream = new FileInputStream(file);
+							LobHelper lobHelper = session.getLobHelper();
+							Blob dataBlob = lobHelper.createBlob(fileStream,
+									fileSize);
+
+							imagemId = im.createImagem(dataBlob);
+							Imagem ie = im.findOneWhere("id",
+									String.valueOf(imagemId));
+
+							// imgs.add(ie);
+
+							// em.saveImagens(entradaProdutoId, imgs);
+
+							em.saveOneImage(entradaProdutoId, ie);
+							checkImgCount();
+							imgCount = 0;
+							setFirstImage();
+						} catch (FileNotFoundException ex) {
+							// TODO Auto-generated catch block
+							ex.printStackTrace();
+						}
 					}
 				} else {
-					System.out.println("Nenhuma imagem inserida!");
-					
-					lblCountImg.setText("0/0");
-					
-					btnTrocarImg.setEnabled(false);
-					btnExcluirImg.setEnabled(false);
-					btnFirstImg.setEnabled(false);
-					btnPreviousImg.setEnabled(false);
-					btnNextImg.setEnabled(false);
-					btnLastImg.setEnabled(false);
+					System.out.println("Não Abriu");
 				}
+				
 			}
 		});
-		sl_imgPanel.putConstraint(SpringLayout.WEST, btnInserirImg, 10, SpringLayout.WEST, imgPanel);
-		sl_imgPanel.putConstraint(SpringLayout.SOUTH, panelPicture, -6, SpringLayout.NORTH, btnInserirImg);
-		sl_imgPanel.putConstraint(SpringLayout.SOUTH, btnInserirImg, -10, SpringLayout.SOUTH, imgPanel);
+		sl_imgPanel.putConstraint(SpringLayout.WEST, btnInserirImg, 10,
+				SpringLayout.WEST, imgPanel);
+		sl_imgPanel.putConstraint(SpringLayout.SOUTH, panelPicture, -6,
+				SpringLayout.NORTH, btnInserirImg);
+		sl_imgPanel.putConstraint(SpringLayout.SOUTH, btnInserirImg, -10,
+				SpringLayout.SOUTH, imgPanel);
 		imgPanel.add(btnInserirImg);
 
-		btnTrocarImg = new JButton("Trocar", new ImageIcon("images/switch-img-icon.png"));
+		btnTrocarImg = new JButton("Trocar", new ImageIcon(
+				"images/switch-img-icon.png"));
 		btnTrocarImg.setEnabled(false);
-		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnTrocarImg, 0, SpringLayout.NORTH, btnInserirImg);
-		sl_imgPanel.putConstraint(SpringLayout.WEST, btnTrocarImg, 6, SpringLayout.EAST, btnInserirImg);
+		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnTrocarImg, 0,
+				SpringLayout.NORTH, btnInserirImg);
+		sl_imgPanel.putConstraint(SpringLayout.WEST, btnTrocarImg, 6,
+				SpringLayout.EAST, btnInserirImg);
 		imgPanel.add(btnTrocarImg);
 
-		btnExcluirImg = new JButton("Excluir", new ImageIcon("images/delete-icon.png"));
+		btnExcluirImg = new JButton("Excluir", new ImageIcon(
+				"images/delete-icon.png"));
 		btnExcluirImg.setEnabled(false);
-		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnExcluirImg, 0, SpringLayout.NORTH, btnInserirImg);
-		sl_imgPanel.putConstraint(SpringLayout.WEST, btnExcluirImg, 6, SpringLayout.EAST, btnTrocarImg);
+		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnExcluirImg, 0,
+				SpringLayout.NORTH, btnInserirImg);
+		sl_imgPanel.putConstraint(SpringLayout.WEST, btnExcluirImg, 6,
+				SpringLayout.EAST, btnTrocarImg);
 		imgPanel.add(btnExcluirImg);
 
 		btnFirstImg = new JButton(new ImageIcon("images/first-view-icon.png"));
-		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnFirstImg, 6, SpringLayout.SOUTH, panelPicture);
-		sl_imgPanel.putConstraint(SpringLayout.WEST, btnFirstImg, 6, SpringLayout.EAST, btnExcluirImg);
+		btnFirstImg.setEnabled(false);
+		btnFirstImg.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				imgCount = 0;
+				setFirstImage();
+			}
+		});
+		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnFirstImg, 6,
+				SpringLayout.SOUTH, panelPicture);
+		sl_imgPanel.putConstraint(SpringLayout.WEST, btnFirstImg, 6,
+				SpringLayout.EAST, btnExcluirImg);
 		imgPanel.add(btnFirstImg);
 
-		btnPreviousImg = new JButton(new ImageIcon("images/previous-view-icon.png"));
-		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnPreviousImg, 6, SpringLayout.SOUTH, panelPicture);
-		sl_imgPanel.putConstraint(SpringLayout.WEST, btnPreviousImg, 6, SpringLayout.EAST, btnFirstImg);
+		btnPreviousImg = new JButton(new ImageIcon(
+				"images/previous-view-icon.png"));
+		btnPreviousImg.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (imgListIter.hasPrevious()) {
+					setPreviousImage();
+				}
+			}
+		});
+		btnPreviousImg.setEnabled(false);
+		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnPreviousImg, 6,
+				SpringLayout.SOUTH, panelPicture);
+		sl_imgPanel.putConstraint(SpringLayout.WEST, btnPreviousImg, 6,
+				SpringLayout.EAST, btnFirstImg);
 		imgPanel.add(btnPreviousImg);
 
 		btnNextImg = new JButton(new ImageIcon("images/next-view-icon.png"));
-		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnNextImg, 0, SpringLayout.NORTH, btnInserirImg);
+		btnNextImg.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (imgListIter.hasNext()) {
+					setNextImage();
+				}
+			}
+		});
+		btnNextImg.setEnabled(false);
+		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnNextImg, 0,
+				SpringLayout.NORTH, btnInserirImg);
 		imgPanel.add(btnNextImg);
 
 		btnLastImg = new JButton(new ImageIcon("images/last-view-icon.png"));
-		sl_imgPanel.putConstraint(SpringLayout.EAST, btnLastImg, -10, SpringLayout.EAST, imgPanel);
-		sl_imgPanel.putConstraint(SpringLayout.EAST, btnNextImg, -6, SpringLayout.WEST, btnLastImg);
-		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnLastImg, 0, SpringLayout.NORTH, btnInserirImg);
+		btnLastImg.setEnabled(false);
+		sl_imgPanel.putConstraint(SpringLayout.EAST, btnLastImg, -10,
+				SpringLayout.EAST, imgPanel);
+		sl_imgPanel.putConstraint(SpringLayout.EAST, btnNextImg, -6,
+				SpringLayout.WEST, btnLastImg);
+		sl_imgPanel.putConstraint(SpringLayout.NORTH, btnLastImg, 0,
+				SpringLayout.NORTH, btnInserirImg);
 		imgPanel.add(btnLastImg);
 
 		lblCountImg = new JLabel("0/0");
-		sl_imgPanel.putConstraint(SpringLayout.NORTH, lblCountImg, 0, SpringLayout.NORTH, imgPanel);
-		sl_imgPanel.putConstraint(SpringLayout.WEST, lblCountImg, 24, SpringLayout.WEST, btnNextImg);
-		sl_imgPanel.putConstraint(SpringLayout.EAST, lblCountImg, 0, SpringLayout.EAST, panelPicture);
+		sl_imgPanel.putConstraint(SpringLayout.NORTH, lblCountImg, 0,
+				SpringLayout.NORTH, imgPanel);
+		sl_imgPanel.putConstraint(SpringLayout.WEST, lblCountImg, 24,
+				SpringLayout.WEST, btnNextImg);
+		sl_imgPanel.putConstraint(SpringLayout.EAST, lblCountImg, 0,
+				SpringLayout.EAST, panelPicture);
 		lblCountImg.setFont(new Font("SansSerif", Font.BOLD, 14));
 		lblCountImg.setHorizontalAlignment(SwingConstants.RIGHT);
 		imgPanel.add(lblCountImg);
-		
-		lblProdutoSelecionado = new JLabel("Nenhum Produto Selecionado(selecione na aba produto)");
-		sl_imgPanel.putConstraint(SpringLayout.WEST, lblProdutoSelecionado, 10, SpringLayout.WEST, imgPanel);
-		sl_imgPanel.putConstraint(SpringLayout.EAST, lblProdutoSelecionado, -6, SpringLayout.WEST, lblCountImg);
+
+		lblProdutoSelecionado = new JLabel(
+				"Nenhum Produto Selecionado(selecione na aba produto)");
+		sl_imgPanel.putConstraint(SpringLayout.WEST, lblProdutoSelecionado, 10,
+				SpringLayout.WEST, imgPanel);
+		sl_imgPanel.putConstraint(SpringLayout.EAST, lblProdutoSelecionado, -6,
+				SpringLayout.WEST, lblCountImg);
 		lblProdutoSelecionado.setFont(new Font("SansSerif", Font.BOLD, 14));
-		sl_imgPanel.putConstraint(SpringLayout.SOUTH, lblProdutoSelecionado, -6, SpringLayout.NORTH, panelPicture);
+		sl_imgPanel.putConstraint(SpringLayout.SOUTH, lblProdutoSelecionado,
+				-6, SpringLayout.NORTH, panelPicture);
 		panelPicture.setLayout(new CardLayout(0, 0));
-		
+
 		picture = new JLabel("");
 		panelPicture.add(picture, "name_30957025553916");
 		imgPanel.add(lblProdutoSelecionado);
-		
+
 		JPanel panel_6 = new JPanel();
 		tabbedPanePedido.addTab("Avaliar", null, panel_6, null);
 		SpringLayout sl_panel_6 = new SpringLayout();
 		panel_6.setLayout(sl_panel_6);
-		
+
 		JPanel panel_7 = new JPanel();
-		sl_panel_6.putConstraint(SpringLayout.NORTH, panel_7, 10, SpringLayout.NORTH, panel_6);
-		sl_panel_6.putConstraint(SpringLayout.WEST, panel_7, 10, SpringLayout.WEST, panel_6);
-		sl_panel_6.putConstraint(SpringLayout.SOUTH, panel_7, -216, SpringLayout.SOUTH, panel_6);
-		sl_panel_6.putConstraint(SpringLayout.EAST, panel_7, -10, SpringLayout.EAST, panel_6);
-		panel_7.setBorder(new TitledBorder(null, "Condi\u00E7\u00F5es do Produto", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		sl_panel_6.putConstraint(SpringLayout.NORTH, panel_7, 10,
+				SpringLayout.NORTH, panel_6);
+		sl_panel_6.putConstraint(SpringLayout.WEST, panel_7, 10,
+				SpringLayout.WEST, panel_6);
+		sl_panel_6.putConstraint(SpringLayout.SOUTH, panel_7, -216,
+				SpringLayout.SOUTH, panel_6);
+		sl_panel_6.putConstraint(SpringLayout.EAST, panel_7, -10,
+				SpringLayout.EAST, panel_6);
+		panel_7.setBorder(new TitledBorder(null,
+				"Condi\u00E7\u00F5es do Produto", TitledBorder.LEADING,
+				TitledBorder.TOP, null, null));
 		panel_6.add(panel_7);
 		GridBagLayout gbl_panel_7 = new GridBagLayout();
-		gbl_panel_7.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
-		gbl_panel_7.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
-		gbl_panel_7.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel_7.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_7.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel_7.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel_7.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0, 0.0,
+				1.0, Double.MIN_VALUE };
+		gbl_panel_7.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				Double.MIN_VALUE };
 		panel_7.setLayout(gbl_panel_7);
-		
+
 		JLabel lblCusto = new JLabel("Venda:");
 		GridBagConstraints gbc_lblCusto = new GridBagConstraints();
 		gbc_lblCusto.anchor = GridBagConstraints.EAST;
@@ -1035,9 +1223,9 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblCusto.gridx = 0;
 		gbc_lblCusto.gridy = 0;
 		panel_7.add(lblCusto, gbc_lblCusto);
-		
-		NumberFormat f = NumberFormat.getNumberInstance(); 
-		
+
+		NumberFormat f = NumberFormat.getNumberInstance();
+
 		txtCusto = new JNumericField();
 		txtCusto.setMaxLength(6);
 		txtCusto.setText("0");
@@ -1049,15 +1237,15 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_txtCusto.gridy = 0;
 		panel_7.add(txtCusto, gbc_txtCusto);
 		txtCusto.setColumns(10);
-		
-		JLabel lblMargem = new JLabel("Margem:");
+
+		JLabel lblMargem = new JLabel("Margem(%):");
 		GridBagConstraints gbc_lblMargem = new GridBagConstraints();
 		gbc_lblMargem.anchor = GridBagConstraints.EAST;
 		gbc_lblMargem.insets = new Insets(0, 0, 5, 5);
 		gbc_lblMargem.gridx = 2;
 		gbc_lblMargem.gridy = 0;
 		panel_7.add(lblMargem, gbc_lblMargem);
-		
+
 		txtMargem = new JNumericField();
 		txtMargem.setMaxLength(2);
 		txtMargem.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -1069,15 +1257,15 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_txtMargem.gridy = 0;
 		panel_7.add(txtMargem, gbc_txtMargem);
 		txtMargem.setColumns(10);
-		
-		JLabel lblComisso = new JLabel("Comiss\u00E3o:");
+
+		JLabel lblComisso = new JLabel("Comiss\u00E3o(%):");
 		GridBagConstraints gbc_lblComisso = new GridBagConstraints();
 		gbc_lblComisso.anchor = GridBagConstraints.EAST;
 		gbc_lblComisso.insets = new Insets(0, 0, 5, 5);
 		gbc_lblComisso.gridx = 4;
 		gbc_lblComisso.gridy = 0;
 		panel_7.add(lblComisso, gbc_lblComisso);
-		
+
 		txtComissao = new JNumericField();
 		txtComissao.setMaxLength(2);
 		txtComissao.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -1090,7 +1278,7 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_txtComissao.gridy = 0;
 		panel_7.add(txtComissao, gbc_txtComissao);
 		txtComissao.setColumns(10);
-		
+
 		JLabel lblEntrada = new JLabel("Entrada:");
 		GridBagConstraints gbc_lblEntrada = new GridBagConstraints();
 		gbc_lblEntrada.anchor = GridBagConstraints.EAST;
@@ -1098,12 +1286,14 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblEntrada.gridx = 0;
 		gbc_lblEntrada.gridy = 1;
 		panel_7.add(lblEntrada, gbc_lblEntrada);
-		
+
 		try {
-			txtEntrada = new JFormattedTextField(new MaskFormatter("##/##/####"));
+			txtEntrada = new JFormattedTextField(
+					new MaskFormatter("##/##/####"));
 		} catch (ParseException e1) {
 			e1.printStackTrace();
-		};
+		}
+		;
 		GridBagConstraints gbc_txtEntrada = new GridBagConstraints();
 		gbc_txtEntrada.gridwidth = 2;
 		gbc_txtEntrada.insets = new Insets(0, 0, 5, 5);
@@ -1112,7 +1302,7 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_txtEntrada.gridy = 1;
 		panel_7.add(txtEntrada, gbc_txtEntrada);
 		txtEntrada.setColumns(10);
-		
+
 		JLabel lblSituacao = new JLabel("Situa\u00E7\u00E3o:");
 		GridBagConstraints gbc_lblSituacao = new GridBagConstraints();
 		gbc_lblSituacao.anchor = GridBagConstraints.EAST;
@@ -1120,18 +1310,18 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblSituacao.gridx = 3;
 		gbc_lblSituacao.gridy = 1;
 		panel_7.add(lblSituacao, gbc_lblSituacao);
-		
+
 		cmbSituacao = new JComboBox();
-		
+
 		Iterator situacoes = SituacaoModel.findAll().iterator();
-		
-		while(situacoes.hasNext()) {
+
+		while (situacoes.hasNext()) {
 			Situacao s = (Situacao) situacoes.next();
 			cmbSituacao.addItem(s.getName());
 		}
-		
+
 		cmbSituacao.setSelectedItem("avaliando");
-		
+
 		cmbSituacao.setMaximumRowCount(3);
 		GridBagConstraints gbc_cmbSituacao = new GridBagConstraints();
 		gbc_cmbSituacao.gridwidth = 2;
@@ -1140,7 +1330,7 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_cmbSituacao.gridx = 4;
 		gbc_cmbSituacao.gridy = 1;
 		panel_7.add(cmbSituacao, gbc_cmbSituacao);
-		
+
 		JLabel lblValidade = new JLabel("Validade:");
 		GridBagConstraints gbc_lblValidade = new GridBagConstraints();
 		gbc_lblValidade.anchor = GridBagConstraints.EAST;
@@ -1148,9 +1338,11 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblValidade.gridx = 0;
 		gbc_lblValidade.gridy = 2;
 		panel_7.add(lblValidade, gbc_lblValidade);
-		
+
 		JComboBox cmbValidade = new JComboBox();
-		cmbValidade.setModel(new DefaultComboBoxModel(new String[] {"3 meses", "75 dias", "2 meses", "45 dias", "1 m\u00EAs", "15 dias", "10 dias", "5 dias", "1 dia"}));
+		cmbValidade.setModel(new DefaultComboBoxModel(new String[] { "3 meses",
+				"75 dias", "2 meses", "45 dias", "1 m\u00EAs", "15 dias",
+				"10 dias", "5 dias", "1 dia" }));
 		GridBagConstraints gbc_cmbValidade = new GridBagConstraints();
 		gbc_cmbValidade.gridwidth = 2;
 		gbc_cmbValidade.insets = new Insets(0, 0, 5, 5);
@@ -1158,7 +1350,7 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_cmbValidade.gridx = 1;
 		gbc_cmbValidade.gridy = 2;
 		panel_7.add(cmbValidade, gbc_cmbValidade);
-		
+
 		JLabel lblValidade_1 = new JLabel("Tipo:");
 		GridBagConstraints gbc_lblValidade_1 = new GridBagConstraints();
 		gbc_lblValidade_1.anchor = GridBagConstraints.EAST;
@@ -1166,17 +1358,16 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblValidade_1.gridx = 3;
 		gbc_lblValidade_1.gridy = 2;
 		panel_7.add(lblValidade_1, gbc_lblValidade_1);
-		
+
 		JComboBox cmbTipo = new JComboBox();
-		
+
 		Iterator tipos = TipoModel.findAll().iterator();
-		
-		while(tipos.hasNext()) {
+
+		while (tipos.hasNext()) {
 			Tipo t = (Tipo) tipos.next();
 			cmbTipo.addItem(t.getName());
 		}
-		
-		
+
 		GridBagConstraints gbc_cmbTipo = new GridBagConstraints();
 		gbc_cmbTipo.gridwidth = 2;
 		gbc_cmbTipo.insets = new Insets(0, 0, 5, 0);
@@ -1184,14 +1375,14 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_cmbTipo.gridx = 4;
 		gbc_cmbTipo.gridy = 2;
 		panel_7.add(cmbTipo, gbc_cmbTipo);
-		
+
 		JLabel lblObservaes = new JLabel("Observa\u00E7\u00F5es:");
 		GridBagConstraints gbc_lblObservaes = new GridBagConstraints();
 		gbc_lblObservaes.insets = new Insets(0, 0, 5, 5);
 		gbc_lblObservaes.gridx = 0;
 		gbc_lblObservaes.gridy = 3;
 		panel_7.add(lblObservaes, gbc_lblObservaes);
-		
+
 		JTextArea tAreaObservacoes = new JTextArea();
 		GridBagConstraints gbc_tAreaObservacoes = new GridBagConstraints();
 		gbc_tAreaObservacoes.insets = new Insets(0, 0, 5, 0);
@@ -1201,7 +1392,7 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_tAreaObservacoes.gridx = 1;
 		gbc_tAreaObservacoes.gridy = 3;
 		panel_7.add(tAreaObservacoes, gbc_tAreaObservacoes);
-		
+
 		JLabel lblValorVenda = new JLabel("Valor Custo:");
 		lblValorVenda.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblValorVenda = new GridBagConstraints();
@@ -1210,7 +1401,7 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblValorVenda.gridx = 0;
 		gbc_lblValorVenda.gridy = 5;
 		panel_7.add(lblValorVenda, gbc_lblValorVenda);
-		
+
 		JLabel lblVendaTotal = new JLabel("R$ 0,00");
 		lblVendaTotal.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblVendaTotal = new GridBagConstraints();
@@ -1219,7 +1410,7 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblVendaTotal.gridx = 1;
 		gbc_lblVendaTotal.gridy = 5;
 		panel_7.add(lblVendaTotal, gbc_lblVendaTotal);
-		
+
 		JLabel lblValorCom = new JLabel("Valor Comiss\u00E3o:");
 		lblValorCom.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblValorCom = new GridBagConstraints();
@@ -1229,27 +1420,32 @@ public class CadastroEntrada extends JInternalFrame {
 		gbc_lblValorCom.gridx = 3;
 		gbc_lblValorCom.gridy = 5;
 		panel_7.add(lblValorCom, gbc_lblValorCom);
-		
+
 		JLabel lblComissaoTotal = new JLabel("R$ 0,00");
 		lblComissaoTotal.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblComissaoTotal = new GridBagConstraints();
 		gbc_lblComissaoTotal.gridx = 5;
 		gbc_lblComissaoTotal.gridy = 5;
 		panel_7.add(lblComissaoTotal, gbc_lblComissaoTotal);
-		
-		JLabel lblNewLabel = new JLabel("Lista dos Produdos(clique para editar)");
-		sl_panel_6.putConstraint(SpringLayout.NORTH, lblNewLabel, 6, SpringLayout.SOUTH, panel_7);
-		sl_panel_6.putConstraint(SpringLayout.WEST, lblNewLabel, 0, SpringLayout.WEST, panel_7);
+
+		JLabel lblNewLabel = new JLabel(
+				"Lista dos Produdos(clique para editar)");
+		sl_panel_6.putConstraint(SpringLayout.NORTH, lblNewLabel, 6,
+				SpringLayout.SOUTH, panel_7);
+		sl_panel_6.putConstraint(SpringLayout.WEST, lblNewLabel, 0,
+				SpringLayout.WEST, panel_7);
 		panel_6.add(lblNewLabel);
-		
+
 		JButton btnAtualizarAval = new JButton("Atualizar");
 		btnAtualizarAval.setEnabled(false);
-		sl_panel_6.putConstraint(SpringLayout.NORTH, btnAtualizarAval, -6, SpringLayout.NORTH, lblNewLabel);
-		sl_panel_6.putConstraint(SpringLayout.EAST, btnAtualizarAval, 0, SpringLayout.EAST, panel_7);
+		sl_panel_6.putConstraint(SpringLayout.NORTH, btnAtualizarAval, -6,
+				SpringLayout.NORTH, lblNewLabel);
+		sl_panel_6.putConstraint(SpringLayout.EAST, btnAtualizarAval, 0,
+				SpringLayout.EAST, panel_7);
 		panel_6.add(btnAtualizarAval);
-		
+
 		jtableAvaliar.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
+
 		jtableAvaliar.getColumnModel().getColumn(0).setPreferredWidth(90);
 		jtableAvaliar.getColumnModel().getColumn(1).setPreferredWidth(120);
 		jtableAvaliar.getColumnModel().getColumn(2).setPreferredWidth(90);
@@ -1261,12 +1457,16 @@ public class CadastroEntrada extends JInternalFrame {
 		jtableAvaliar.getColumnModel().getColumn(8).setPreferredWidth(90);
 		jtableAvaliar.getColumnModel().getColumn(9).setPreferredWidth(90);
 		jtableAvaliar.getColumnModel().getColumn(10).setPreferredWidth(90);
-		
+
 		JScrollPane scrollPaneAvaliar = new JScrollPane(jtableAvaliar);
-		sl_panel_6.putConstraint(SpringLayout.NORTH, scrollPaneAvaliar, 0, SpringLayout.SOUTH, btnAtualizarAval);
-		sl_panel_6.putConstraint(SpringLayout.WEST, scrollPaneAvaliar, 0, SpringLayout.WEST, panel_7);
-		sl_panel_6.putConstraint(SpringLayout.SOUTH, scrollPaneAvaliar, 178, SpringLayout.SOUTH, btnAtualizarAval);
-		sl_panel_6.putConstraint(SpringLayout.EAST, scrollPaneAvaliar, 0, SpringLayout.EAST, panel_7);
+		sl_panel_6.putConstraint(SpringLayout.NORTH, scrollPaneAvaliar, 0,
+				SpringLayout.SOUTH, btnAtualizarAval);
+		sl_panel_6.putConstraint(SpringLayout.WEST, scrollPaneAvaliar, 0,
+				SpringLayout.WEST, panel_7);
+		sl_panel_6.putConstraint(SpringLayout.SOUTH, scrollPaneAvaliar, 178,
+				SpringLayout.SOUTH, btnAtualizarAval);
+		sl_panel_6.putConstraint(SpringLayout.EAST, scrollPaneAvaliar, 0,
+				SpringLayout.EAST, panel_7);
 		panel_6.add(scrollPaneAvaliar);
 
 		JPanel finalizarPanel = new JPanel();
@@ -1274,75 +1474,109 @@ public class CadastroEntrada extends JInternalFrame {
 		SpringLayout sl_finalizarPanel = new SpringLayout();
 		finalizarPanel.setLayout(sl_finalizarPanel);
 
-		JButton btnNewButton_2 = new JButton(new ImageIcon("images/Documents-icon.png"));
-		btnNewButton_2.setText("Recuperar Pedido"); 
-		// btnNewButton_2.setIcon(new ImageIcon("C:\\Users\\arthur\\Pictures\\brecho\\registration_queue.png"));
-		sl_finalizarPanel.putConstraint(SpringLayout.NORTH, btnNewButton_2, 4, SpringLayout.NORTH, finalizarPanel);
-		sl_finalizarPanel.putConstraint(SpringLayout.EAST, btnNewButton_2, -10, SpringLayout.EAST, finalizarPanel);
+		JButton btnNewButton_2 = new JButton(new ImageIcon(
+				"images/Documents-icon.png"));
+		btnNewButton_2.setText("Recuperar Pedido");
+		// btnNewButton_2.setIcon(new
+		// ImageIcon("C:\\Users\\arthur\\Pictures\\brecho\\registration_queue.png"));
+		sl_finalizarPanel.putConstraint(SpringLayout.NORTH, btnNewButton_2, 4,
+				SpringLayout.NORTH, finalizarPanel);
+		sl_finalizarPanel.putConstraint(SpringLayout.EAST, btnNewButton_2, -10,
+				SpringLayout.EAST, finalizarPanel);
 		finalizarPanel.add(btnNewButton_2);
 
 		JLabel lblNmeroPedido = new JLabel("N\u00FAmero Pedido:");
-		sl_finalizarPanel.putConstraint(SpringLayout.NORTH, lblNmeroPedido, 10, SpringLayout.NORTH, finalizarPanel);
+		sl_finalizarPanel.putConstraint(SpringLayout.NORTH, lblNmeroPedido, 10,
+				SpringLayout.NORTH, finalizarPanel);
 		lblNmeroPedido.setFont(new Font("SansSerif", Font.BOLD, 12));
-		sl_finalizarPanel.putConstraint(SpringLayout.WEST, lblNmeroPedido, 10, SpringLayout.WEST, finalizarPanel);
+		sl_finalizarPanel.putConstraint(SpringLayout.WEST, lblNmeroPedido, 10,
+				SpringLayout.WEST, finalizarPanel);
 		finalizarPanel.add(lblNmeroPedido);
 
 		lblNumPedido = new JLabel("000000");
-		sl_finalizarPanel.putConstraint(SpringLayout.WEST, btnNewButton_2, 6, SpringLayout.EAST, lblNumPedido);
-		sl_finalizarPanel.putConstraint(SpringLayout.NORTH, lblNumPedido, 0, SpringLayout.NORTH, lblNmeroPedido);
-		sl_finalizarPanel.putConstraint(SpringLayout.WEST, lblNumPedido, 6, SpringLayout.EAST, lblNmeroPedido);
+		sl_finalizarPanel.putConstraint(SpringLayout.WEST, btnNewButton_2, 6,
+				SpringLayout.EAST, lblNumPedido);
+		sl_finalizarPanel.putConstraint(SpringLayout.NORTH, lblNumPedido, 0,
+				SpringLayout.NORTH, lblNmeroPedido);
+		sl_finalizarPanel.putConstraint(SpringLayout.WEST, lblNumPedido, 6,
+				SpringLayout.EAST, lblNmeroPedido);
 		finalizarPanel.add(lblNumPedido);
 
-		JButton btnExcluirPedido = new JButton("Excluir Pedido", new ImageIcon("images/delete-icon.png"));
+		JButton btnExcluirPedido = new JButton("Excluir Pedido", new ImageIcon(
+				"images/delete-icon.png"));
 		btnExcluirPedido.setEnabled(false);
-		sl_finalizarPanel.putConstraint(SpringLayout.EAST, btnExcluirPedido, 0, SpringLayout.EAST, btnNewButton_2);
+		sl_finalizarPanel.putConstraint(SpringLayout.EAST, btnExcluirPedido, 0,
+				SpringLayout.EAST, btnNewButton_2);
 		finalizarPanel.add(btnExcluirPedido);
 
 		JPanel panel_5 = new JPanel();
-		sl_finalizarPanel.putConstraint(SpringLayout.NORTH, btnExcluirPedido, 6, SpringLayout.SOUTH, panel_5);
-		sl_finalizarPanel.putConstraint(SpringLayout.NORTH, panel_5, 6, SpringLayout.SOUTH, btnNewButton_2);
-		sl_finalizarPanel.putConstraint(SpringLayout.SOUTH, panel_5, -44, SpringLayout.SOUTH, finalizarPanel);
-		panel_5.setBorder(new TitledBorder(null, "Resumo do Pedido", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		sl_finalizarPanel.putConstraint(SpringLayout.WEST, panel_5, 10, SpringLayout.WEST, finalizarPanel);
-		sl_finalizarPanel.putConstraint(SpringLayout.EAST, panel_5, 0, SpringLayout.EAST, btnNewButton_2);
+		sl_finalizarPanel.putConstraint(SpringLayout.NORTH, btnExcluirPedido,
+				6, SpringLayout.SOUTH, panel_5);
+		sl_finalizarPanel.putConstraint(SpringLayout.NORTH, panel_5, 6,
+				SpringLayout.SOUTH, btnNewButton_2);
+		sl_finalizarPanel.putConstraint(SpringLayout.SOUTH, panel_5, -44,
+				SpringLayout.SOUTH, finalizarPanel);
+		panel_5.setBorder(new TitledBorder(null, "Resumo do Pedido",
+				TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		sl_finalizarPanel.putConstraint(SpringLayout.WEST, panel_5, 10,
+				SpringLayout.WEST, finalizarPanel);
+		sl_finalizarPanel.putConstraint(SpringLayout.EAST, panel_5, 0,
+				SpringLayout.EAST, btnNewButton_2);
 		finalizarPanel.add(panel_5);
-		
+
 		tabbedPanePedido.setEnabledAt(1, false);
 		tabbedPanePedido.setEnabledAt(2, false);
 		tabbedPanePedido.setEnabledAt(3, false);
 		tabbedPanePedido.setEnabledAt(4, false);
-		
+
 		tabbedPanePedido.addChangeListener(new ChangeListener() {
-		    public void stateChanged(ChangeEvent e) {
-		    	if(tabbedPanePedido.getSelectedIndex() == 2) {
-		    		Entrada entSelect = em.findOneWhere("id", String.valueOf(entradaProdutoId));
-		    		lblProdutoSelecionado.setText("ID: " + entSelect.getId() + " - " + entSelect.getDescricao());
-		    	}
-		    }
+			public void stateChanged(ChangeEvent e) {
+				if (tabbedPanePedido.getSelectedIndex() == 2) {
+					Entrada entSelect = em.findOneWhere("id",
+							String.valueOf(entradaProdutoId));
+
+					lblProdutoSelecionado.setText("ID: " + entSelect.getId()
+							+ " - " + entSelect.getDescricao());
+
+					checkImgCount();
+
+					picture.setIcon(null);
+
+					if (imgTotalCount > 0) {
+						imgCount = 0;
+						setFirstImage();
+						
+					}
+				}
+			}
 		});
-		
-		
+
 	}
 
-
-
 	protected void populateProduto() {
-		entradaProdutoId = Integer.parseInt((String) jtableProdutos.getValueAt(linhaSelecionadaProduto, 0));
+		entradaProdutoId = Integer.parseInt((String) jtableProdutos.getValueAt(
+				linhaSelecionadaProduto, 0));
 		lblNovoProduto.setText("Produto ID: " + entradaProdutoId);
-		
-		txtDescricao.setText((String) jtableProdutos.getValueAt(linhaSelecionadaProduto, 1));
-		
-		cmbCategoria.setSelectedItem((String) jtableProdutos.getValueAt(linhaSelecionadaProduto, 2));
-		cmbMarca.setSelectedItem((String) jtableProdutos.getValueAt(linhaSelecionadaProduto, 3));
-		
-		txtTamanho.setText((String) jtableProdutos.getValueAt(linhaSelecionadaProduto, 4));
-		txtCor.setText((String) jtableProdutos.getValueAt(linhaSelecionadaProduto, 5));
-		txtQtde.setText((String) jtableProdutos.getValueAt(linhaSelecionadaProduto, 6));
-		
+
+		txtDescricao.setText((String) jtableProdutos.getValueAt(
+				linhaSelecionadaProduto, 1));
+
+		cmbCategoria.setSelectedItem((String) jtableProdutos.getValueAt(
+				linhaSelecionadaProduto, 2));
+		cmbMarca.setSelectedItem((String) jtableProdutos.getValueAt(
+				linhaSelecionadaProduto, 3));
+
+		txtTamanho.setText((String) jtableProdutos.getValueAt(
+				linhaSelecionadaProduto, 4));
+		txtCor.setText((String) jtableProdutos.getValueAt(
+				linhaSelecionadaProduto, 5));
+		txtQtde.setText((String) jtableProdutos.getValueAt(
+				linhaSelecionadaProduto, 6));
+
 		tabbedPanePedido.setEnabledAt(2, true);
 		tabbedPanePedido.setEnabledAt(3, true);
 		tabbedPanePedido.setEnabledAt(4, true);
-		
+
 		btnCancelarProduto.setEnabled(true);
 		btnExcluirProd.setEnabled(true);
 	}
@@ -1350,12 +1584,12 @@ public class CadastroEntrada extends JInternalFrame {
 	protected void limparConsignatario() {
 		lblNovoConsig.setText("Novo Consignatário");
 		lblNovoPedido.setText("Novo Pedido");
-		
+
 		limparProduto();
 		limparAvaliacao();
-		
+
 		consigId = 0;
-		
+
 		txtNome.setText("");
 		txtTelefone.setText("");
 		txtCelular.setText("");
@@ -1373,105 +1607,82 @@ public class CadastroEntrada extends JInternalFrame {
 
 		btnCancelarConsig.setEnabled(false);
 		btnExcluirConsig.setEnabled(false);
-		
+
 		tabbedPanePedido.setEnabledAt(1, false);
 		tabbedPanePedido.setEnabledAt(2, false);
 		tabbedPanePedido.setEnabledAt(3, false);
 		tabbedPanePedido.setEnabledAt(4, false);
-		
-		
+
 	}
 
 	private void limparAvaliacao() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void limparProduto() {
 		// TODO Auto-generated method stub
 		entradaProdutoId = 0;
 		lblNovoProduto.setText("Novo Produto");
-		
+
 		txtDescricao.setText("");
 		txtTamanho.setText("");
 		txtCor.setText("");
 		txtQtde.setText("1");
-		
+
 		btnCancelarProduto.setEnabled(false);
 		btnExcluirProd.setEnabled(false);
-		
+
 		tabbedPanePedido.setEnabledAt(2, false);
 	}
-	
-	private void addTProduto(String titulo, String categoria, String marca, String tamanho, String cor, String qtde, String situacao) {
+
+	private void addTProduto(String titulo, String categoria, String marca,
+			String tamanho, String cor, String qtde, String situacao) {
 		// TODO
-		String[] linhaProd = new String[] {
-			String.valueOf(entradaProdutoId),
-			titulo,
-			categoria,
-			marca,
-			tamanho,
-			cor,
-			qtde,
-			situacao
-		};
-		
-		String[] linhaAval = new String[] {
-			String.valueOf(entradaProdutoId),
-			titulo,
-			"",
-			"",
-			"",
-			situacao,
-			"",			
-			"",
-			"",
-			"",
-			""
-		};
-		
+		String[] linhaProd = new String[] { String.valueOf(entradaProdutoId),
+				titulo, categoria, marca, tamanho, cor, qtde, situacao };
+
+		String[] linhaAval = new String[] { String.valueOf(entradaProdutoId),
+				titulo, "", "", "", situacao, "", "", "", "", "" };
+
 		modelProduto.addRow(linhaProd);
-		modelAvaliar.addRow(linhaAval);		
+		modelAvaliar.addRow(linhaAval);
 	}
-	
-	protected void updateTProduto(String titulo, String categoria, String marca, String tamanho, String cor, String qtde, String situacao) {
+
+	protected void updateTProduto(String titulo, String categoria,
+			String marca, String tamanho, String cor, String qtde,
+			String situacao) {
 		// TODO Auto-generated method stub
-		String[] linhaProd = new String[] {
-				String.valueOf(entradaProdutoId),
-				titulo,
-				categoria,
-				marca,
-				tamanho,
-				cor,
-				qtde,
-				situacao
-			};
-		
-		for(int i = 0; i < jtableProdutos.getRowCount(); i += 1) {
-			if(entradaProdutoId == Integer.parseInt((String) jtableProdutos.getValueAt(i, 0))) {
+		String[] linhaProd = new String[] { String.valueOf(entradaProdutoId),
+				titulo, categoria, marca, tamanho, cor, qtde, situacao };
+
+		for (int i = 0; i < jtableProdutos.getRowCount(); i += 1) {
+			if (entradaProdutoId == Integer.parseInt((String) jtableProdutos
+					.getValueAt(i, 0))) {
 				modelProduto.removeRow(i);
 				modelProduto.insertRow(i, linhaProd);
 			}
-			if(entradaProdutoId == Integer.parseInt((String) jtableAvaliar.getValueAt(i, 0))) {
+			if (entradaProdutoId == Integer.parseInt((String) jtableAvaliar
+					.getValueAt(i, 0))) {
 				modelAvaliar.setValueAt(titulo, i, 1);
 			}
 		}
-		
 
-		
 	}
-	
+
 	private void removeTProduto() {
-		for(int i = 0; i < jtableProdutos.getRowCount(); i += 1) {
-			if(entradaProdutoId == Integer.parseInt((String) jtableProdutos.getValueAt(i, 0))) {
+		for (int i = 0; i < jtableProdutos.getRowCount(); i += 1) {
+			if (entradaProdutoId == Integer.parseInt((String) jtableProdutos
+					.getValueAt(i, 0))) {
 				modelProduto.removeRow(i);
 			}
-			if(entradaProdutoId == Integer.parseInt((String) jtableAvaliar.getValueAt(i, 0))) {
+			if (entradaProdutoId == Integer.parseInt((String) jtableAvaliar
+					.getValueAt(i, 0))) {
 				modelAvaliar.removeRow(i);
 			}
 		}
-		
-		if(jtableProdutos.getRowCount() == 0) {
+
+		if (jtableProdutos.getRowCount() == 0) {
 			tabbedPanePedido.setEnabledAt(2, false);
 			tabbedPanePedido.setEnabledAt(3, false);
 			tabbedPanePedido.setEnabledAt(4, false);
@@ -1480,9 +1691,9 @@ public class CadastroEntrada extends JInternalFrame {
 
 	protected void populateConsignatario() {
 		Consignatario ce = cm.findOneWhere("id", String.valueOf(consigId));
-		
+
 		lblNovoConsig.setText("Consignatário ID: " + consigId);
-		
+
 		txtNome.setText(ce.getNome());
 		txtTelefone.setText(ce.getTelefone());
 		txtCelular.setText(ce.getCelular());
@@ -1497,10 +1708,157 @@ public class CadastroEntrada extends JInternalFrame {
 		txtCep.setText(ce.getCep());
 		txtCidade.setText(ce.getCidade());
 		cmbUf.setSelectedItem(ce.getEstado().getName());
-		
+
 		btnCancelarConsig.setEnabled(true);
 		btnExcluirConsig.setEnabled(true);
-		
+
 		tabbedPanePedido.setEnabledAt(1, true);
+	}
+
+	private int checkImgCount() {
+		imgListIter = getImageIterator();
+
+		if (imgTotalCount > 0) {
+			lblCountImg.setText(imgCount + "/" + imgTotalCount);
+		} else {
+			System.out.println("Nenhuma imagem inserida!");
+
+			lblCountImg.setText("0/0");
+
+			btnTrocarImg.setEnabled(false);
+			btnExcluirImg.setEnabled(false);
+			btnFirstImg.setEnabled(false);
+			btnPreviousImg.setEnabled(false);
+			btnNextImg.setEnabled(false);
+			btnLastImg.setEnabled(false);
+		}
+
+		return imgTotalCount;
+	}
+
+	private ListIterator getImageIterator() {
+		imgTotalCount = 0;
+
+		Entrada ee = EntradaModel.findOneWhere("id",
+				String.valueOf(entradaProdutoId));
+
+		try {
+			imgTotalCount = ee.getImagens().size();
+
+			Iterator imgIter = ee.getImagens().iterator();
+
+			ArrayList<Imagem> imgList = new ArrayList<Imagem>();
+
+			while (imgIter.hasNext()) {
+				imgList.add((Imagem) imgIter.next());
+			}
+
+			imgListIter = imgList.listIterator();
+			return imgListIter;
+		} catch (ClassCastException ex) {
+			ex.printStackTrace();
+		} catch (LazyInitializationException ex) {
+			ex.printStackTrace();
+		}
+
+		return null;
+	}
+
+	private void setFirstImage() {
+		imgListIter = getImageIterator();
+		
+		setNextImage();
+	}
+
+	private void setNextImage() {
+		ifHasPrevAndNext();
+		
+		Blob blob_img = ((Imagem) imgListIter.next()).getImagemBlob();
+
+		try {
+			BufferedImage bi = setMaxWidthHeight(blob_img, 400, 400);
+			imgCount += 1;
+			drawPicture(bi);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+
+	}
+
+	private void setPreviousImage() {
+		ifHasPrevAndNext();
+		
+		Blob blob_img = ((Imagem) imgListIter.previous()).getImagemBlob();
+
+		try {
+			BufferedImage bi = setMaxWidthHeight(blob_img, 400, 400);
+			imgCount -= 1;
+			drawPicture(bi);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+
+	private void ifHasPrevAndNext() {
+		if (imgListIter.hasPrevious()) {
+			btnFirstImg.setEnabled(true);
+			btnPreviousImg.setEnabled(true);
+		} else {
+			btnFirstImg.setEnabled(false);
+			btnPreviousImg.setEnabled(false);
+		}
+		
+		if (imgListIter.hasNext()) {
+			btnLastImg.setEnabled(true);
+			btnNextImg.setEnabled(true);
+		} else {
+			btnLastImg.setEnabled(false);
+			btnNextImg.setEnabled(false);
+		}
+	}
+
+	private void drawPicture(BufferedImage bi) {
+		picture.setIcon(new ImageIcon(bi));
+		lblCountImg.setText(imgCount + "/" + imgTotalCount);
+	}
+
+	private BufferedImage setMaxWidthHeight(Blob blob_img, int widthImg,
+			int heightImg) throws SQLException, IOException {
+		InputStream is;
+		Image img;
+		is = blob_img.getBinaryStream();
+		img = ImageIO.read(is);
+
+		int origW = img.getWidth(null), origH = img.getHeight(null), newW = origW, newH = origH;
+
+		if (origW > widthImg || origH > heightImg) {
+			if (origW >= origH) {
+				newW = widthImg;
+				newH = origH * newW / origW;
+			} else {
+				newH = heightImg;
+				newW = origW * newH / origH;
+			}
+		}
+
+		BufferedImage bi = new BufferedImage(newW, newH,
+				BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = bi.createGraphics();
+		g.drawImage(img, 0, 0, newW, newH, null);
+		g.setBackground(new Color(255, 255, 255, 0));
+		g.dispose();
+		return bi;
 	}
 }

@@ -9,8 +9,8 @@ import br.arthur.entities.Imagem;
 import br.arthur.utils.HibernateUtil;
 
 public class ImagemModel {
-	Imagem entity;
-	Session session;
+	private Imagem entity;
+	private static Session session;
 	
 	public int createImagem(Blob imgBlog) {
 		entity = new Imagem();
@@ -24,17 +24,23 @@ public class ImagemModel {
 		
 		session.getTransaction().commit();
 		
-		session.close();
+		close();
 		
 		return entity.getId();
 	}
 
 	public Imagem findOneWhere(String prop, String val) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		
 		String hql =  "FROM Imagem where " + prop + " = " + val;
 		Imagem i = (Imagem) session.createQuery(hql).uniqueResult();
 		
+		close();
+		
 		return (Imagem) i;
+	}
+	
+	public static void close() {
+		session.close();
 	}
 }

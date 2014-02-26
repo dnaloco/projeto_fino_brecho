@@ -18,25 +18,25 @@ import br.arthur.utils.HibernateUtil;
 
 public class EntradaModel {
 	private Entrada entity;
-	private Session session;
+	private static Session session;
 
 	public void saveEntrada(int entradaId, HashMap<String, Object> data) {
 		
 	}
 	
-	public void addImagem(int entradaId, HashSet<Imagem> img) {
+	public void saveImagens(int entradaId, List<Imagem> imgs) {
 		entity = findOneWhere("id", String.valueOf(entradaId));
 		
-		entity.setImagens(img);
+		entity.setImagens(imgs);
 		
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();
 		
 		session.update(entity);
 		
 		session.getTransaction().commit();
 		
-		session.close();
+		close();
 	}
 
 	public int createEntrada(HashMap<String, Object> data) {
@@ -53,19 +53,19 @@ public class EntradaModel {
 		
 		session.getTransaction().commit();
 		
-		session.close();
+		close();
 		
 		return entity.getId();
 	}
 	
 	
 	public static Entrada findOneWhere(String prop, String val){
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		
 		String hql =  "FROM Entrada where " + prop + " = " + val;
 		Entrada e = (Entrada) session.createQuery(hql).uniqueResult();
 		
-		session.close();
+		close();
 		
 		return (Entrada) e;
 	}
@@ -75,22 +75,22 @@ public class EntradaModel {
 		
 		setProduto(data);
 		
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();
 		
 		session.update(entity);
 		
 		session.getTransaction().commit();
 		
-		session.close();
+		close();
 	}
 	
 	public List findAll() {
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		
 		List estados = session.createQuery("FROM Entrada ORDER BY produto").list();
 		
-		session.close();
+		close();
 		
 		return estados;
 	}
@@ -101,7 +101,7 @@ public class EntradaModel {
 		String hql =  "FROM Entrada where " + prop + " = " + val;
 		List entradas = session.createQuery(hql).list();
 		
-		session.close();
+		close();
 		
 		return entradas;
 	}
@@ -120,13 +120,34 @@ public class EntradaModel {
 	public void deleteById(int entradaId) {
 		entity = findOneWhere("id", String.valueOf(entradaId));
 		
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();
 		
 		session.delete(entity);
 		
 		session.getTransaction().commit();
+		
+		close();
+	}
+	
+	public static void close() {
+		session.close();
 	}
 
+	public void saveOneImage(int entradaProdutoId, Imagem ie) {
+		entity = findOneWhere("id", String.valueOf(entradaProdutoId));
+		
+		// entity.setImagens(imgs);
+		entity.addImage(ie);
+		
+		session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+		
+		session.update(entity);
+		
+		session.getTransaction().commit();
+		
+		close();
+	}
 	
 }

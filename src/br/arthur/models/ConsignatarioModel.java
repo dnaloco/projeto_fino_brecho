@@ -17,6 +17,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 
 public class ConsignatarioModel {
 	private Consignatario entity;
+	private static Session session;
 	
 	public int createConsignatario(Map<String, Object> data) {
 		entity = new Consignatario();
@@ -30,6 +31,8 @@ public class ConsignatarioModel {
 		session.save(entity);
 		
 		session.getTransaction().commit();
+
+		close();
 		
 		return entity.getId();
 	}
@@ -52,17 +55,19 @@ public class ConsignatarioModel {
 	}
 	
 	public static List findAll() {
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		List categorias = session.createQuery("FROM Consignatario").list();
 		return categorias;
 	}
 	
 	
 	public static Consignatario findOneWhere(String prop, String val){
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		
 		String hql =  "FROM Consignatario where " + prop + " = " + val;
 		Consignatario c = (Consignatario) session.createQuery(hql).uniqueResult();
+		
+		close();
 		
 		return (Consignatario) c;
 	}
@@ -70,12 +75,14 @@ public class ConsignatarioModel {
 	public void deleteById(int id) throws MySQLIntegrityConstraintViolationException, ConstraintViolationException {
 		entity = findOneWhere("id", String.valueOf(id));
 		
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();
 		
 		session.delete(entity);
 		
 		session.getTransaction().commit();
+		
+		close();
 	}
 
 	public void saveConsignatario(int theId, HashMap<String, Object> data) {
@@ -88,5 +95,11 @@ public class ConsignatarioModel {
 		session.update(entity);
 		
 		session.getTransaction().commit();
+		
+		close();
+	}
+	
+	public static void close() {
+		session.close();
 	}
 }

@@ -9,7 +9,7 @@ import br.arthur.entities.Status;
 import br.arthur.utils.HibernateUtil;
 
 public class StatusModel {
-	Session session;
+	private static Session session;
 
 	public List findAll() {
 		session = HibernateUtil.getSessionFactory().openSession();
@@ -20,7 +20,7 @@ public class StatusModel {
 	}
 	
 	public Status findOneWhere(String prop, String val) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		
 		String hql =  "FROM Status where " + prop + " = " + val;
 		Status s = (Status) session.createQuery(hql).uniqueResult();
@@ -28,4 +28,7 @@ public class StatusModel {
 		return (Status) s;
 	}
 	
+	public static void close() {
+		session.close();
+	}
 }

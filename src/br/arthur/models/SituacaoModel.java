@@ -8,9 +8,10 @@ import br.arthur.entities.Situacao;
 import br.arthur.utils.HibernateUtil;
 
 public class SituacaoModel {
+	private static Session session;	
 
 	public static List findAll() {
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		
 		List situacoes = session.createQuery("FROM Situacao ORDER BY name").list();
 		
@@ -19,12 +20,16 @@ public class SituacaoModel {
 	
 	
 	public static Situacao findOneWhere(String prop, String val){
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		
 		String hql =  "FROM Situacao where " + prop + " = " + val;
 		System.out.println(hql);
 		Situacao e = (Situacao) session.createQuery(hql).uniqueResult();
 		
 		return (Situacao) e;
+	}
+	
+	public static void close() {
+		session.close();
 	}
 }

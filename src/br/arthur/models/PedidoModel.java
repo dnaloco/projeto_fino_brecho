@@ -12,13 +12,14 @@ import br.arthur.utils.HibernateUtil;
 
 public class PedidoModel {
 	private Pedido entity;
+	private static Session session;
 
 	public int createPedido(Consignatario consignatario) {
 		entity = new Pedido();
 		
 		entity.setConsignaratio(consignatario);
 		
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 
 		session.beginTransaction();
 		
@@ -26,33 +27,44 @@ public class PedidoModel {
 		
 		session.getTransaction().commit();
 		
+		close();
+		
 		return entity.getId();
 	}
 	
 	public static List findAll() {
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		List pedidos = session.createQuery("FROM Pedido").list();
+		
+		close();
+		
 		return pedidos;
 	}
 	
 	public static Pedido findOneWhere(String prop, String val){
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		
 		String hql =  "FROM Pedido where " + prop + " = " + val;
 		Pedido p = (Pedido) session.createQuery(hql).uniqueResult();
+		
+		close();
 		
 		return (Pedido) p;
 	}
 	
 
 	public static List findWhere(String prop, String val) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		
 		String hql =  "FROM Pedido where " + prop + " = " + val;
 		List pedidos = session.createQuery(hql).list();
 		
-		session.close();
+		close();
 		
 		return pedidos;
+	}
+	
+	public static void close() {
+		session.close();
 	}
 }

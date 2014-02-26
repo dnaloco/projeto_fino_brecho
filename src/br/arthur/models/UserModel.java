@@ -14,6 +14,8 @@ import br.arthur.utils.HibernateUtil;
 import br.arthur.utils.PasswordUtil;
 
 public class UserModel {
+	private static Session session;
+	
 	public int createUser(Map<String, Object> data) {
 		User u = new User();
 		
@@ -36,28 +38,39 @@ public class UserModel {
 		
 		u.setCreatedAt(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 		
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();
 		
 		session.save(u);
 		
 		session.getTransaction().commit();
 		
+		close();
+		
 		return u.getId();
 	}
 	
 	public List findAll() {
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
+		
+		close();
 		
 		return session.createQuery("FROM User").list();
 	}
 	
 	public User findOneWhere(String prop, String val) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		
 		String hql =  "FROM User where " + prop + " = " + val;
 		User u = (User) session.createQuery(hql).uniqueResult();
 		
+		close();
+		
 		return (User) u;
+	}
+	
+	
+	public static void close() {
+		session.close();
 	}
 }

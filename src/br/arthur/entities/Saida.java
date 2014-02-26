@@ -22,7 +22,7 @@ public class Saida {
 	@JoinColumn(name="cliente_fk", nullable=false)
 	private Cliente cliente;
 	@ManyToOne
-	@JoinColumn(name="estado_fk", nullable=false)
+	@JoinColumn(name="entrada_fk", nullable=false)
 	private Entrada entrada;
 	
 	@Column(name="quantidate")

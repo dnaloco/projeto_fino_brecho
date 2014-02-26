@@ -27,4 +27,8 @@ public class MarcaModel {
 		
 		return (Marca) m;
 	}
+	
+	public static void close() {
+		session.close();
+	}
 }

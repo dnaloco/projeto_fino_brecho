@@ -4,8 +4,11 @@ import java.sql.Blob;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -17,6 +20,9 @@ public class Imagem {
 	private int id;
 	@Column(name="imagem_blob")
 	private Blob imagemBlob;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Entrada entrada;
 	
 	public Imagem() {
 		
@@ -26,6 +32,28 @@ public class Imagem {
 		this.imagemBlob = imagemBlob;
 	}
 	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public Blob getImagemBlob() {
+		return imagemBlob;
+	}
+	public void setImagemBlob(Blob imagemBlob) {
+		this.imagemBlob = imagemBlob;
+	}
+	
+	public Entrada getEntrada() {
+		return entrada;
+	}
+
+	public void setEntrada(Entrada entrada) {
+		this.entrada = entrada;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -46,16 +74,6 @@ public class Imagem {
 			return false;
 		return true;
 	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public Blob getImagemBlob() {
-		return imagemBlob;
-	}
-	public void setImagemBlob(Blob imagemBlob) {
-		this.imagemBlob = imagemBlob;
-	}
+
+	
 }

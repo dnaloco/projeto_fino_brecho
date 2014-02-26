@@ -8,8 +8,9 @@ import br.arthur.entities.Estado;
 import br.arthur.utils.HibernateUtil;
 
 public class EstadoModel {
+	private static Session session;
 	public static List findAll() {
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		
 		List estados = session.createQuery("FROM Estado ORDER BY name").list();
 		
@@ -18,11 +19,15 @@ public class EstadoModel {
 	
 	
 	public static Estado findOneWhere(String prop, String val){
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		
 		String hql =  "FROM Estado where " + prop + " = " + val;
 		Estado e = (Estado) session.createQuery(hql).uniqueResult();
 		
 		return (Estado) e;
+	}
+	
+	public static void close() {
+		session.close();
 	}
 }
