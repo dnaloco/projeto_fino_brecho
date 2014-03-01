@@ -1,4 +1,4 @@
-package br.arthur.interfaces.visualizacoes;
+package br.arthur.interfaces.consultas;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -10,7 +10,7 @@ import javax.swing.JTextField;
 
 import br.arthur.models.UserModel;
 
-public class VisualizarUsuarios extends JInternalFrame {
+public class ConsultarUsuarios extends JInternalFrame {
 	private JTable table;
 	private JTextField txtId;
 	private JTextField txtUser;
@@ -27,7 +27,7 @@ public class VisualizarUsuarios extends JInternalFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					VisualizarUsuarios frame = new VisualizarUsuarios();
+					ConsultarUsuarios frame = new ConsultarUsuarios();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -39,7 +39,7 @@ public class VisualizarUsuarios extends JInternalFrame {
 	/**
 	 * Create the frame.
 	 */
-	public VisualizarUsuarios() {
+	public ConsultarUsuarios() {
 		setBounds(100, 100, 827, 300);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 

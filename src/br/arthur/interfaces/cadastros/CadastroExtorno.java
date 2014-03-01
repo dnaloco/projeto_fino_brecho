@@ -1,0 +1,33 @@
+package br.arthur.interfaces.cadastros;
+
+import java.awt.EventQueue;
+
+import javax.swing.JInternalFrame;
+
+public class CadastroExtorno extends JInternalFrame {
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					CadastroExtorno frame = new CadastroExtorno();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public CadastroExtorno() {
+		setBounds(100, 100, 450, 300);
+
+	}
+
+}

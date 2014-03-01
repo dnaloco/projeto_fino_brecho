@@ -2,12 +2,15 @@ package br.arthur.interfaces.cadastros.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
@@ -16,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import antlr.debug.Event;
 import br.arthur.entities.Pedido;
 import br.arthur.models.PedidoModel;
 
@@ -23,6 +27,8 @@ import com.lowagie.text.pdf.events.IndexEvents.Entry;
 
 import javax.swing.SpringLayout;
 import javax.swing.JScrollPane;
+import javax.swing.JLabel;
+import java.awt.Font;
 
 public class PedidoDialog extends JDialog {
 	
@@ -42,7 +48,7 @@ public class PedidoDialog extends JDialog {
 	public PedidoDialog(int consigId) {
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 436);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		
@@ -105,11 +111,17 @@ public class PedidoDialog extends JDialog {
 		
 		
 		JScrollPane scrollPane = new JScrollPane(table);
-		sl_contentPanel.putConstraint(SpringLayout.NORTH, scrollPane, 5, SpringLayout.NORTH, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.WEST, scrollPane, 5, SpringLayout.WEST, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.SOUTH, scrollPane, 214, SpringLayout.NORTH, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.EAST, scrollPane, 419, SpringLayout.WEST, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.SOUTH, scrollPane, -5, SpringLayout.SOUTH, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, scrollPane, -5, SpringLayout.EAST, contentPanel);
 		contentPanel.add(scrollPane);
+		
+		JLabel lblPedidosFiltradosPor = new JLabel("Pedidos Filtrados Por Consignat\u00E1rio:");
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, scrollPane, 6, SpringLayout.SOUTH, lblPedidosFiltradosPor);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, scrollPane, 0, SpringLayout.WEST, lblPedidosFiltradosPor);
+		lblPedidosFiltradosPor.setFont(new Font("SansSerif", Font.BOLD, 14));
+		sl_contentPanel.putConstraint(SpringLayout.WEST, lblPedidosFiltradosPor, 5, SpringLayout.WEST, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblPedidosFiltradosPor, 0, SpringLayout.NORTH, contentPanel);
+		contentPanel.add(lblPedidosFiltradosPor);
 		{		    
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -117,12 +129,31 @@ public class PedidoDialog extends JDialog {
 			{
 				JButton okButton = new JButton("OK");
 				okButton.setActionCommand("OK");
+				okButton.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent evt) {
+						JOptionPane.showMessageDialog(null, "Pedido selecionado: " +  theId);
+						dispose();
+					}
+					
+				});
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.setActionCommand("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// TODO Auto-generated method stub
+						theId = 0;
+						dispose();
+					}
+					
+				});
 				buttonPane.add(cancelButton);
 			}
 		}

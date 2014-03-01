@@ -48,7 +48,7 @@ public class CadastroCategoria extends JInternalFrame {
 		setInheritsPopupMenu(true);
 		setIgnoreRepaint(true);
 
-		setBounds(100, 100, 269, 443);
+		setBounds(100, 100, 269, 369);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 		
@@ -72,7 +72,7 @@ public class CadastroCategoria extends JInternalFrame {
 		
 		JButton btnSalvar = new JButton("Salvar");
 		springLayout.putConstraint(SpringLayout.NORTH, btnSalvar, 6, SpringLayout.SOUTH, txtCategoria);
-		springLayout.putConstraint(SpringLayout.EAST, btnSalvar, 0, SpringLayout.EAST, txtCategoria);
+		springLayout.putConstraint(SpringLayout.EAST, btnSalvar, -10, SpringLayout.EAST, getContentPane());
 		btnSalvar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				HashMap<String, Object> c = new HashMap();
@@ -105,23 +105,18 @@ public class CadastroCategoria extends JInternalFrame {
 		});
 		getContentPane().add(btnSalvar);
 		
-		JButton btnBuscar = new JButton("Buscar");
-		springLayout.putConstraint(SpringLayout.WEST, btnSalvar, 0, SpringLayout.WEST, btnBuscar);
-		springLayout.putConstraint(SpringLayout.NORTH, btnBuscar, 0, SpringLayout.NORTH, lblCategoriaID);
-		springLayout.putConstraint(SpringLayout.EAST, btnBuscar, -10, SpringLayout.EAST, getContentPane());
-		getContentPane().add(btnBuscar);
-		
 		JPanel panel = new JPanel();
 		springLayout.putConstraint(SpringLayout.NORTH, panel, 6, SpringLayout.SOUTH, btnSalvar);
-		springLayout.putConstraint(SpringLayout.SOUTH, panel, -8, SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel, -10, SpringLayout.SOUTH, getContentPane());
 		panel.setBorder(new TitledBorder(null, "Lista de Categorias", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		springLayout.putConstraint(SpringLayout.WEST, panel, 0, SpringLayout.WEST, lblCategoriaID);
 		springLayout.putConstraint(SpringLayout.EAST, panel, 0, SpringLayout.EAST, txtCategoria);
 		getContentPane().add(panel);
 		
 		JButton btnCancelar = new JButton("Cancelar");
+		springLayout.putConstraint(SpringLayout.SOUTH, btnCancelar, -6, SpringLayout.NORTH, panel);
+		springLayout.putConstraint(SpringLayout.WEST, btnSalvar, 81, SpringLayout.EAST, btnCancelar);
 		springLayout.putConstraint(SpringLayout.WEST, btnCancelar, 10, SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, btnCancelar, 0, SpringLayout.SOUTH, btnSalvar);
 		getContentPane().add(btnCancelar);
 	}
 }

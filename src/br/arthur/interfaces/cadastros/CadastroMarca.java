@@ -8,6 +8,8 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 
 public class CadastroMarca extends JInternalFrame {
 	private JTextField txtMarca;
@@ -33,7 +35,7 @@ public class CadastroMarca extends JInternalFrame {
 	 */
 	public CadastroMarca() {
 		setTitle("Cadastro de Categoria");
-		setBounds(100, 100, 260, 133);
+		setBounds(100, 100, 260, 377);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 		
@@ -57,14 +59,22 @@ public class CadastroMarca extends JInternalFrame {
 		
 		JButton btnSalvar = new JButton("Salvar");
 		springLayout.putConstraint(SpringLayout.NORTH, btnSalvar, 6, SpringLayout.SOUTH, txtMarca);
-		springLayout.putConstraint(SpringLayout.EAST, btnSalvar, 0, SpringLayout.EAST, txtMarca);
+		springLayout.putConstraint(SpringLayout.EAST, btnSalvar, -10, SpringLayout.EAST, getContentPane());
 		getContentPane().add(btnSalvar);
 		
-		JButton btnBuscar = new JButton("Buscar");
-		springLayout.putConstraint(SpringLayout.NORTH, btnBuscar, -5, SpringLayout.NORTH, lblMarcaID);
-		springLayout.putConstraint(SpringLayout.EAST, btnBuscar, 0, SpringLayout.EAST, txtMarca);
+		JButton btnBuscar = new JButton("Cancelar");
+		springLayout.putConstraint(SpringLayout.WEST, btnSalvar, 60, SpringLayout.EAST, btnBuscar);
+		springLayout.putConstraint(SpringLayout.NORTH, btnBuscar, 6, SpringLayout.SOUTH, txtMarca);
+		springLayout.putConstraint(SpringLayout.WEST, btnBuscar, 0, SpringLayout.WEST, lblMarcaID);
 		getContentPane().add(btnBuscar);
+		
+		JPanel panel = new JPanel();
+		springLayout.putConstraint(SpringLayout.NORTH, panel, 6, SpringLayout.SOUTH, btnSalvar);
+		springLayout.putConstraint(SpringLayout.SOUTH, panel, -10, SpringLayout.SOUTH, getContentPane());
+		panel.setBorder(new TitledBorder(null, "Lista de Marcas", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		springLayout.putConstraint(SpringLayout.WEST, panel, 10, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, panel, 0, SpringLayout.EAST, txtMarca);
+		getContentPane().add(panel);
 
 	}
-
 }

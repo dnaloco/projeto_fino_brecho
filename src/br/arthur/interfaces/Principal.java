@@ -250,7 +250,7 @@ public class Principal extends JFrame {
 		});
 		mnCadastro.add(mntmConsignatrio);
 		
-		JMenuItem mntmPedido = new JMenuItem("Pedido");
+		JMenuItem mntmPedido = new JMenuItem("Entrada");
 		mnCadastro.add(mntmPedido);
 		
 		JSeparator separator_4 = new JSeparator();
@@ -291,9 +291,6 @@ public class Principal extends JFrame {
 				
 				mnCadastro.add(mntmUsurio);
 				
-				JMenuItem mntmAlterarSenha = new JMenuItem("Alterar Senha");
-				mnCadastro.add(mntmAlterarSenha);
-				
 				JSeparator separator_1 = new JSeparator();
 				mnCadastro.add(separator_1);
 				
@@ -329,9 +326,6 @@ public class Principal extends JFrame {
 		JMenuItem mntmCaixa = new JMenuItem("Caixa");
 		mnFinanceiro.add(mntmCaixa);
 		
-		JMenuItem mntmComisso = new JMenuItem("Comiss\u00E3o");
-		mnFinanceiro.add(mntmComisso);
-		
 		JMenuItem mntmVendas = new JMenuItem("Vendas");
 		mnFinanceiro.add(mntmVendas);
 		
@@ -347,17 +341,35 @@ public class Principal extends JFrame {
 		JMenuItem mntmSaldoEmAberto = new JMenuItem("Saldo em Aberto");
 		mnFinanceiro.add(mntmSaldoEmAberto);
 		
+		JSeparator separator_6 = new JSeparator();
+		mnFinanceiro.add(separator_6);
+		
+		JMenuItem mntmContasPagar = new JMenuItem("Contas \u00E0 Pagar");
+		mnFinanceiro.add(mntmContasPagar);
+		
+		JMenuItem mntmContasReceber = new JMenuItem("Contas \u00E0 Receber");
+		mnFinanceiro.add(mntmContasReceber);
+		
 		JMenu mnManuteno = new JMenu("Manuten\u00E7\u00E3o");
 		menuBar.add(mnManuteno);
+		
+		JMenuItem mntmEcf = new JMenuItem("ECF");
+		mnManuteno.add(mntmEcf);
 		
 		JMenuItem mntmBackup = new JMenuItem("Backup");
 		mnManuteno.add(mntmBackup);
 		
+		JMenuItem mntmEventos = new JMenuItem("Eventos");
+		mnManuteno.add(mntmEventos);
+		
+		JSeparator separator_7 = new JSeparator();
+		mnManuteno.add(separator_7);
+		
 		JMenuItem mntmUsurios = new JMenuItem("Usu\u00E1rios");
 		mnManuteno.add(mntmUsurios);
 		
-		JMenuItem mntmEventos = new JMenuItem("Eventos");
-		mnManuteno.add(mntmEventos);
+		JMenuItem mntmAlterarSenha = new JMenuItem("Alterar Senha");
+		mnManuteno.add(mntmAlterarSenha);
 		
 		JMenu mnRelatrio = new JMenu("Relat\u00F3rio");
 		menuBar.add(mnRelatrio);
@@ -376,21 +388,6 @@ public class Principal extends JFrame {
 		
 		JMenuItem mntmUsurios_2 = new JMenuItem("Usu\u00E1rios");
 		mnRelatrio.add(mntmUsurios_2);
-		
-		JMenuItem mntmEstoque = new JMenuItem("Estoque");
-		mnRelatrio.add(mntmEstoque);
-		
-		JMenuItem mntmComisso_1 = new JMenuItem("Comiss\u00E3o");
-		mnRelatrio.add(mntmComisso_1);
-		
-		JMenu mnConfigurao = new JMenu("Configura\u00E7\u00E3o");
-		menuBar.add(mnConfigurao);
-		
-		JMenuItem mntmEcf = new JMenuItem("ECF");
-		mnConfigurao.add(mntmEcf);
-		
-		JMenuItem mntmSistema = new JMenuItem("Trocar Fundo");
-		mnConfigurao.add(mntmSistema);
 		
 		JMenu mnSobre = new JMenu("Sobre");
 		menuBar.add(mnSobre);

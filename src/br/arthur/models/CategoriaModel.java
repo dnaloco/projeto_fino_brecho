@@ -20,7 +20,6 @@ public class CategoriaModel {
 		session.beginTransaction();
 		session.save(c);
 		session.getTransaction().commit();
-		
 		close();
 		
 		return c.getId();

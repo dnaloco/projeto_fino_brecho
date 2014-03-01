@@ -25,7 +25,7 @@ public class ConsignatarioModel {
 		setData(data);
 		entity.setCreatedAt(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 		
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();
 		
 		session.save(entity);
@@ -89,7 +89,7 @@ public class ConsignatarioModel {
 		entity = findOneWhere("id", String.valueOf(theId));
 		setData(data);
 		
-		Session session = HibernateUtil.getSessionFactory().openSession();
+		session = HibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();
 		
 		session.update(entity);

@@ -58,5 +58,6 @@
 	<classpathentry kind="lib" path="libs/ireports/poi-ooxml-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="libs/ireports/poi-ooxml-schemas-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="libs/ireports/servlet-api-2.4.jar"/>
+	<classpathentry kind="lib" path="forms-1.3.0.jar" sourcepath="forms-1.3.0-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
