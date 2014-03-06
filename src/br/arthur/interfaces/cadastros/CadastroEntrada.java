@@ -123,7 +123,7 @@ public class CadastroEntrada extends JInternalFrame {
 	private JButton btnCancelarConsig;
 	private JButton btnExcluirConsig;
 	private JLabel lblProdutoSelecionado;
-	private JLabel lblNovoPedido;
+	private JLabel lblNovaEntrada;
 	private JButton btnCancelarProduto;
 	private JButton btnExcluirProd;
 
@@ -842,9 +842,10 @@ public class CadastroEntrada extends JInternalFrame {
 						String.valueOf(consigId));
 
 				if (pedidoId == 0) {
+					System.out.println("aasdqwe");
 					pedidoId = pm.createPedido(ce);
 					JOptionPane.showMessageDialog(null, "Novo número de entrada gerado! [" + pedidoId + "]");
-					lblNovoPedido.setText("Entrada ID: " + pedidoId);
+					lblNovaEntrada.setText("Entrada ID: " + pedidoId);
 				}
 
 				if (pedidoId > 0) {
@@ -1050,13 +1051,13 @@ public class CadastroEntrada extends JInternalFrame {
 		});
 		pecarPanel.add(btnRecuperarPedido);
 
-		lblNovoPedido = new JLabel("Nova Entrada");
-		sl_pecarPanel.putConstraint(SpringLayout.SOUTH, lblNovoPedido, -393, SpringLayout.SOUTH, pecarPanel);
-		sl_pecarPanel.putConstraint(SpringLayout.NORTH, btnRecuperarPedido, -4, SpringLayout.NORTH, lblNovoPedido);
-		sl_pecarPanel.putConstraint(SpringLayout.WEST, btnRecuperarPedido, 132, SpringLayout.EAST, lblNovoPedido);
-		sl_pecarPanel.putConstraint(SpringLayout.WEST, lblNovoPedido, 0, SpringLayout.WEST, panel_2);
-		lblNovoPedido.setFont(new Font("SansSerif", Font.BOLD, 14));
-		pecarPanel.add(lblNovoPedido);
+		lblNovaEntrada = new JLabel("Nova Entrada");
+		sl_pecarPanel.putConstraint(SpringLayout.SOUTH, lblNovaEntrada, -393, SpringLayout.SOUTH, pecarPanel);
+		sl_pecarPanel.putConstraint(SpringLayout.NORTH, btnRecuperarPedido, -4, SpringLayout.NORTH, lblNovaEntrada);
+		sl_pecarPanel.putConstraint(SpringLayout.WEST, btnRecuperarPedido, 132, SpringLayout.EAST, lblNovaEntrada);
+		sl_pecarPanel.putConstraint(SpringLayout.WEST, lblNovaEntrada, 0, SpringLayout.WEST, panel_2);
+		lblNovaEntrada.setFont(new Font("SansSerif", Font.BOLD, 14));
+		pecarPanel.add(lblNovaEntrada);
 
 		btnExcluirProd = new JButton("Excluir", new ImageIcon(
 				"images/delete-icon.png"));
@@ -1855,7 +1856,7 @@ public class CadastroEntrada extends JInternalFrame {
 			limparProduto();
 			limparAvaliacao();
 
-			lblNovoPedido.setText("Entrad ID: " + pedidoId);
+			lblNovaEntrada.setText("Entrad ID: " + pedidoId);
 		}
 		tabbedPanePedido.setEnabledAt(3, true);
 		tabbedPanePedido.setEnabledAt(4, true);
@@ -1994,7 +1995,7 @@ public class CadastroEntrada extends JInternalFrame {
 
 	protected void limparConsignatario() {
 		lblNovoConsig.setText("Novo Consignatário");
-		lblNovoPedido.setText("Nova Entrada");
+		lblNovaEntrada.setText("Nova Entrada");
 
 		limparProduto();
 		limparAvaliacao();

@@ -14,7 +14,7 @@ public class SituacaoModel {
 		session = HibernateUtil.getSessionFactory().openSession();
 		
 		List situacoes = session.createQuery("FROM Situacao ORDER BY name").list();
-		
+		close();
 		return situacoes;
 	}
 	

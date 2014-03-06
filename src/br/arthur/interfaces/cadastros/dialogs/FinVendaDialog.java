@@ -1,7 +1,7 @@
 package br.arthur.interfaces.cadastros.dialogs;
 
-import java.awt.EventQueue;
-import java.awt.Font;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -10,7 +10,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JInternalFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -23,7 +23,9 @@ import br.arthur.entities.Saida;
 import br.arthur.entities.User;
 import br.arthur.models.SaidaModel;
 
-public class FinalizarVendaDialog extends JInternalFrame {
+import com.lowagie.text.Font;
+
+public class FinVendaDialog extends JDialog {
 	private JTextField txtPago;
 	private JTextField txtDesconto;
 	private static HeaderSaida hSaida;
@@ -31,43 +33,43 @@ public class FinalizarVendaDialog extends JInternalFrame {
 	private static User vendedor;
 
 	private SaidaModel sm = new SaidaModel();
-	
+
+	private final JPanel contentPanel = new JPanel();
+
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					FinalizarVendaDialog frame = new FinalizarVendaDialog(hSaida, cliente, vendedor);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		try {
+			FinVendaDialog dialog = new FinVendaDialog(hSaida, cliente, vendedor);
+			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
-	 * Create the frame.
+	 * Create the dialog.
 	 */
-	public FinalizarVendaDialog(HeaderSaida hSaida, Cliente cliente, User vendedor) {
-
+	public FinVendaDialog(HeaderSaida hSaida, Cliente cliente, User vendedor) {
+		setModal(true);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		
 		List produtos = sm.findWhere("header_saida_fk", String.valueOf(hSaida.getId()));
 		
 		for(Object o : produtos) {
 			String s = ((Saida) o).getEntrada().getDescricao();
+			System.out.println(s);
 		}
 		
 		setTitle("Finalizar Venda");
-		setBounds(100, 100, 520, 266);
+		setBounds(100, 100, 523, 331);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 		
 		JPanel panel = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel, 10, SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, panel, 10, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, panel, 68, SpringLayout.NORTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, panel, -10, SpringLayout.EAST, getContentPane());
 		panel.setBorder(new TitledBorder(null, "Resumo Venda", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		getContentPane().add(panel);
@@ -79,7 +81,6 @@ public class FinalizarVendaDialog extends JInternalFrame {
 		panel.setLayout(gbl_panel);
 		
 		JLabel lblNumNf = new JLabel("Num. NF / S\u00E9rie:");
-		lblNumNf.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblNumNf = new GridBagConstraints();
 		gbc_lblNumNf.anchor = GridBagConstraints.EAST;
 		gbc_lblNumNf.insets = new Insets(0, 0, 5, 5);
@@ -95,7 +96,6 @@ public class FinalizarVendaDialog extends JInternalFrame {
 		panel.add(label, gbc_label);
 		
 		JLabel lblCliente = new JLabel("Cliente:");
-		lblCliente.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblCliente = new GridBagConstraints();
 		gbc_lblCliente.anchor = GridBagConstraints.EAST;
 		gbc_lblCliente.insets = new Insets(0, 0, 5, 5);
@@ -111,7 +111,6 @@ public class FinalizarVendaDialog extends JInternalFrame {
 		panel.add(lblNomeCliente, gbc_lblNomeCliente);
 		
 		JLabel lblQuantidadeItens = new JLabel("Quantidade Itens:");
-		lblQuantidadeItens.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblQuantidadeItens = new GridBagConstraints();
 		gbc_lblQuantidadeItens.insets = new Insets(0, 0, 0, 5);
 		gbc_lblQuantidadeItens.gridx = 0;
@@ -127,7 +126,6 @@ public class FinalizarVendaDialog extends JInternalFrame {
 		panel.add(lblQtde, gbc_lblQtde);
 		
 		JLabel lblValorTotal = new JLabel("Valor Total:");
-		lblValorTotal.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblValorTotal = new GridBagConstraints();
 		gbc_lblValorTotal.insets = new Insets(0, 0, 0, 5);
 		gbc_lblValorTotal.gridx = 3;
@@ -142,24 +140,25 @@ public class FinalizarVendaDialog extends JInternalFrame {
 		panel.add(lblTotal, gbc_lblTotal);
 		
 		JPanel panel_1 = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 98, SpringLayout.NORTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, panel_1, 10, SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -44, SpringLayout.SOUTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, panel_1, -10, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, panel, 0, SpringLayout.WEST, panel_1);
 		springLayout.putConstraint(SpringLayout.SOUTH, panel, -6, SpringLayout.NORTH, panel_1);
+		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 156, SpringLayout.NORTH, getContentPane());
 		panel_1.setBorder(new TitledBorder(null, "Forma de Pagamento", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		getContentPane().add(panel_1);
 		
 		JButton btnNewButton = new JButton("Confirmar Venda");
-		springLayout.putConstraint(SpringLayout.NORTH, btnNewButton, 6, SpringLayout.SOUTH, panel_1);
-		springLayout.putConstraint(SpringLayout.WEST, btnNewButton, -265, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -6, SpringLayout.NORTH, btnNewButton);
 		springLayout.putConstraint(SpringLayout.EAST, btnNewButton, -10, SpringLayout.EAST, getContentPane());
 		getContentPane().add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Voltar p/ Venda");
-		springLayout.putConstraint(SpringLayout.NORTH, btnNewButton_1, 6, SpringLayout.SOUTH, panel_1);
 		springLayout.putConstraint(SpringLayout.WEST, btnNewButton_1, 10, SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, btnNewButton_1, -6, SpringLayout.WEST, btnNewButton);
+		springLayout.putConstraint(SpringLayout.EAST, btnNewButton_1, -271, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, btnNewButton, 0, SpringLayout.NORTH, btnNewButton_1);
+		springLayout.putConstraint(SpringLayout.WEST, btnNewButton, 6, SpringLayout.EAST, btnNewButton_1);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnNewButton_1, -10, SpringLayout.SOUTH, getContentPane());
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
 		gbl_panel_1.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_panel_1.rowHeights = new int[]{0, 0, 0};
@@ -168,7 +167,6 @@ public class FinalizarVendaDialog extends JInternalFrame {
 		panel_1.setLayout(gbl_panel_1);
 		
 		JLabel lblFormaPagto = new JLabel("Forma Pagto:");
-		lblFormaPagto.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblFormaPagto = new GridBagConstraints();
 		gbc_lblFormaPagto.anchor = GridBagConstraints.EAST;
 		gbc_lblFormaPagto.insets = new Insets(0, 0, 5, 5);
@@ -186,7 +184,6 @@ public class FinalizarVendaDialog extends JInternalFrame {
 		panel_1.add(comboBox_1, gbc_comboBox_1);
 		
 		JLabel lblNewLabel = new JLabel("Parcelas:");
-		lblNewLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.EAST;
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
@@ -204,7 +201,6 @@ public class FinalizarVendaDialog extends JInternalFrame {
 		panel_1.add(comboBox, gbc_comboBox);
 		
 		JLabel lblValorPago = new JLabel("Valor Pago:");
-		lblValorPago.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblValorPago = new GridBagConstraints();
 		gbc_lblValorPago.anchor = GridBagConstraints.EAST;
 		gbc_lblValorPago.insets = new Insets(0, 0, 5, 5);
@@ -223,7 +219,6 @@ public class FinalizarVendaDialog extends JInternalFrame {
 		txtPago.setColumns(10);
 		
 		JLabel lblDesconto = new JLabel("Desconto:");
-		lblDesconto.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblDesconto = new GridBagConstraints();
 		gbc_lblDesconto.anchor = GridBagConstraints.EAST;
 		gbc_lblDesconto.insets = new Insets(0, 0, 0, 5);
@@ -243,7 +238,6 @@ public class FinalizarVendaDialog extends JInternalFrame {
 		txtDesconto.setColumns(10);
 		
 		JLabel lblTotalPago = new JLabel("Total Pago:");
-		lblTotalPago.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblTotalPago = new GridBagConstraints();
 		gbc_lblTotalPago.anchor = GridBagConstraints.EAST;
 		gbc_lblTotalPago.insets = new Insets(0, 0, 0, 5);
@@ -259,7 +253,6 @@ public class FinalizarVendaDialog extends JInternalFrame {
 		panel_1.add(lblTotalpago, gbc_lblTotalpago);
 		
 		JLabel lblTroco = new JLabel("Troco:");
-		lblTroco.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblTroco = new GridBagConstraints();
 		gbc_lblTroco.insets = new Insets(0, 0, 0, 5);
 		gbc_lblTroco.anchor = GridBagConstraints.EAST;
@@ -274,5 +267,22 @@ public class FinalizarVendaDialog extends JInternalFrame {
 		panel_1.add(lblNewLabel_1, gbc_lblNewLabel_1);
 		getContentPane().add(btnNewButton_1);
 
+		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		{
+			JPanel buttonPane = new JPanel();
+			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+			getContentPane().add(buttonPane, BorderLayout.SOUTH);
+			{
+				JButton okButton = new JButton("OK");
+				okButton.setActionCommand("OK");
+				buttonPane.add(okButton);
+				getRootPane().setDefaultButton(okButton);
+			}
+			{
+				JButton cancelButton = new JButton("Cancel");
+				cancelButton.setActionCommand("Cancel");
+				buttonPane.add(cancelButton);
+			}
+		}
 	}
 }

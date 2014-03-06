@@ -1,17 +1,30 @@
 package br.arthur.interfaces.consultas;
 
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
@@ -32,10 +45,14 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import br.arthur.entities.Entrada;
-import br.arthur.models.EntradaModel;
+import org.hibernate.LazyInitializationException;
 
-import com.lowagie.text.pdf.events.IndexEvents.Entry;
+import br.arthur.entities.Entrada;
+import br.arthur.entities.Imagem;
+import br.arthur.models.EntradaModel;
+import br.arthur.utils.MyIteratorUtil;
+
+import com.lowagie.text.Image;
 
 public class ConsultarProduto extends JInternalFrame {
 	private JTextField txtCor;
@@ -54,6 +71,17 @@ public class ConsultarProduto extends JInternalFrame {
 	
 	private DefaultTableModel model;
 	private JTable table;
+	
+	private MyIteratorUtil imgListIter;
+	private int imgCount = 0;
+	private int imgTotalCount;
+	private JLabel lblCountImg;
+	private JButton btnFirstImg;
+	private JButton btnPreviousImg;
+	private JButton btnLastImg;
+	private JButton btnNextImg;
+	
+	private EntradaModel em = new EntradaModel();
 
 	/**
 	 * Launch the application.
@@ -104,7 +132,7 @@ public class ConsultarProduto extends JInternalFrame {
 		panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		getContentPane().add(panel_1);
 		
-		JButton btnFirstImg = new JButton("<<");
+		btnFirstImg = new JButton("<<");
 		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -6, SpringLayout.NORTH, btnFirstImg);
 		springLayout.putConstraint(SpringLayout.WEST, btnFirstImg, 0, SpringLayout.WEST, panel);
 		springLayout.putConstraint(SpringLayout.SOUTH, btnFirstImg, -6, SpringLayout.NORTH, panel);
@@ -307,7 +335,7 @@ public class ConsultarProduto extends JInternalFrame {
 		panel.add(btnFiltrar, gbc_btnFiltrar);
 		getContentPane().add(btnFirstImg);
 		
-		JButton btnPreviousImg = new JButton("<");
+		btnPreviousImg = new JButton("<");
 		springLayout.putConstraint(SpringLayout.WEST, btnPreviousImg, 4, SpringLayout.EAST, btnFirstImg);
 		springLayout.putConstraint(SpringLayout.SOUTH, btnPreviousImg, -6, SpringLayout.NORTH, panel);
 		btnPreviousImg.addActionListener(new ActionListener() {
@@ -316,7 +344,7 @@ public class ConsultarProduto extends JInternalFrame {
 		});
 		getContentPane().add(btnPreviousImg);
 		
-		JButton btnLastImg = new JButton(">>");
+		btnLastImg = new JButton(">>");
 		springLayout.putConstraint(SpringLayout.NORTH, btnLastImg, 0, SpringLayout.NORTH, btnFirstImg);
 		springLayout.putConstraint(SpringLayout.EAST, btnLastImg, -760, SpringLayout.EAST, getContentPane());
 		getContentPane().add(btnLastImg);
@@ -394,6 +422,15 @@ public class ConsultarProduto extends JInternalFrame {
 	    };
 	    
 	    table = new JTable(model);
+	    table.addMouseListener(new MouseAdapter() {
+	    	@Override
+	    	public void mouseClicked(MouseEvent arg0) {
+	    		int linhaSelecionadaProduto = table.getSelectedRow();
+	    		
+	    		int prodId = (int) table.getValueAt(linhaSelecionadaProduto, 0);    		
+	    		
+	    	}
+	    });
 	    
 	    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
@@ -424,13 +461,13 @@ public class ConsultarProduto extends JInternalFrame {
 		JScrollPane scrollPaneProdutos = new JScrollPane(table);
 		panel_2.add(scrollPaneProdutos, "name_10326065285220");
 		
-		JLabel lblImgcount = new JLabel("0/0");
-		lblImgcount.setFont(new Font("SansSerif", Font.BOLD, 14));
-		lblImgcount.setHorizontalAlignment(SwingConstants.CENTER);
-		springLayout.putConstraint(SpringLayout.WEST, lblImgcount, 6, SpringLayout.EAST, btnPreviousImg);
-		springLayout.putConstraint(SpringLayout.SOUTH, lblImgcount, -6, SpringLayout.NORTH, panel);
-		springLayout.putConstraint(SpringLayout.EAST, lblImgcount, -6, SpringLayout.WEST, btnNextImg);
-		getContentPane().add(lblImgcount);
+		lblCountImg = new JLabel("0/0");
+		lblCountImg.setFont(new Font("SansSerif", Font.BOLD, 14));
+		lblCountImg.setHorizontalAlignment(SwingConstants.CENTER);
+		springLayout.putConstraint(SpringLayout.WEST, lblCountImg, 6, SpringLayout.EAST, btnPreviousImg);
+		springLayout.putConstraint(SpringLayout.SOUTH, lblCountImg, -6, SpringLayout.NORTH, panel);
+		springLayout.putConstraint(SpringLayout.EAST, lblCountImg, -6, SpringLayout.WEST, btnNextImg);
+		getContentPane().add(lblCountImg);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -496,4 +533,5 @@ public class ConsultarProduto extends JInternalFrame {
 		mnRelatrios.add(mntmGerarTodos);
 
 	}
+
 }

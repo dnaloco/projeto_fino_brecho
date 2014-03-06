@@ -1,5 +1,7 @@
 package br.arthur.entities;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -65,6 +67,11 @@ public class FormaPagto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public static List findAll() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

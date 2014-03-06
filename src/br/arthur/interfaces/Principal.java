@@ -126,6 +126,7 @@ public class Principal extends JFrame {
 		panel.add(lblUsurio, gbc_lblUsurio);
 		
 		JLabel lblUserid = new JLabel(String.valueOf(ulog.getId()));
+		lblUserid.setFont(new Font("SansSerif", Font.BOLD, 13));
 		lblUserid.setForeground(new Color(0, 0, 255));
 		GridBagConstraints gbc_lblUserid = new GridBagConstraints();
 		gbc_lblUserid.anchor = GridBagConstraints.WEST;
@@ -145,8 +146,11 @@ public class Principal extends JFrame {
 		panel.add(lblNomeUsurio, gbc_lblNomeUsurio);
 		
 		JLabel lblUsername = new JLabel(ulog.getName());
+		lblUsername.setFont(new Font("SansSerif", Font.BOLD, 13));
+		lblUsername.setHorizontalAlignment(SwingConstants.LEFT);
 		lblUsername.setForeground(new Color(0, 0, 255));
 		GridBagConstraints gbc_lblUsername = new GridBagConstraints();
+		gbc_lblUsername.anchor = GridBagConstraints.WEST;
 		gbc_lblUsername.insets = new Insets(0, 0, 5, 0);
 		gbc_lblUsername.gridx = 2;
 		gbc_lblUsername.gridy = 2;
@@ -163,8 +167,11 @@ public class Principal extends JFrame {
 		panel.add(lblGrupoUsurio, gbc_lblGrupoUsurio);
 		
 		JLabel lblUsergroup = new JLabel(ulog.getGroup().getName());
+		lblUsergroup.setFont(new Font("SansSerif", Font.BOLD, 13));
+		lblUsergroup.setHorizontalAlignment(SwingConstants.LEFT);
 		lblUsergroup.setForeground(new Color(0, 0, 255));
 		GridBagConstraints gbc_lblUsergroup = new GridBagConstraints();
+		gbc_lblUsergroup.anchor = GridBagConstraints.WEST;
 		gbc_lblUsergroup.gridx = 2;
 		gbc_lblUsergroup.gridy = 3;
 		panel.add(lblUsergroup, gbc_lblUsergroup);
@@ -274,6 +281,18 @@ public class Principal extends JFrame {
 				obj.setVisible(true);
 			}
 		});
+		
+		JMenuItem mntmProdutos_2 = new JMenuItem("Produtos");
+		mnCadastro.add(mntmProdutos_2);
+		mntmProdutos_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ConsultarProduto obj = new ConsultarProduto();
+				jDesktopPanelPrincipal.add(obj);
+				obj.setVisible(true);
+			}
+		});
+		mntmProdutos_2.setIcon((new ImageIcon(
+				"images/products-small.jpg")));
 		mnCadastro.add(mntmPedido);
 		
 		JSeparator separator_4 = new JSeparator();
@@ -350,47 +369,6 @@ public class Principal extends JFrame {
 				});
 				mnCadastro.add(mntmSair);
 		
-		JMenu mnVisualizar = new JMenu("Consultar");
-		menuBar.add(mnVisualizar);
-		
-		JMenuItem mntmConsignatrios = new JMenuItem("Consignat\u00E1rios");
-		mntmConsignatrios.setIcon(new ImageIcon("images/Zoom-icon.png"));
-		mnVisualizar.add(mntmConsignatrios);
-		
-		JMenuItem mntmClientes = new JMenuItem("Clientes");
-		mntmClientes.setIcon(new ImageIcon("images/Zoom-icon.png"));
-		mnVisualizar.add(mntmClientes);
-		
-		JSeparator separator_8 = new JSeparator();
-		mnVisualizar.add(separator_8);
-		
-		JMenuItem mntmProdutos = new JMenuItem("Entradas");
-		mntmProdutos.setIcon(new ImageIcon("images/Zoom-icon.png"));
-		mnVisualizar.add(mntmProdutos);
-		
-		JMenuItem mntmProdutos_2 = new JMenuItem("Produtos");
-		mntmProdutos_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ConsultarProduto obj = new ConsultarProduto();
-				jDesktopPanelPrincipal.add(obj);
-				obj.setVisible(true);
-			}
-		});
-		mnVisualizar.add(mntmProdutos_2);
-		mntmProdutos_2.setIcon((new ImageIcon(
-				"images/products-small.jpg")));
-		
-		JMenuItem mntmSadas = new JMenuItem("Sa\u00EDdas");
-		mntmSadas.setIcon(new ImageIcon("images/Zoom-icon.png"));
-		mnVisualizar.add(mntmSadas);
-		
-		JSeparator separator_3 = new JSeparator();
-		mnVisualizar.add(separator_3);
-		
-		JMenuItem mntmUsurios_1 = new JMenuItem("Usu\u00E1rios");
-		mntmUsurios_1.setIcon(new ImageIcon("images/Zoom-icon.png"));
-		mnVisualizar.add(mntmUsurios_1);
-		
 		JMenu mnFinanceiro = new JMenu("Financeiro");
 		menuBar.add(mnFinanceiro);
 		
@@ -416,6 +394,15 @@ public class Principal extends JFrame {
 		JMenuItem mntmContasReceber = new JMenuItem("Contas \u00E0 Receber");
 		mntmContasReceber.setIcon(new ImageIcon("images/balance-plus-icon.png"));
 		mnFinanceiro.add(mntmContasReceber);
+		
+		JSeparator separator_3 = new JSeparator();
+		mnFinanceiro.add(separator_3);
+		
+		JMenuItem mntmSaldoDevedor = new JMenuItem("Saldo Devedor");
+		mnFinanceiro.add(mntmSaldoDevedor);
+		
+		JMenuItem mntmSaldoEmAberto = new JMenuItem("Saldo em Aberto");
+		mnFinanceiro.add(mntmSaldoEmAberto);
 		
 		JMenu mnManuteno = new JMenu("Manuten\u00E7\u00E3o");
 		menuBar.add(mnManuteno);

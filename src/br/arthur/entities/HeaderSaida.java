@@ -38,9 +38,6 @@ public class HeaderSaida {
 	@JoinColumn(name="forma_pagto_fk")
 	private FormaPagto formaPagto;
 	
-	@Column(name="pagto")
-	private Pagto pagto;
-	
 	public HeaderSaida() {
 		
 	}
@@ -92,15 +89,6 @@ public class HeaderSaida {
 	public void setFormaPagto(FormaPagto formaPagto) {
 		this.formaPagto = formaPagto;
 	}
-	
-	@Enumerated(EnumType.STRING)
-	public Pagto getPagto() {
-		return pagto;
-	}
-
-	public void setPagto(Pagto pagto) {
-		this.pagto = pagto;
-	}
 
 	@Override
 	public int hashCode() {
@@ -112,7 +100,6 @@ public class HeaderSaida {
 		result = prime * result
 				+ ((formaPagto == null) ? 0 : formaPagto.hashCode());
 		result = prime * result + id;
-		result = prime * result + ((pagto == null) ? 0 : pagto.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(totalVenda);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -146,8 +133,6 @@ public class HeaderSaida {
 		} else if (!formaPagto.equals(other.formaPagto))
 			return false;
 		if (id != other.id)
-			return false;
-		if (pagto != other.pagto)
 			return false;
 		if (Double.doubleToLongBits(totalVenda) != Double
 				.doubleToLongBits(other.totalVenda))

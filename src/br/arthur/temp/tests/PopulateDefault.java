@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import br.arthur.entities.CatLastId;
 import br.arthur.entities.Categoria;
 import br.arthur.entities.Estado;
+import br.arthur.entities.FormaPagto;
 import br.arthur.entities.Group;
 import br.arthur.entities.Marca;
 import br.arthur.entities.Permission;
@@ -178,6 +179,12 @@ public class PopulateDefault {
 				"salto"
 		};
 		
+		String [] formasPagto = {
+				"dinheiro",
+				"débido",
+				"crédito"
+		};
+		
 		session.beginTransaction();
 		
 		for(String situacao : situacoesStr) {
@@ -200,6 +207,11 @@ public class PopulateDefault {
 			session.save(c);
 			CatLastId clid = new CatLastId(c.getId(), 1);
 			session.save(clid);
+		}
+		
+		for(String fp : formasPagto) {
+			FormaPagto f = new FormaPagto(fp);
+			session.save(f);
 		}
 
 		session.getTransaction().commit();

@@ -14,6 +14,8 @@ public class EstadoModel {
 		
 		List estados = session.createQuery("FROM Estado ORDER BY name").list();
 		
+		session.close();
+		
 		return estados;
 	}
 	

@@ -34,7 +34,7 @@ import br.arthur.entities.Cliente;
 import br.arthur.entities.Entrada;
 import br.arthur.entities.HeaderSaida;
 import br.arthur.interfaces.cadastros.dialogs.ClienteDialog;
-import br.arthur.interfaces.cadastros.dialogs.FinalizarVendaDialog;
+import br.arthur.interfaces.cadastros.dialogs.TestFinVen;
 import br.arthur.models.ClienteModel;
 import br.arthur.models.EntradaModel;
 import br.arthur.models.HeaderSaidaModel;
@@ -250,7 +250,7 @@ public class CadastroSaida extends JInternalFrame {
 		panel_2.setLayout(new CardLayout(0, 0));
 	
 		
-		String[] colunas = new String[] { "Código", "Descrição", "Qtde",
+		String[] colunas = new String[] { "Cód. Produto", "Descrição", "Qtde",
 				"Preço Un", "Subtotal"};
 		String[][] dataProdutoTable = new String[][] {};
 		
@@ -315,30 +315,31 @@ public class CadastroSaida extends JInternalFrame {
 		sl_panel.putConstraint(SpringLayout.WEST, lblNumVenda, 6, SpringLayout.EAST, lblNumNf);
 		panel.add(lblNumVenda);
 		
-		JButton btnFinaaalizarrrVendaaaa = new JButton("* Finalizar Venda *");
-		btnFinaaalizarrrVendaaaa.addActionListener(new ActionListener() {
+		JButton btnFinalizarVenda = new JButton("* Finalizar Venda *");
+		btnFinalizarVenda.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO
-				if (hSaidaId != 0 && clienteId != 0) {
+				System.out.println("aksdahshdjqkwe");
+				System.out.println(hSaidaId + " " + clienteId);
+				if (hSaidaId > 0 && clienteId > 0) {
 					HeaderSaida hse = hsm.findOneWhere("id", String.valueOf(hSaidaId));
 					Cliente ce = cm.findOneWhere("id", String.valueOf(clienteId));
 					
-					FinalizarVendaDialog cDiag = new FinalizarVendaDialog(hse, ce, login.getLoggedUser());
-					cDiag.setVisible(true);
+					TestFinVen fvDiag = new TestFinVen(hse, ce, login.getLoggedUser());
+					fvDiag.setVisible(true);
 				}
 			}
 		});
-		sl_panel.putConstraint(SpringLayout.NORTH, btnFinaaalizarrrVendaaaa, 6, SpringLayout.SOUTH, txtQtde);
-		sl_panel.putConstraint(SpringLayout.EAST, btnFinaaalizarrrVendaaaa, 0, SpringLayout.EAST, button);
-		panel.add(btnFinaaalizarrrVendaaaa);
+		sl_panel.putConstraint(SpringLayout.NORTH, btnFinalizarVenda, 6, SpringLayout.SOUTH, txtQtde);
+		sl_panel.putConstraint(SpringLayout.EAST, btnFinalizarVenda, 0, SpringLayout.EAST, button);
+		panel.add(btnFinalizarVenda);
 
 	}
 
 	protected void checkProduto(int prodId, LoginController login) {
 		int qtde = Integer.parseInt(txtQtde.getText());
 		if (qtde > 0) {
-			boolean hasEntrada = em.hasEntrada(prodId);
-			if(hasEntrada) {
+			if(em.hasEntrada(prodId)) {
 				Entrada ee = em.getEntity();
 				
 				boolean hasSaida = sm.hasSaida(prodId);
