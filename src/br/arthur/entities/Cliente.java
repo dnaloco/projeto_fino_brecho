@@ -7,11 +7,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="clientes")
 public class Cliente {
+
 	@Id
 	@GeneratedValue
 	@Column(name="cliente_id")
@@ -35,10 +38,148 @@ public class Cliente {
 	@Column(name="observacao", columnDefinition="TEXT")
 	private String observacao;
 	
+	@ManyToOne
+	@JoinColumn(name="ultima_compra_fk")
+	private Entrada ultimaCompra;
+	
 	public Cliente() {
 		
 	}
 	
+	
+
+	public int getId() {
+		return id;
+	}
+
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+
+
+	public String getNome() {
+		return nome;
+	}
+
+
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+
+
+	public String getTelefone() {
+		return telefone;
+	}
+
+
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
+
+
+	public String getCelular() {
+		return celular;
+	}
+
+
+
+	public void setCelular(String celular) {
+		this.celular = celular;
+	}
+
+
+
+	public String getEmail() {
+		return email;
+	}
+
+
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+
+
+	public String getSite() {
+		return site;
+	}
+
+
+
+	public void setSite(String site) {
+		this.site = site;
+	}
+
+
+
+	public Date getAniversario() {
+		return aniversario;
+	}
+
+
+
+	public void setAniversario(Date aniversario) {
+		this.aniversario = aniversario;
+	}
+
+
+
+	public Timestamp getCreatedAt() {
+		return createdAt;
+	}
+
+
+
+	public void setCreatedAt(Timestamp createdAt) {
+		this.createdAt = createdAt;
+	}
+
+
+
+	public boolean isPendencia() {
+		return pendencia;
+	}
+
+
+
+	public void setPendencia(boolean pendencia) {
+		this.pendencia = pendencia;
+	}
+
+
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+
+
+
+	public Entrada getUltimaCompra() {
+		return ultimaCompra;
+	}
+
+
+
+	public void setUltimaCompra(Entrada ultimaCompra) {
+		this.ultimaCompra = ultimaCompra;
+	}
+
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -49,14 +190,19 @@ public class Cliente {
 		result = prime * result
 				+ ((createdAt == null) ? 0 : createdAt.hashCode());
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + id;
 		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result
+				+ ((observacao == null) ? 0 : observacao.hashCode());
 		result = prime * result + (pendencia ? 1231 : 1237);
 		result = prime * result + ((site == null) ? 0 : site.hashCode());
 		result = prime * result
 				+ ((telefone == null) ? 0 : telefone.hashCode());
+		result = prime * result
+				+ ((ultimaCompra == null) ? 0 : ultimaCompra.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -93,6 +239,11 @@ public class Cliente {
 				return false;
 		} else if (!nome.equals(other.nome))
 			return false;
+		if (observacao == null) {
+			if (other.observacao != null)
+				return false;
+		} else if (!observacao.equals(other.observacao))
+			return false;
 		if (pendencia != other.pendencia)
 			return false;
 		if (site == null) {
@@ -105,61 +256,13 @@ public class Cliente {
 				return false;
 		} else if (!telefone.equals(other.telefone))
 			return false;
+		if (ultimaCompra == null) {
+			if (other.ultimaCompra != null)
+				return false;
+		} else if (!ultimaCompra.equals(other.ultimaCompra))
+			return false;
 		return true;
 	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public String getNome() {
-		return nome;
-	}
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-	public String getTelefone() {
-		return telefone;
-	}
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
-	}
-	public String getCelular() {
-		return celular;
-	}
-	public void setCelular(String celular) {
-		this.celular = celular;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getSite() {
-		return site;
-	}
-	public void setSite(String site) {
-		this.site = site;
-	}
-	public Date getAniversario() {
-		return aniversario;
-	}
-	public void setAniversario(Date aniversario) {
-		this.aniversario = aniversario;
-	}
-	public Timestamp getCreatedAt() {
-		return createdAt;
-	}
-	public void setCreatedAt(Timestamp createdAt) {
-		this.createdAt = createdAt;
-	}
-	public boolean isPendencia() {
-		return pendencia;
-	}
-	public void setPendencia(boolean pendencia) {
-		this.pendencia = pendencia;
-	}
+
 	
 }

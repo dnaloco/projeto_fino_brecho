@@ -1,5 +1,6 @@
 package br.arthur.models;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -16,8 +17,12 @@ public class ClienteModel {
 	private static Session session;
 	
 	public static List findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		session = HibernateUtil.getSessionFactory().openSession();
+		List clientes = session.createQuery("FROM Cliente").list();
+		
+		close();
+		
+		return clientes;
 	}
 	
 	public int createCliente(Map<String, Object> data) {
@@ -38,23 +43,51 @@ public class ClienteModel {
 		return entity.getId();
 	}
 
-	private void close() {
+	private static void close() {
 		session.close();
 	}
 
 	private void setData(Map<String, Object> data) {
 		entity.setNome((String) data.get("nome"));
-		entity.setNome((String) data.get("nome"));
-		entity.setNome((String) data.get("nome"));
-		entity.setNome((String) data.get("nome"));
-		entity.setNome((String) data.get("nome"));
-		entity.setNome((String) data.get("nome"));
-		entity.setNome((String) data.get("nome"));
+		entity.setTelefone((String) data.get("telefone"));
+		entity.setCelular((String) data.get("celular"));
+		entity.setEmail((String) data.get("email"));
+		entity.setSite((String) data.get("site"));
+		entity.setAniversario((Date) data.get("aniver"));
+		entity.setPendencia((Boolean) data.get("pendencia"));
+		entity.setObservacao((String) data.get("observ"));
 	}
+	
+	public static Cliente findOneWhere(String prop, String val){
+		session = HibernateUtil.getSessionFactory().openSession();
+		
+		String hql =  "FROM Cliente where " + prop + " = " + val;
+		Cliente c = (Cliente) session.createQuery(hql).uniqueResult();
+		
+		close();
+		
+		return (Cliente) c;
+	}
+	
 
 	public void saveCliente(int theId, HashMap<String, Object> data) {
-		// TODO Auto-generated method stub
+		entity = findOneWhere("id", String.valueOf(theId));
 		
+		setData(data);
+		
+		session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+		
+		session.update(entity);
+		
+		session.getTransaction().commit();
+		
+		close();
+	}
+
+	public Cliente getEntity() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

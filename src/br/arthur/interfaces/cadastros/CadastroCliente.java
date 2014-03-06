@@ -1,7 +1,6 @@
 package br.arthur.interfaces.cadastros;
 
-import groovyjarjarcommonscli.ParseException;
-
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -9,9 +8,12 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JInternalFrame;
@@ -24,6 +26,8 @@ import javax.swing.SpringLayout;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.MaskFormatter;
 
+import br.arthur.entities.Cliente;
+import br.arthur.interfaces.cadastros.dialogs.ClienteDialog;
 import br.arthur.models.ClienteModel;
 
 public class CadastroCliente extends JInternalFrame {
@@ -33,12 +37,16 @@ public class CadastroCliente extends JInternalFrame {
 	private JTextField txtSite;
 	private JTextField txtAniversario;
 	private JTextField txtNome;
-	private int theId;
+	private JTextArea textAreaObserv;
+	private static int theId;
 	private JLabel lblNovo;
 	
 	private JButton btnCancelar;
 	private JButton btnExcluir;
 	private JButton btnSalvar;
+	
+	private JLabel lblUltCompra;
+	private JLabel lblPend;
 
 	private ClienteModel cm = new ClienteModel();
 	/**
@@ -48,7 +56,7 @@ public class CadastroCliente extends JInternalFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CadastroCliente frame = new CadastroCliente();
+					CadastroCliente frame = new CadastroCliente(theId);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -60,7 +68,14 @@ public class CadastroCliente extends JInternalFrame {
 	/**
 	 * Create the frame.
 	 */
-	public CadastroCliente() throws ParseException {
+	public CadastroCliente(int id) {
+		setFrameIcon(new ImageIcon(
+				"images/clients.png"));
+		this.theId = id;
+		setClosable(true);
+		setIconifiable(true);
+		setInheritsPopupMenu(true);
+		setIgnoreRepaint(true);
 		setTitle("Cadastro de Cliente");
 		setBounds(100, 100, 442, 323);
 		SpringLayout springLayout = new SpringLayout();
@@ -109,15 +124,18 @@ public class CadastroCliente extends JInternalFrame {
 					data.put("email", txtEmail.getText());
 					data.put("site", txtSite.getText());
 					Calendar aniverCal = Calendar.getInstance();
-					if(txtAniversario.getText().length() > 9) {
+					if(txtAniversario.getText().matches("\\d{2}/\\d{2}/\\d{4}")) {
 						String[] aniverStr = txtAniversario.getText().split("/");
 						int ano = Integer.parseInt(aniverStr[2]);
 						int mes = Integer.parseInt(aniverStr[1]) + 1;
 						int dia = Integer.parseInt(aniverStr[0]);
 						aniverCal.set(ano, mes, dia);
-						data.put("aniver", aniverCal.getTime());
+						data.put("aniver", new java.sql.Date(aniverCal.getTime().getTime()));
+					} else {
+						data.put("aniver", null);
 					}
 					data.put("pendencia", false);
+					data.put("observ", textAreaObserv.getText());
 					String msgSuccess =  "";
 					
 					
@@ -129,14 +147,11 @@ public class CadastroCliente extends JInternalFrame {
 						lblNovo.setText(String.valueOf(theId));
 						
 						msgSuccess = "Cliente criado com sucesso!";
-						
-						btnCancelar.setEnabled(true);
-						btnExcluir.setEnabled(true);
-						btnSalvar.setEnabled(true);
 					}
 					
 					if(theId > 0) {
 						JOptionPane.showMessageDialog(null, msgSuccess);
+						enabledEditionButtons();
 					} else {
 						JOptionPane.showMessageDialog(null, "Não foi possível inserir o cliente.");
 					}
@@ -153,20 +168,28 @@ public class CadastroCliente extends JInternalFrame {
 		getContentPane().add(btnSalvar);
 		
 		btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				theId = 0;
+				limparCampos();
+			}
+		});
+		btnCancelar.setEnabled(false);
 		springLayout.putConstraint(SpringLayout.NORTH, btnCancelar, 6, SpringLayout.SOUTH, panel);
 		springLayout.putConstraint(SpringLayout.WEST, btnCancelar, 0, SpringLayout.WEST, lblClienteId);
 		springLayout.putConstraint(SpringLayout.EAST, btnCancelar, 0, SpringLayout.EAST, lblNovo);
 		getContentPane().add(btnCancelar);
 		
 		btnExcluir = new JButton("Excluir");
+		btnExcluir.setEnabled(false);
 		springLayout.putConstraint(SpringLayout.NORTH, btnExcluir, 0, SpringLayout.NORTH, btnSalvar);
 		springLayout.putConstraint(SpringLayout.WEST, btnExcluir, 6, SpringLayout.EAST, btnCancelar);
 		springLayout.putConstraint(SpringLayout.EAST, btnExcluir, -72, SpringLayout.WEST, btnSalvar);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0};
 		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_panel.columnWeights = new double[]{0.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
 		JLabel lblNome = new JLabel("Nome:");
@@ -278,14 +301,36 @@ public class CadastroCliente extends JInternalFrame {
 		panel.add(txtAniversario, gbc_txtAniversario);
 		txtAniversario.setColumns(10);
 		
-		JLabel lblPendncia = new JLabel("Possui Pend\u00EAncia? [sim/n\u00E3o]");
-		GridBagConstraints gbc_lblPendncia = new GridBagConstraints();
-		gbc_lblPendncia.gridwidth = 2;
-		gbc_lblPendncia.anchor = GridBagConstraints.EAST;
-		gbc_lblPendncia.insets = new Insets(0, 0, 5, 5);
-		gbc_lblPendncia.gridx = 2;
-		gbc_lblPendncia.gridy = 3;
-		panel.add(lblPendncia, gbc_lblPendncia);
+		JPanel panel_1 = new JPanel();
+		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
+		gbc_panel_1.gridwidth = 2;
+		gbc_panel_1.insets = new Insets(0, 0, 5, 5);
+		gbc_panel_1.fill = GridBagConstraints.BOTH;
+		gbc_panel_1.gridx = 2;
+		gbc_panel_1.gridy = 3;
+		panel.add(panel_1, gbc_panel_1);
+		SpringLayout sl_panel_1 = new SpringLayout();
+		panel_1.setLayout(sl_panel_1);
+		
+		JLabel lblPossuiPendncia = new JLabel("Possui pend\u00EAncia?");
+		sl_panel_1.putConstraint(SpringLayout.NORTH, lblPossuiPendncia, 0, SpringLayout.NORTH, panel_1);
+		sl_panel_1.putConstraint(SpringLayout.WEST, lblPossuiPendncia, 0, SpringLayout.WEST, panel_1);
+		panel_1.add(lblPossuiPendncia);
+		
+		lblPend = new JLabel("[S/N]");
+		sl_panel_1.putConstraint(SpringLayout.NORTH, lblPend, 0, SpringLayout.NORTH, lblPossuiPendncia);
+		sl_panel_1.putConstraint(SpringLayout.EAST, lblPend, 0, SpringLayout.EAST, panel_1);
+		panel_1.add(lblPend);
+		
+		JLabel lblltimaCompraid = new JLabel("\u00DAltima Compra(ID):");
+		sl_panel_1.putConstraint(SpringLayout.NORTH, lblltimaCompraid, 6, SpringLayout.SOUTH, lblPossuiPendncia);
+		sl_panel_1.putConstraint(SpringLayout.EAST, lblltimaCompraid, 0, SpringLayout.EAST, lblPossuiPendncia);
+		panel_1.add(lblltimaCompraid);
+		
+		lblUltCompra = new JLabel("000000");
+		sl_panel_1.putConstraint(SpringLayout.NORTH, lblUltCompra, 6, SpringLayout.SOUTH, lblPend);
+		sl_panel_1.putConstraint(SpringLayout.EAST, lblUltCompra, 0, SpringLayout.EAST, lblPend);
+		panel_1.add(lblUltCompra);
 		
 		JLabel lblObservaes = new JLabel("Observa\u00E7\u00F5es:");
 		GridBagConstraints gbc_lblObservaes = new GridBagConstraints();
@@ -295,21 +340,98 @@ public class CadastroCliente extends JInternalFrame {
 		gbc_lblObservaes.gridy = 4;
 		panel.add(lblObservaes, gbc_lblObservaes);
 		
-		JTextArea textArea = new JTextArea();
-		GridBagConstraints gbc_textArea = new GridBagConstraints();
-		gbc_textArea.gridwidth = 3;
-		gbc_textArea.fill = GridBagConstraints.BOTH;
-		gbc_textArea.gridx = 1;
-		gbc_textArea.gridy = 4;
-		panel.add(textArea, gbc_textArea);
+		textAreaObserv = new JTextArea();
+		GridBagConstraints gbc_textAreaObserv = new GridBagConstraints();
+		gbc_textAreaObserv.gridwidth = 3;
+		gbc_textAreaObserv.fill = GridBagConstraints.BOTH;
+		gbc_textAreaObserv.gridx = 1;
+		gbc_textAreaObserv.gridy = 4;
+		panel.add(textAreaObserv, gbc_textAreaObserv);
 		getContentPane().add(btnExcluir);
 		
 		JButton btnBuscarCliente = new JButton("Buscar Cliente");
+		btnBuscarCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (cm.findAll().size() > 0) {
+					ClienteDialog cDiag = new ClienteDialog();
+					cDiag.setVisible(true);
+
+					theId = cDiag.getTheId();
+
+					if (theId > 0) {
+						populateCampos();
+					}
+				} else {
+					JOptionPane
+							.showMessageDialog(null,
+									"Não existe ainda nenhum cliente registrado no sistema!");
+				}
+			}
+		});
 		springLayout.putConstraint(SpringLayout.SOUTH, btnBuscarCliente, -258, SpringLayout.SOUTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.NORTH, panel, 1, SpringLayout.SOUTH, btnBuscarCliente);
 		springLayout.putConstraint(SpringLayout.WEST, btnBuscarCliente, -180, SpringLayout.EAST, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, btnBuscarCliente, -10, SpringLayout.EAST, getContentPane());
 		getContentPane().add(btnBuscarCliente);
 
+	}
+
+	protected void populateCampos() {
+		Cliente c = ClienteModel.findOneWhere("id", String.valueOf(theId));
+		
+		lblNovo.setText(String.valueOf(c.getId()));
+		
+		txtNome.setText(c.getNome());
+		txtTelefone.setText(c.getTelefone());
+		txtCelular.setText(c.getCelular());
+		txtEmail.setText(c.getEmail());
+		txtSite.setText(c.getSite());
+
+		if (c.getAniversario() != null) {
+			DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			txtAniversario.setText(df.format(c.getAniversario()));
+		}
+		
+		if (c.isPendencia()) {
+			lblPend.setText("Sim");
+			lblPend.setForeground (Color.red);
+		} else {
+			lblPend.setText("Não");
+			lblPend.setForeground (Color.black);
+		}
+		
+		if (c.getUltimaCompra() != null) {
+			lblUltCompra.setText(String.valueOf(c.getUltimaCompra().getId()));
+		} else {
+			lblUltCompra.setText("000000");
+		}
+		
+		enabledEditionButtons();
+	}
+
+	protected void enabledEditionButtons() {
+		btnCancelar.setEnabled(true);
+		btnExcluir.setEnabled(true);
+	}
+	protected void disabledEditionButtons() {
+		btnCancelar.setEnabled(false);
+		btnExcluir.setEnabled(false);
+	}
+	
+	private void limparCampos() {
+		lblNovo.setText("NOVO");
+		
+		txtNome.setText("");
+		txtTelefone.setText("");
+		txtCelular.setText("");
+		txtEmail.setText("");
+		txtSite.setText("");
+		txtAniversario.setText("");
+		textAreaObserv.setText("");
+		
+		lblPend.setText("S/N");
+		lblUltCompra.setText("000000");
+		
+		disabledEditionButtons();
 	}
 }

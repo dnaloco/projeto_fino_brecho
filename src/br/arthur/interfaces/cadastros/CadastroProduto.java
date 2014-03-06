@@ -26,7 +26,8 @@ public class CadastroProduto extends JInternalFrame {
 	private JTextField textField_1;
 	private JTextField textField_2;
 	private JTextField textField_3;
-
+	private static int theId;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -34,7 +35,7 @@ public class CadastroProduto extends JInternalFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CadastroProduto frame = new CadastroProduto();
+					CadastroProduto frame = new CadastroProduto(theId);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -46,7 +47,8 @@ public class CadastroProduto extends JInternalFrame {
 	/**
 	 * Create the frame.
 	 */
-	public CadastroProduto() {
+	public CadastroProduto(int theId) {
+		this.theId = theId;
 		setBounds(100, 100, 530, 484);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
@@ -59,12 +61,12 @@ public class CadastroProduto extends JInternalFrame {
 		springLayout.putConstraint(SpringLayout.EAST, lblConsignatrio, -197, SpringLayout.EAST, getContentPane());
 		getContentPane().add(lblConsignatrio);
 		
-		JButton btnBuscarProduto = new JButton("Buscar Produto");
-		springLayout.putConstraint(SpringLayout.NORTH, btnBuscarProduto, 6, SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, btnBuscarProduto, 243, SpringLayout.EAST, lblProduto);
-		springLayout.putConstraint(SpringLayout.EAST, btnBuscarProduto, -10, SpringLayout.EAST, getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, lblProduto, 4, SpringLayout.NORTH, btnBuscarProduto);
-		getContentPane().add(btnBuscarProduto);
+		JButton btnAvaliarProduto = new JButton("Avaliar Produto");
+		springLayout.putConstraint(SpringLayout.NORTH, btnAvaliarProduto, 6, SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, btnAvaliarProduto, 243, SpringLayout.EAST, lblProduto);
+		springLayout.putConstraint(SpringLayout.EAST, btnAvaliarProduto, -10, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, lblProduto, 4, SpringLayout.NORTH, btnAvaliarProduto);
+		getContentPane().add(btnAvaliarProduto);
 		
 		JLabel lblConsigId = new JLabel("Consig. ID");
 		springLayout.putConstraint(SpringLayout.WEST, lblProduto, 0, SpringLayout.WEST, lblConsigId);
@@ -240,7 +242,7 @@ public class CadastroProduto extends JInternalFrame {
 		
 		JButton button_6 = new JButton("Excluir");
 		springLayout.putConstraint(SpringLayout.NORTH, button_6, 0, SpringLayout.NORTH, button_4);
-		springLayout.putConstraint(SpringLayout.EAST, button_6, 0, SpringLayout.EAST, btnBuscarProduto);
+		springLayout.putConstraint(SpringLayout.EAST, button_6, 0, SpringLayout.EAST, btnAvaliarProduto);
 		getContentPane().add(button_6);
 		
 		JButton btnNewButton_1 = new JButton("Salvar Produto");
@@ -259,7 +261,7 @@ public class CadastroProduto extends JInternalFrame {
 		springLayout.putConstraint(SpringLayout.SOUTH, btnNewButton_2, -6, SpringLayout.NORTH, btnExcluirProduto);
 		springLayout.putConstraint(SpringLayout.WEST, btnExcluirProduto, 6, SpringLayout.EAST, panel_1);
 		springLayout.putConstraint(SpringLayout.SOUTH, btnExcluirProduto, -7, SpringLayout.NORTH, btnNewButton_1);
-		springLayout.putConstraint(SpringLayout.EAST, btnExcluirProduto, 0, SpringLayout.EAST, btnBuscarProduto);
+		springLayout.putConstraint(SpringLayout.EAST, btnExcluirProduto, 0, SpringLayout.EAST, btnAvaliarProduto);
 		getContentPane().add(btnExcluirProduto);
 		
 		JLabel lblNewLabel = new JLabel("Produto Indispon\u00EDvel (05/02/2014)");
@@ -283,7 +285,7 @@ public class CadastroProduto extends JInternalFrame {
 		
 		JLabel label_8 = new JLabel("01/01/2014");
 		springLayout.putConstraint(SpringLayout.NORTH, label_8, 6, SpringLayout.SOUTH, panel);
-		springLayout.putConstraint(SpringLayout.EAST, label_8, 0, SpringLayout.EAST, btnBuscarProduto);
+		springLayout.putConstraint(SpringLayout.EAST, label_8, 0, SpringLayout.EAST, btnAvaliarProduto);
 		getContentPane().add(label_8);
 		
 		JLabel lblDataVencimento = new JLabel("Data Vencimento:");
@@ -293,12 +295,12 @@ public class CadastroProduto extends JInternalFrame {
 		
 		JLabel label_9 = new JLabel("01/01/2014");
 		springLayout.putConstraint(SpringLayout.SOUTH, label_9, 0, SpringLayout.SOUTH, lblDataVencimento);
-		springLayout.putConstraint(SpringLayout.EAST, label_9, 0, SpringLayout.EAST, btnBuscarProduto);
+		springLayout.putConstraint(SpringLayout.EAST, label_9, 0, SpringLayout.EAST, btnAvaliarProduto);
 		getContentPane().add(label_9);
 		
 		JCheckBox chckbxNewCheckBox = new JCheckBox("Produto Recolhido");
 		springLayout.putConstraint(SpringLayout.NORTH, chckbxNewCheckBox, 6, SpringLayout.SOUTH, label_9);
-		springLayout.putConstraint(SpringLayout.EAST, chckbxNewCheckBox, 0, SpringLayout.EAST, btnBuscarProduto);
+		springLayout.putConstraint(SpringLayout.EAST, chckbxNewCheckBox, 0, SpringLayout.EAST, btnAvaliarProduto);
 		getContentPane().add(chckbxNewCheckBox);
 
 	}

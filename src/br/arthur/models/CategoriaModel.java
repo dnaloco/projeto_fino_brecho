@@ -1,17 +1,16 @@
 package br.arthur.models;
 
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.Session;
 
+import br.arthur.entities.CatLastId;
 import br.arthur.entities.Categoria;
-import br.arthur.entities.Group;
 import br.arthur.utils.HibernateUtil;
 
 public class CategoriaModel {
 	static Session session;
-	
+	private Categoria entity;
 	public int createCategoria(String categoria) {
 		Categoria c = new Categoria(categoria);
 		
@@ -19,6 +18,8 @@ public class CategoriaModel {
 		
 		session.beginTransaction();
 		session.save(c);
+		CatLastId clid = new CatLastId(c.getId(), 1);
+		session.save(clid);
 		session.getTransaction().commit();
 		close();
 		
@@ -46,5 +47,18 @@ public class CategoriaModel {
 	
 	public static void close() {
 		session.close();
+	}
+
+	public void deleteById(int theId) {
+		entity = findOneWhere("id", String.valueOf(theId));
+		
+		session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+		
+		session.delete(entity);
+		
+		session.getTransaction().commit();
+		
+		close();
 	}
 }

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
@@ -77,6 +78,9 @@ public class CadastroConsignatario extends JInternalFrame {
 	 */
 	public CadastroConsignatario(int id) {
 		this.theId = id;
+		// TODO Popular se for maior do que zero
+		setFrameIcon(new ImageIcon(
+				"images/consigs-small.png"));
 		setClosable(true);
 		setIconifiable(true);
 		setInheritsPopupMenu(true);
@@ -449,13 +453,19 @@ public class CadastroConsignatario extends JInternalFrame {
 		springLayout.putConstraint(SpringLayout.EAST, button, -10, SpringLayout.EAST, getContentPane());
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				ConsignatarioDialog cDiag = new ConsignatarioDialog();
-				cDiag.setVisible(true);
-				
-				theId = cDiag.getTheId();
-				
-				if (theId > 0) {
-					populateMe();
+				if (cm.findAll().size() > 0) {
+					ConsignatarioDialog cDiag = new ConsignatarioDialog();
+					cDiag.setVisible(true);
+
+					theId = cDiag.getTheId();
+
+					if (theId > 0) {
+						populateMe();
+					}
+				} else {
+					JOptionPane
+							.showMessageDialog(null,
+									"Não existe ainda nenhum consignatário registrado no sistema!");
 				}
 			}
 		});
@@ -466,19 +476,26 @@ public class CadastroConsignatario extends JInternalFrame {
 		btnExcluir = new JButton("Excluir");
 		btnExcluir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					cm.deleteById(theId);
-					limparCampos();
-					JOptionPane.showMessageDialog(null, "Registro excluido");
-				} catch (MySQLIntegrityConstraintViolationException e1) {
-					// TODO Auto-generated catch block
-					JOptionPane.showMessageDialog(null, "Não é possível excluir este consignatário. A pedidos ligados ao mesmo.");
-					e1.printStackTrace();
-				} catch (ConstraintViolationException ex) {
-					JOptionPane.showMessageDialog(null, "Não é possível excluir este consignatário. A pedidos ligados ao mesmo.");
-					ex.printStackTrace();
+				int opcao;
+				opcao = JOptionPane.showConfirmDialog(null,
+						"Deseja Realmente excluir o consignatário " + theId + "?", "Atencão",
+						JOptionPane.YES_NO_OPTION);
+				if (opcao == JOptionPane.YES_OPTION) {
+					try {
+						cm.deleteById(theId);
+						limparCampos();
+						JOptionPane.showMessageDialog(null, "Registro excluido");
+					} catch (MySQLIntegrityConstraintViolationException e1) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(null, "Não é possível excluir este consignatário. A entradas ligados ao mesmo.");
+						e1.printStackTrace();
+					} catch (ConstraintViolationException ex) {
+						JOptionPane.showMessageDialog(null, "Não é possível excluir este consignatário. A entradas ligados ao mesmo.");
+						ex.printStackTrace();
+					}
+					
 				}
-				
+
 			}
 		});
 		btnExcluir.setEnabled(false);

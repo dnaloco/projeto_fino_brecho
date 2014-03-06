@@ -20,8 +20,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import antlr.debug.Event;
-import br.arthur.entities.Pedido;
-import br.arthur.models.PedidoModel;
+import br.arthur.entities.HeaderEntrada;
+import br.arthur.models.HeaderEntradaModel;
 
 import com.lowagie.text.pdf.events.IndexEvents.Entry;
 
@@ -30,7 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import java.awt.Font;
 
-public class PedidoDialog extends JDialog {
+public class HeaderEntradaDialog extends JDialog {
 	
 	private JTable table;
 	private int theId;
@@ -45,7 +45,7 @@ public class PedidoDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 
-	public PedidoDialog(int consigId) {
+	public HeaderEntradaDialog(int consigId) {
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 436);
@@ -54,21 +54,19 @@ public class PedidoDialog extends JDialog {
 		
 		Vector<String> colunas = new Vector();
 		
-		colunas.add("Pedido ID");
-		colunas.add("Consig. ID");
+		colunas.add("Entrada ID");
 		colunas.add("Nome Consignatário");
 		
 		Vector tableData = new Vector();
 		
 		// TODO Procurar apenas pelo id do consignatário
 		
-		for(Object o : PedidoModel.findWhere("consignatario_fk", String.valueOf(consigId))) {
-			Pedido p = (Pedido) o;
+		for(Object o : HeaderEntradaModel.findWhere("consignatario_fk", String.valueOf(consigId))) {
+			HeaderEntrada he = (HeaderEntrada) o;
 			Vector<Object> oneRow = new Vector<Object>();
 			
-			oneRow.add(p.getId());
-			oneRow.add(p.getConsignaratio().getId());
-			oneRow.add(p.getConsignaratio().getNome());
+			oneRow.add(he.getId());
+			oneRow.add(he.getConsignatario().getNome());
 			
 			tableData.add(oneRow);
 		}
@@ -115,7 +113,7 @@ public class PedidoDialog extends JDialog {
 		sl_contentPanel.putConstraint(SpringLayout.EAST, scrollPane, -5, SpringLayout.EAST, contentPanel);
 		contentPanel.add(scrollPane);
 		
-		JLabel lblPedidosFiltradosPor = new JLabel("Pedidos Filtrados Por Consignat\u00E1rio:");
+		JLabel lblPedidosFiltradosPor = new JLabel("Entradas Filtradas Por Consignat\u00E1rio:");
 		sl_contentPanel.putConstraint(SpringLayout.NORTH, scrollPane, 6, SpringLayout.SOUTH, lblPedidosFiltradosPor);
 		sl_contentPanel.putConstraint(SpringLayout.WEST, scrollPane, 0, SpringLayout.WEST, lblPedidosFiltradosPor);
 		lblPedidosFiltradosPor.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -133,7 +131,7 @@ public class PedidoDialog extends JDialog {
 
 					@Override
 					public void actionPerformed(ActionEvent evt) {
-						JOptionPane.showMessageDialog(null, "Pedido selecionado: " +  theId);
+						JOptionPane.showMessageDialog(null, "Entrada selecionada: " +  theId);
 						dispose();
 					}
 					

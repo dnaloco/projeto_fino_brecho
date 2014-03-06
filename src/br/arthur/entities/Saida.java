@@ -1,6 +1,7 @@
 package br.arthur.entities;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,88 +18,23 @@ public class Saida {
 	@GeneratedValue
 	@Column(name="saida_id")
 	private int id;
-	
-	@ManyToOne
-	@JoinColumn(name="cliente_fk", nullable=false)
-	private Cliente cliente;
+
 	@ManyToOne
 	@JoinColumn(name="entrada_fk", nullable=false)
 	private Entrada entrada;
 	
 	@Column(name="quantidate")
 	private int quantidate;
-	@Column(name="preco")
-	private double preco;
+
 	@Column(name="data_saida")
-	private Date dataSaida;
+	private Timestamp dataSaida;
+	
 	@ManyToOne
-	@JoinColumn(name="forma_pagto_fk", nullable=false)
-	private FormaPagto formaPagto;
-	@Column(name="pagto")
-	private boolean pagto;
+	@JoinColumn(name="header_saida_fk", nullable=false)
+	private HeaderSaida headerSaida;
 	
 	public Saida() {
 		
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((cliente == null) ? 0 : cliente.hashCode());
-		result = prime * result
-				+ ((dataSaida == null) ? 0 : dataSaida.hashCode());
-		result = prime * result + ((entrada == null) ? 0 : entrada.hashCode());
-		result = prime * result
-				+ ((formaPagto == null) ? 0 : formaPagto.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + (pagto ? 1231 : 1237);
-		long temp;
-		temp = Double.doubleToLongBits(preco);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + quantidate;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Saida other = (Saida) obj;
-		if (cliente == null) {
-			if (other.cliente != null)
-				return false;
-		} else if (!cliente.equals(other.cliente))
-			return false;
-		if (dataSaida == null) {
-			if (other.dataSaida != null)
-				return false;
-		} else if (!dataSaida.equals(other.dataSaida))
-			return false;
-		if (entrada == null) {
-			if (other.entrada != null)
-				return false;
-		} else if (!entrada.equals(other.entrada))
-			return false;
-		if (formaPagto == null) {
-			if (other.formaPagto != null)
-				return false;
-		} else if (!formaPagto.equals(other.formaPagto))
-			return false;
-		if (id != other.id)
-			return false;
-		if (pagto != other.pagto)
-			return false;
-		if (Double.doubleToLongBits(preco) != Double
-				.doubleToLongBits(other.preco))
-			return false;
-		if (quantidate != other.quantidate)
-			return false;
-		return true;
 	}
 
 	public int getId() {
@@ -107,14 +43,6 @@ public class Saida {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public Cliente getCliente() {
-		return cliente;
-	}
-
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
 	}
 
 	public Entrada getEntrada() {
@@ -133,36 +61,65 @@ public class Saida {
 		this.quantidate = quantidate;
 	}
 
-	public double getPreco() {
-		return preco;
-	}
-
-	public void setPreco(double preco) {
-		this.preco = preco;
-	}
-
-	public Date getDataSaida() {
+	public Timestamp getDataSaida() {
 		return dataSaida;
 	}
 
-	public void setDataSaida(Date dataSaida) {
+	public void setDataSaida(Timestamp dataSaida) {
 		this.dataSaida = dataSaida;
 	}
 
-	public FormaPagto getFormaPagto() {
-		return formaPagto;
+	public HeaderSaida getHeaderSaida() {
+		return headerSaida;
 	}
 
-	public void setFormaPagto(FormaPagto formaPagto) {
-		this.formaPagto = formaPagto;
+	public void setHeaderSaida(HeaderSaida headerSaida) {
+		this.headerSaida = headerSaida;
 	}
 
-	public boolean isPagto() {
-		return pagto;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((dataSaida == null) ? 0 : dataSaida.hashCode());
+		result = prime * result + ((entrada == null) ? 0 : entrada.hashCode());
+		result = prime * result
+				+ ((headerSaida == null) ? 0 : headerSaida.hashCode());
+		result = prime * result + id;
+		result = prime * result + quantidate;
+		return result;
 	}
 
-	public void setPagto(boolean pagto) {
-		this.pagto = pagto;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Saida other = (Saida) obj;
+		if (dataSaida == null) {
+			if (other.dataSaida != null)
+				return false;
+		} else if (!dataSaida.equals(other.dataSaida))
+			return false;
+		if (entrada == null) {
+			if (other.entrada != null)
+				return false;
+		} else if (!entrada.equals(other.entrada))
+			return false;
+		if (headerSaida == null) {
+			if (other.headerSaida != null)
+				return false;
+		} else if (!headerSaida.equals(other.headerSaida))
+			return false;
+		if (id != other.id)
+			return false;
+		if (quantidate != other.quantidate)
+			return false;
+		return true;
 	}
-
+	
 }

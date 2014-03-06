@@ -19,13 +19,12 @@ import javax.persistence.Table;
 @Table(name="entradas")
 public class Entrada {
 	@Id
-	@GeneratedValue
 	@Column(name="entrada_id")
 	private int id;
 	
 	@ManyToOne
-	@JoinColumn(name="pedido_fk", nullable=false)
-	private Pedido pedido;
+	@JoinColumn(name="header_entrada_fk", nullable=false)
+	private HeaderEntrada headerEntrada;
 
 	@Column(name="descricao")
 	private String descricao;
@@ -36,10 +35,13 @@ public class Entrada {
 	@ManyToOne
 	@JoinColumn(name="marca_fk", nullable=false)
 	private Marca marca;
-	@Column(length=30)
-	private String cor;
+	
 	@Column(length=30)
 	private String tamanho;
+	
+	@Column(length=30)
+	private String cor;
+
 
 	@Column(name="venda")
 	private double venda;
@@ -82,7 +84,9 @@ public class Entrada {
 	public Entrada() {
 		
 	}
+
 	
+
 	public int getId() {
 		return id;
 	}
@@ -95,14 +99,14 @@ public class Entrada {
 
 
 
-	public Pedido getPedido() {
-		return pedido;
+	public HeaderEntrada getHeaderEntrada() {
+		return headerEntrada;
 	}
 
 
 
-	public void setPedido(Pedido pedido) {
-		this.pedido = pedido;
+	public void setHeaderEntrada(HeaderEntrada headerEntrada) {
+		this.headerEntrada = headerEntrada;
 	}
 
 
@@ -143,18 +147,6 @@ public class Entrada {
 
 
 
-	public String getCor() {
-		return cor;
-	}
-
-
-
-	public void setCor(String cor) {
-		this.cor = cor;
-	}
-
-
-
 	public String getTamanho() {
 		return tamanho;
 	}
@@ -163,6 +155,18 @@ public class Entrada {
 
 	public void setTamanho(String tamanho) {
 		this.tamanho = tamanho;
+	}
+
+
+
+	public String getCor() {
+		return cor;
+	}
+
+
+
+	public void setCor(String cor) {
+		this.cor = cor;
 	}
 
 
@@ -321,8 +325,6 @@ public class Entrada {
 		this.imagens = imagens;
 	}
 
-
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -333,6 +335,8 @@ public class Entrada {
 		temp = Double.doubleToLongBits(comissao);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((cor == null) ? 0 : cor.hashCode());
+		temp = Double.doubleToLongBits(custo);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
 				+ ((dataEntrada == null) ? 0 : dataEntrada.hashCode());
 		result = prime * result
@@ -341,6 +345,8 @@ public class Entrada {
 				+ ((dataVencimento == null) ? 0 : dataVencimento.hashCode());
 		result = prime * result
 				+ ((descricao == null) ? 0 : descricao.hashCode());
+		result = prime * result
+				+ ((headerEntrada == null) ? 0 : headerEntrada.hashCode());
 		result = prime * result + id;
 		result = prime * result + ((imagens == null) ? 0 : imagens.hashCode());
 		result = prime * result + ((marca == null) ? 0 : marca.hashCode());
@@ -350,10 +356,7 @@ public class Entrada {
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
 				+ ((observacao == null) ? 0 : observacao.hashCode());
-		result = prime * result + ((pedido == null) ? 0 : pedido.hashCode());
 		result = prime * result + quantidate;
-		temp = Double.doubleToLongBits(custo);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
 				+ ((situacao == null) ? 0 : situacao.hashCode());
 		result = prime * result + ((tamanho == null) ? 0 : tamanho.hashCode());
@@ -387,6 +390,9 @@ public class Entrada {
 				return false;
 		} else if (!cor.equals(other.cor))
 			return false;
+		if (Double.doubleToLongBits(custo) != Double
+				.doubleToLongBits(other.custo))
+			return false;
 		if (dataEntrada == null) {
 			if (other.dataEntrada != null)
 				return false;
@@ -406,6 +412,11 @@ public class Entrada {
 			if (other.descricao != null)
 				return false;
 		} else if (!descricao.equals(other.descricao))
+			return false;
+		if (headerEntrada == null) {
+			if (other.headerEntrada != null)
+				return false;
+		} else if (!headerEntrada.equals(other.headerEntrada))
 			return false;
 		if (id != other.id)
 			return false;
@@ -430,15 +441,7 @@ public class Entrada {
 				return false;
 		} else if (!observacao.equals(other.observacao))
 			return false;
-		if (pedido == null) {
-			if (other.pedido != null)
-				return false;
-		} else if (!pedido.equals(other.pedido))
-			return false;
 		if (quantidate != other.quantidate)
-			return false;
-		if (Double.doubleToLongBits(custo) != Double
-				.doubleToLongBits(other.custo))
 			return false;
 		if (situacao == null) {
 			if (other.situacao != null)
@@ -462,9 +465,17 @@ public class Entrada {
 	}
 
 
+
 	public void addImage(Imagem ie) {
 		// TODO Auto-generated method stub
 		this.imagens.add(ie);
 	}
 
+	public void updateImage(Imagem ie) {
+		
+	}
+	
+	public void removeImage(Imagem ie) {
+		
+	}
 }

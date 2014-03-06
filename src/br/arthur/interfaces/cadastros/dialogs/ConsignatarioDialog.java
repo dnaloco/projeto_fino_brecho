@@ -147,6 +147,7 @@ public class ConsignatarioDialog extends JDialog {
 		    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
 		    sorter.setRowFilter(filter);
 		    table.setRowSorter(sorter);
+		    
 			scrollPane = new JScrollPane(table);
 			sl_contentPanel.putConstraint(SpringLayout.NORTH, scrollPane, 33, SpringLayout.NORTH, contentPanel);
 			sl_contentPanel.putConstraint(SpringLayout.WEST, scrollPane, 5, SpringLayout.WEST, contentPanel);

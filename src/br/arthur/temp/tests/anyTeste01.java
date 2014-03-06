@@ -1,18 +1,40 @@
 package br.arthur.temp.tests;
 
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+
+import br.arthur.utils.MyIteratorUtil;
 
 public class anyTeste01 {
 	public static void main(String[] args) {
-		String str = "Jamaica";
-		str = str.substring(1);
-		System.out.println(str);
+		List<Object> testIter = new ArrayList();
 		
+		testIter.add("arthur 1");
+		testIter.add("arthur 2");
+		testIter.add("arthur 3");
+		testIter.add("arthur 4");
+		testIter.add("arthur 5");
+		testIter.add("arthur 6");
+		testIter.add("arthur 7");
+		
+		MyIteratorUtil iter = new MyIteratorUtil(testIter);
+		System.out.println(iter.last());
+		while(iter.hasNext()) {
+			System.out.println(iter.next());
+			
+		}
+		System.out.println(iter.first());
+		while(iter.hasPrevious()) {
+			System.out.println(iter.previous());
+		}
+		System.out.println(iter.last());
+		while(iter.hasNext()) {
+			System.out.println(iter.next());
+			
+		}
+		
+		//System.out.println(iter.last());
+		//System.out.println(iter.first());
 	}
 }

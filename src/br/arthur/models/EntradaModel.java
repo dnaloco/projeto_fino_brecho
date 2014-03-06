@@ -6,13 +6,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.hibernate.Session;
 
 import br.arthur.entities.Categoria;
 import br.arthur.entities.Entrada;
 import br.arthur.entities.Imagem;
 import br.arthur.entities.Marca;
-import br.arthur.entities.Pedido;
+import br.arthur.entities.HeaderEntrada;
+import br.arthur.entities.Saida;
 import br.arthur.entities.Situacao;
 import br.arthur.entities.Tipo;
 import br.arthur.utils.HibernateUtil;
@@ -35,15 +38,50 @@ public class EntradaModel {
 		
 		close();
 	}
+	
+	public boolean hasEntrada(int productId) {
+		Entrada entrada =  findOneWhereDisponivel(String.valueOf(productId));
+		int entradaId = 0;
+		
+		try {
+			entradaId = entrada.getId();
+		} catch (NullPointerException ex) {
+			ex.printStackTrace();
+		}
+		
+		if (entradaId ==  0) {
+			return false;
+		}
+		entity = entrada;
+		return true;
+	}
+	
+	public Entrada getEntity() {
+		return entity;
+	}
+
+	private Entrada findOneWhereDisponivel(String id) {
+		session = HibernateUtil.getSessionFactory().openSession();
+		
+		String hql =  "FROM Entrada where id  = " + id + " and situacao_fk = 4";
+		Entrada e = (Entrada) session.createQuery(hql).uniqueResult();
+		
+		close();
+		
+		return (Entrada) e;
+	}
 
 	public int createEntrada(HashMap<String, Object> data) {
 		entity = new Entrada();
 		
-		Date myDate = new Date();
-		Timestamp hoje = new Timestamp(myDate.getTime());
-		data.put("entrada", hoje);
+		int cat = ((Categoria) data.get("categoria")).getId();
+		int clid = CatLastIdModel.getLastId(cat);
 		
-		entity.setPedido((Pedido) data.get("pedido"));
+		entity.setId((cat * 10000) + clid);
+		
+		CatLastIdModel.updateLastId(cat);
+		
+		entity.setHeaderEntrada((HeaderEntrada) data.get("header_entrada"));
 		entity.setDataInicio((Date) data.get("inicio"));
 		entity.setDataVencimento((Date) data.get("vencimento"));
 		entity.setSituacao((Situacao) data.get("situacao"));
@@ -111,10 +149,10 @@ public class EntradaModel {
 		close();
 	}
 	
-	public List findAll() {
+	public static List findAll() {
 		session = HibernateUtil.getSessionFactory().openSession();
 		
-		List estados = session.createQuery("FROM Entrada ORDER BY produto").list();
+		List estados = session.createQuery("FROM Entrada ORDER BY descricao").list();
 		
 		close();
 		
@@ -133,6 +171,7 @@ public class EntradaModel {
 	}
 	
 	private void setProduto(HashMap<String, Object> data) {
+		
 		entity.setDescricao((String) data.get("descricao"));
 		entity.setCategoria((Categoria) data.get("categoria"));
 		entity.setMarca((Marca) data.get("marca"));
@@ -146,7 +185,7 @@ public class EntradaModel {
 		entity.setMargemCusto((Double) data.get("margemCusto"));
 		entity.setMargemComissao((Double) data.get("margemComissao"));
 		entity.setDataInicio((Date) data.get("inicio"));
-		entity.setSituacao((Situacao) data.get("situacao"));
+		entity.setSituacao((Situacao) data.get("situacao"));		
 		entity.setDataVencimento((Date) data.get("vencimento"));
 		entity.setTipo((Tipo) data.get("tipo"));
 		entity.setObservacao((String) data.get("observacoes"));

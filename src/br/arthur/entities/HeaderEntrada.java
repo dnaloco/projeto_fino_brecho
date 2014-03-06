@@ -1,5 +1,7 @@
 package br.arthur.entities;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,23 +11,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="pedidos")
-public class Pedido {
+@Table(name="header_entrada")
+public class HeaderEntrada {
 	@Id
 	@GeneratedValue
-	@Column(name="pedido_id")
+	@Column(name="header_entrada_id")
 	private int id;
+	
+	@Column(name="data_entrada")
+	private Timestamp dataEntrada;
 	
 	@ManyToOne
 	@JoinColumn(name="consignatario_fk", nullable=false)
 	private Consignatario consignatario;
 
-	public Pedido() {
+	public HeaderEntrada() {
 		
-	}
-	
-	public Pedido(Consignatario consignatario) {
-		this.consignatario = consignatario;
 	}
 
 	public int getId() {
@@ -36,12 +37,20 @@ public class Pedido {
 		this.id = id;
 	}
 
-	public Consignatario getConsignaratio() {
+	public Timestamp getDataEntrada() {
+		return dataEntrada;
+	}
+
+	public void setDataEntrada(Timestamp dataEntrada) {
+		this.dataEntrada = dataEntrada;
+	}
+
+	public Consignatario getConsignatario() {
 		return consignatario;
 	}
 
-	public void setConsignaratio(Consignatario consignaratio) {
-		this.consignatario = consignaratio;
+	public void setConsignatario(Consignatario consignatario) {
+		this.consignatario = consignatario;
 	}
 
 	@Override
@@ -50,6 +59,8 @@ public class Pedido {
 		int result = 1;
 		result = prime * result
 				+ ((consignatario == null) ? 0 : consignatario.hashCode());
+		result = prime * result
+				+ ((dataEntrada == null) ? 0 : dataEntrada.hashCode());
 		result = prime * result + id;
 		return result;
 	}
@@ -62,15 +73,20 @@ public class Pedido {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Pedido other = (Pedido) obj;
+		HeaderEntrada other = (HeaderEntrada) obj;
 		if (consignatario == null) {
 			if (other.consignatario != null)
 				return false;
 		} else if (!consignatario.equals(other.consignatario))
 			return false;
+		if (dataEntrada == null) {
+			if (other.dataEntrada != null)
+				return false;
+		} else if (!dataEntrada.equals(other.dataEntrada))
+			return false;
 		if (id != other.id)
 			return false;
 		return true;
 	}
-
+	
 }

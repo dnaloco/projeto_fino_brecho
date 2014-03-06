@@ -24,14 +24,19 @@ public class ContaPagar {
 	
 	@Column(name="parcela")
 	private byte parcela;
+	
 	@Column(name="total_parcela")
 	private byte total_parcela;
+	
 	@Column(name="data_vencimento")
 	private Date dataVencimento;
+	
 	@Column(name="valor")
 	private double valor;
+	
 	@Column(name="data_pagto")
 	private Date dataPagto;
+	
 	@Column(name="pagto")
 	private boolean pagto;
 	

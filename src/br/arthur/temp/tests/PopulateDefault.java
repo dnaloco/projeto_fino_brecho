@@ -4,6 +4,7 @@ import java.util.HashSet;
 
 import org.hibernate.Session;
 
+import br.arthur.entities.CatLastId;
 import br.arthur.entities.Categoria;
 import br.arthur.entities.Estado;
 import br.arthur.entities.Group;
@@ -197,6 +198,8 @@ public class PopulateDefault {
 		for(String cat : catsStr) {
 			Categoria c = new Categoria(cat);
 			session.save(c);
+			CatLastId clid = new CatLastId(c.getId(), 1);
+			session.save(clid);
 		}
 
 		session.getTransaction().commit();

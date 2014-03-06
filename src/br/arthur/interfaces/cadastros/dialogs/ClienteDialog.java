@@ -3,13 +3,18 @@ package br.arthur.interfaces.cadastros.dialogs;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -24,8 +29,6 @@ import javax.swing.table.TableRowSorter;
 import br.arthur.entities.Cliente;
 import br.arthur.models.ClienteModel;
 
-import com.lowagie.text.pdf.events.IndexEvents.Entry;
-
 public class ClienteDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
@@ -34,6 +37,7 @@ public class ClienteDialog extends JDialog {
 	private int theId;
 	private TableModel model;
 	private JTable table;
+	private JScrollPane scrollPane;
 	
 	/**
 	 * Launch the application.
@@ -52,6 +56,7 @@ public class ClienteDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public ClienteDialog() {
+		setModal(true);
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -60,6 +65,7 @@ public class ClienteDialog extends JDialog {
 		contentPanel.setLayout(sl_contentPanel);
 		
 		Vector<String> colunas = new Vector();
+		colunas.add("ID");
 		colunas.add("Nome");
 		colunas.add("Telefone");
 		colunas.add("Celular");
@@ -72,19 +78,30 @@ public class ClienteDialog extends JDialog {
 		
 		for(Object o : ClienteModel.findAll()) {
 			Cliente c = (Cliente) o;
+			
 			Vector<Object> oneRow = new Vector<Object>();
+			
 			oneRow.add(c.getId());
 			oneRow.add(c.getNome());
 			oneRow.add(c.getTelefone());
 			oneRow.add(c.getCelular());
 			oneRow.add(c.getEmail());
 			oneRow.add(c.getSite());
-			oneRow.add(c.getAniversario());
+			
+			if (c.getAniversario() != null) {
+				DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+				oneRow.add(df.format(c.getAniversario()));
+			} else {
+				oneRow.add("");
+			}
+			
 			if(c.isPendencia()) {
 				oneRow.add("sim");
 			} else {
 				oneRow.add("não");
 			}
+			
+			tableData.add(oneRow);
 		}
 		
 		model = new DefaultTableModel(tableData, colunas) {
@@ -92,7 +109,7 @@ public class ClienteDialog extends JDialog {
 				return getValueAt(0, column).getClass();
 			}
 	    	boolean[] columnEditables = new boolean[] {
-	    		false, false, false, false, false, false
+	    		false, false, false, false, false, false, false, false
 	    	};
 	    	public boolean isCellEditable(int row, int column) {
 	    		return columnEditables[column];
@@ -112,6 +129,7 @@ public class ClienteDialog extends JDialog {
 		table = new JTable(model);
 		
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
 		table.getColumnModel().getColumn(0).setPreferredWidth(32);
 		table.getColumnModel().getColumn(1).setPreferredWidth(120);
 		table.getColumnModel().getColumn(2).setPreferredWidth(80);
@@ -140,7 +158,7 @@ public class ClienteDialog extends JDialog {
 	    sorter.setRowFilter(filter);
 	    table.setRowSorter(sorter);
 		
-		JScrollPane scrollPane = new JScrollPane(table);
+	    scrollPane = new JScrollPane(table);
 		panel.add(scrollPane, "name_18400489789867");
 		{
 			lblNome = new JLabel("Nome:");
@@ -150,8 +168,8 @@ public class ClienteDialog extends JDialog {
 		}
 		{
 			textField = new JTextField();
+			sl_contentPanel.putConstraint(SpringLayout.NORTH, textField, -6, SpringLayout.NORTH, lblNome);
 			sl_contentPanel.putConstraint(SpringLayout.WEST, textField, 6, SpringLayout.EAST, lblNome);
-			sl_contentPanel.putConstraint(SpringLayout.SOUTH, textField, -6, SpringLayout.NORTH, panel);
 			contentPanel.add(textField);
 			textField.setColumns(10);
 		}
@@ -166,15 +184,39 @@ public class ClienteDialog extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
+				okButton.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						JOptionPane.showMessageDialog(null, "Consignatário Selecionado: " + theId);
+						dispose();
+					}
+				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						theId = 0;
+						dispose();
+					}
+				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
 		}
+	}
+
+	public int getTheId() {
+		return theId;
+	}
+
+	public void setTheId(int theId) {
+		this.theId = theId;
 	}
 }

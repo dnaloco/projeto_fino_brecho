@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,6 +28,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 
 import br.arthur.controllers.LoginController;
+
 import java.awt.Font;
 
 public class SplashScreen extends JFrame {
@@ -70,6 +72,8 @@ public class SplashScreen extends JFrame {
 	 * Create the frame.
 	 */
 	public SplashScreen() {
+		setIconImage((new ImageIcon(
+				"images/Store-icon.png").getImage()));
 		setUndecorated(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);

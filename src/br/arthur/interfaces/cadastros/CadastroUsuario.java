@@ -12,6 +12,7 @@ import java.beans.PropertyVetoException;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
@@ -22,8 +23,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 
 import br.arthur.entities.Group;
 import br.arthur.entities.Status;
@@ -69,6 +68,8 @@ public class CadastroUsuario extends JInternalFrame {
 	 * Create the frame.
 	 */
 	public CadastroUsuario(long id) throws PropertyVetoException {
+		setFrameIcon(new ImageIcon(
+				"images/user.png"));
 		theId = id;
 		setClosable(true);
 		setIconifiable(true);
