@@ -238,7 +238,7 @@ public class CadastroCategoria extends JInternalFrame {
 		springLayout.putConstraint(SpringLayout.EAST, btnExcluir, -6, SpringLayout.WEST, btnSalvar);
 		getContentPane().add(btnExcluir);
 		
-		JLabel lblCategoriaId = new JLabel("Categoria ID:");
+		JLabel lblCategoriaId = new JLabel("C\u00F3d. Categoria:");
 		lblCategoriaId.setFont(new Font("SansSerif", Font.BOLD, 14));
 		springLayout.putConstraint(SpringLayout.NORTH, lblCategoriaId, 1, SpringLayout.NORTH, lblCategoriaID);
 		springLayout.putConstraint(SpringLayout.WEST, lblCategoriaId, 0, SpringLayout.WEST, lblCategoria);

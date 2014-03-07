@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -23,6 +24,7 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.MaskFormatter;
 
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -31,6 +33,7 @@ import br.arthur.entities.Estado;
 import br.arthur.interfaces.cadastros.dialogs.ConsignatarioDialog;
 import br.arthur.models.ConsignatarioModel;
 import br.arthur.models.EstadoModel;
+import br.arthur.utils.MyValidateUtil;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -136,7 +139,15 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblTelefone.gridy = 1;
 		panel.add(lblTelefone, gbc_lblTelefone);
 		
-		txtTelefone = new JTextField();
+		MaskFormatter frmtTefelone = null;
+		try {
+			frmtTefelone = new MaskFormatter("####-####");
+		} catch (ParseException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
+		txtTelefone = new javax.swing.JFormattedTextField(frmtTefelone);
 		GridBagConstraints gbc_txtTelefone = new GridBagConstraints();
 		gbc_txtTelefone.anchor = GridBagConstraints.NORTH;
 		gbc_txtTelefone.insets = new Insets(0, 0, 5, 5);
@@ -154,7 +165,7 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblCelular.gridy = 1;
 		panel.add(lblCelular, gbc_lblCelular);
 		
-		txtCelular = new JTextField();
+		txtCelular = new javax.swing.JFormattedTextField(frmtTefelone);
 		GridBagConstraints gbc_txtCelular = new GridBagConstraints();
 		gbc_txtCelular.insets = new Insets(0, 0, 5, 0);
 		gbc_txtCelular.fill = GridBagConstraints.HORIZONTAL;
@@ -340,7 +351,8 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_cmbEstado.gridy = 3;
 		panel_1.add(cmbEstado, gbc_cmbEstado);
 		
-		JButton btnSalvar = new JButton("Salvar");
+		JButton btnSalvar = new JButton("Salvar", new ImageIcon(
+				"images/Save-icon.png"));
 		springLayout.putConstraint(SpringLayout.NORTH, btnSalvar, 6, SpringLayout.SOUTH, panel_1);
 		springLayout.putConstraint(SpringLayout.WEST, btnSalvar, 371, SpringLayout.WEST, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, btnSalvar, -4, SpringLayout.EAST, getContentPane());
@@ -359,6 +371,13 @@ public class CadastroConsignatario extends JInternalFrame {
 				if(txtTelefone.getText().trim().isEmpty() && txtCelular.getText().trim().isEmpty()) {
 					msgErro += "Um número de 'celular' ou 'telefone' deve ser informado\n";
 					isValid = false;
+				}
+				
+				if (!txtEmail.getText().trim().isEmpty()) {
+					if (!MyValidateUtil.validate(txtEmail.getText())) {
+						isValid = false;
+						msgErro += "O 'e-mail' informado não é válido!";
+					}
 				}
 
 				if(isValid) {
@@ -384,7 +403,7 @@ public class CadastroConsignatario extends JInternalFrame {
 						msgSuccess = "Consignatário salvo com sucesso!";
 					} else {
 						theId = cm.createConsignatario(data);
-						lblSubtitle.setText("Usuário ID: " + theId);
+						lblSubtitle.setText("Cód. Consignatário: " + theId);
 						msgSuccess = "Consignatário inserido com sucesso!";
 						btnCancelar.setEnabled(true);
 						btnExcluir.setEnabled(true);
@@ -401,7 +420,8 @@ public class CadastroConsignatario extends JInternalFrame {
 		});
 		getContentPane().add(btnSalvar);
 		
-		btnCancelar = new JButton("Cancelar");
+		btnCancelar = new JButton("Cancelar", new ImageIcon(
+				"images/cancel-icon.png"));
 		springLayout.putConstraint(SpringLayout.NORTH, btnCancelar, 6, SpringLayout.SOUTH, panel_1);
 		springLayout.putConstraint(SpringLayout.WEST, btnCancelar, 10, SpringLayout.WEST, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, btnCancelar, -365, SpringLayout.EAST, getContentPane());
@@ -414,8 +434,8 @@ public class CadastroConsignatario extends JInternalFrame {
 		btnCancelar.setEnabled(false);
 		getContentPane().add(btnCancelar);
 		
-		JButton button = new JButton((Icon) null);
-		springLayout.putConstraint(SpringLayout.WEST, button, 6, SpringLayout.EAST, lblSubtitle);
+		JButton button = new JButton(new ImageIcon("images/Zoom-icon.png"));
+		springLayout.putConstraint(SpringLayout.WEST, button, 26, SpringLayout.EAST, lblSubtitle);
 		springLayout.putConstraint(SpringLayout.SOUTH, button, 0, SpringLayout.NORTH, panel);
 		
 		JLabel lblCpf = new JLabel("CPF:");
@@ -426,7 +446,15 @@ public class CadastroConsignatario extends JInternalFrame {
 		gbc_lblCpf.gridy = 3;
 		panel.add(lblCpf, gbc_lblCpf);
 		
-		txtCpf = new JTextField();
+		MaskFormatter frmtCpf = null;
+		try {
+			frmtCpf = new MaskFormatter("###.###.###-##");
+		} catch (ParseException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
+		txtCpf = new javax.swing.JFormattedTextField(frmtCpf);
 		GridBagConstraints gbc_txtCpf = new GridBagConstraints();
 		gbc_txtCpf.insets = new Insets(0, 0, 0, 5);
 		gbc_txtCpf.fill = GridBagConstraints.HORIZONTAL;
@@ -473,7 +501,8 @@ public class CadastroConsignatario extends JInternalFrame {
 		button.setHorizontalTextPosition(SwingConstants.LEFT);
 		getContentPane().add(button);
 		
-		btnExcluir = new JButton("Excluir");
+		btnExcluir = new JButton("Excluir", new ImageIcon(
+				"images/delete-icon.png"));
 		btnExcluir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int opcao;
@@ -531,7 +560,7 @@ public class CadastroConsignatario extends JInternalFrame {
 
 	protected void populateMe() {		
 		Consignatario c = ConsignatarioModel.findOneWhere("id", String.valueOf(this.theId));
-		lblSubtitle.setText("Usuário ID: " + c.getId());
+		lblSubtitle.setText("Cód. Consignatário: " + c.getId());
 		txtNome.setText(c.getNome());
 		txtTelefone.setText(c.getTelefone());
 		txtCelular.setText(c.getCelular());

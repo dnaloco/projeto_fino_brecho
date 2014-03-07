@@ -53,7 +53,7 @@ public class CadastroProduto extends JInternalFrame {
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 		
-		JLabel lblProduto = new JLabel("Produto ID");
+		JLabel lblProduto = new JLabel("Cód. Produto");
 		lblProduto.setFont(new Font("SansSerif", Font.BOLD, 14));
 		getContentPane().add(lblProduto);
 		

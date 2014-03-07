@@ -81,7 +81,7 @@ public class CadastroCliente extends JInternalFrame {
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 		
-		JLabel lblClienteId = new JLabel("Cliente ID:");
+		JLabel lblClienteId = new JLabel("C\u00F3d. Cliente:");
 		lblClienteId.setFont(new Font("SansSerif", Font.BOLD, 14));
 		springLayout.putConstraint(SpringLayout.NORTH, lblClienteId, 10, SpringLayout.NORTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, lblClienteId, 10, SpringLayout.WEST, getContentPane());

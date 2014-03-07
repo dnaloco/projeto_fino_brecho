@@ -174,6 +174,8 @@ public class CadastroSaida extends JInternalFrame {
 		txtCodigoProduto.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				
+				
 				if(e.getKeyCode() == 10) {
 					if(!txtCodigoProduto.getText().trim().isEmpty()) {
 						int prodId = Integer.parseInt(txtCodigoProduto.getText());

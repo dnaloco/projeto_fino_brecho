@@ -462,11 +462,12 @@ public class ConsultarProduto extends JInternalFrame {
 		panel_2.add(scrollPaneProdutos, "name_10326065285220");
 		
 		lblCountImg = new JLabel("0/0");
-		lblCountImg.setFont(new Font("SansSerif", Font.BOLD, 14));
-		lblCountImg.setHorizontalAlignment(SwingConstants.CENTER);
+		springLayout.putConstraint(SpringLayout.NORTH, lblCountImg, -25, SpringLayout.NORTH, panel);
 		springLayout.putConstraint(SpringLayout.WEST, lblCountImg, 6, SpringLayout.EAST, btnPreviousImg);
 		springLayout.putConstraint(SpringLayout.SOUTH, lblCountImg, -6, SpringLayout.NORTH, panel);
 		springLayout.putConstraint(SpringLayout.EAST, lblCountImg, -6, SpringLayout.WEST, btnNextImg);
+		lblCountImg.setFont(new Font("SansSerif", Font.BOLD, 14));
+		lblCountImg.setHorizontalAlignment(SwingConstants.CENTER);
 		getContentPane().add(lblCountImg);
 		
 		JMenuBar menuBar = new JMenuBar();

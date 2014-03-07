@@ -153,7 +153,7 @@ public class CadastroMarca extends JInternalFrame {
 		
 		Vector<String> colunas = new Vector();
 		
-		colunas.add("ID");
+		colunas.add("Código");
 		colunas.add("Categoria");
 		
 		Vector tableData = new Vector();
@@ -236,7 +236,7 @@ public class CadastroMarca extends JInternalFrame {
 		springLayout.putConstraint(SpringLayout.EAST, btnExcluir, -6, SpringLayout.WEST, btnSalvar);
 		getContentPane().add(btnExcluir);
 		
-		lblMarcaTtl = new JLabel("Marca ID:");
+		lblMarcaTtl = new JLabel("Cód. Marca:");
 		lblMarcaTtl.setFont(new Font("SansSerif", Font.BOLD, 14));
 		springLayout.putConstraint(SpringLayout.NORTH, lblMarcaTtl, 0, SpringLayout.NORTH, lblMarcaID);
 		springLayout.putConstraint(SpringLayout.WEST, lblMarcaTtl, 0, SpringLayout.WEST, btnCancelar);

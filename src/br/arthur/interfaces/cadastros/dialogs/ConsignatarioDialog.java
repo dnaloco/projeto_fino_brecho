@@ -1,5 +1,7 @@
 package br.arthur.interfaces.cadastros.dialogs;
 
+import groovyjarjarcommonscli.ParseException;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -23,6 +25,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.MaskFormatter;
 
 import br.arthur.entities.Consignatario;
 import br.arthur.models.ConsignatarioModel;
@@ -46,25 +49,6 @@ public class ConsignatarioDialog extends JDialog {
 		this.theId = theId;
 	}
 	
-	public void filtroPorCPF() {
-
-	}
-	
-	public void filtroPorRG() {
-		
-	}
-	
-	public void filtroPorNome(final String nome) {
-		RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
-		      public boolean include(Entry entry) {
-		    	String population = (String) entry.getValue(1);
-		        return population.contentEquals(nome);
-		      }
-		    };
-	    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
-	    sorter.setRowFilter(filter);
-	    table.setRowSorter(sorter);
-	}
 
 	public ConsignatarioDialog() {
 		setTitle("Buscar Consignat\u00E1rio");
@@ -208,7 +192,15 @@ public class ConsignatarioDialog extends JDialog {
 		contentPanel.add(txtRG);
 		txtRG.setColumns(10);
 		
-		txtCPF = new JTextField();
+		MaskFormatter frmtCpf = null;
+		try {
+			frmtCpf = new MaskFormatter("###.###.###-##");
+		} catch (java.text.ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		txtCPF = new javax.swing.JFormattedTextField(frmtCpf);
 		sl_contentPanel.putConstraint(SpringLayout.EAST, txtCPF, -68, SpringLayout.EAST, contentPanel);
 		sl_contentPanel.putConstraint(SpringLayout.WEST, btnFiltrar, 6, SpringLayout.EAST, txtCPF);
 		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtCPF, -6, SpringLayout.NORTH, scrollPane);
