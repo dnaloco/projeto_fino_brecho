@@ -2269,29 +2269,29 @@ public class CadastroEntrada extends JInternalFrame {
 	}
 
 	private MyIteratorUtil getImageIterator() {
-		imgTotalCount = 0;
-
-		Entrada ee = EntradaModel.findOneWhere("id",
-				String.valueOf(entradaProdutoId));
-
-		try {
-			imgTotalCount = ee.getImagens().size();
-
-			Iterator imgIter = ee.getImagens().iterator();
-
-			ArrayList<Imagem> imgList = new ArrayList<Imagem>();
-
-			while (imgIter.hasNext()) {
-				imgList.add((Imagem) imgIter.next());
-			}
-
-			imgListIter = new MyIteratorUtil(imgList);
-			return imgListIter;
-		} catch (ClassCastException ex) {
-			ex.printStackTrace();
-		} catch (LazyInitializationException ex) {
-			ex.printStackTrace();
-		}
+//		imgTotalCount = 0;
+//
+//		Entrada ee = EntradaModel.findOneWhere("id",
+//				String.valueOf(entradaProdutoId));
+//
+//		try {
+//			imgTotalCount = ee.getImagens().size();
+//
+//			Iterator imgIter = ee.getImagens().iterator();
+//
+//			ArrayList<Imagem> imgList = new ArrayList<Imagem>();
+//
+//			while (imgIter.hasNext()) {
+//				imgList.add((Imagem) imgIter.next());
+//			}
+//
+//			imgListIter = new MyIteratorUtil(imgList);
+//			return imgListIter;
+//		} catch (ClassCastException ex) {
+//			ex.printStackTrace();
+//		} catch (LazyInitializationException ex) {
+//			ex.printStackTrace();
+//		}
 
 		return null;
 	}
@@ -2302,7 +2302,7 @@ public class CadastroEntrada extends JInternalFrame {
 		Blob blob_img = ((Imagem) imgListIter.first()).getImagemBlob();
 
 		try {
-			BufferedImage bi = setMaxWidthHeight(blob_img, 400, 400);
+			BufferedImage bi = setMaxWidthHeight(blob_img);
 			imgCount += 1;
 			drawPicture(bi);
 		} catch (SQLException e) {
@@ -2321,7 +2321,7 @@ public class CadastroEntrada extends JInternalFrame {
 		Blob blob_img = ((Imagem) imgListIter.previous()).getImagemBlob();
 
 		try {
-			BufferedImage bi = setMaxWidthHeight(blob_img, picture.getWidth(), picture.getHeight());
+			BufferedImage bi = setMaxWidthHeight(blob_img);
 			imgCount -= 1;
 			drawPicture(bi);
 		} catch (SQLException e) {
@@ -2340,7 +2340,7 @@ public class CadastroEntrada extends JInternalFrame {
 		Blob blob_img = ((Imagem) imgListIter.next()).getImagemBlob();
 
 		try {
-			BufferedImage bi = setMaxWidthHeight(blob_img, picture.getWidth(), picture.getHeight());
+			BufferedImage bi = setMaxWidthHeight(blob_img);
 			imgCount += 1;
 			drawPicture(bi);
 		} catch (SQLException e) {
@@ -2356,9 +2356,9 @@ public class CadastroEntrada extends JInternalFrame {
 	
 	protected void setLastImage() {
 		Blob blob_img = ((Imagem) imgListIter.last()).getImagemBlob();
-		
+
 		try {
-			BufferedImage bi = setMaxWidthHeight(blob_img, picture.getWidth(), picture.getHeight());
+			BufferedImage bi = setMaxWidthHeight(blob_img);
 			imgCount = imgTotalCount;
 			drawPicture(bi);
 		} catch (SQLException e) {
@@ -2395,8 +2395,7 @@ public class CadastroEntrada extends JInternalFrame {
 		lblCountImg.setText(imgCount + "/" + imgTotalCount);
 	}
 
-	private BufferedImage setMaxWidthHeight(Blob blob_img, int widthImg,
-			int heightImg) throws SQLException, IOException {
+	private BufferedImage setMaxWidthHeight(Blob blob_img) throws SQLException, IOException {
 		InputStream is;
 		Image img;
 		is = blob_img.getBinaryStream();
@@ -2404,12 +2403,12 @@ public class CadastroEntrada extends JInternalFrame {
 
 		int origW = img.getWidth(null), origH = img.getHeight(null), newW = origW, newH = origH;
 
-		if (origW > widthImg || origH > heightImg) {
+		if (origW > picture.getWidth() || origH > picture.getHeight()) {
 			if (origW >= origH) {
-				newW = widthImg;
+				newW = picture.getWidth();
 				newH = origH * newW / origW;
 			} else {
-				newH = heightImg;
+				newH = picture.getHeight();
 				newW = origW * newH / origH;
 			}
 		}

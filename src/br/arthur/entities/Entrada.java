@@ -1,5 +1,6 @@
 package br.arthur.entities;
 
+import java.sql.Blob;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,252 +78,171 @@ public class Entrada {
 	@Column(name="observacao", columnDefinition="TEXT")
 	private String observacao;
 	
-	@OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name="entrada_id")
-	private List<Imagem> imagens = new ArrayList<Imagem>();
+	@Column(name="imagem_blob")
+	private Blob imagemBlob;
 
 	public Entrada() {
 		
 	}
 
-	
-
 	public int getId() {
 		return id;
 	}
-
-
 
 	public void setId(int id) {
 		this.id = id;
 	}
 
-
-
 	public HeaderEntrada getHeaderEntrada() {
 		return headerEntrada;
 	}
-
-
 
 	public void setHeaderEntrada(HeaderEntrada headerEntrada) {
 		this.headerEntrada = headerEntrada;
 	}
 
-
-
 	public String getDescricao() {
 		return descricao;
 	}
-
-
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
 
-
-
 	public Categoria getCategoria() {
 		return categoria;
 	}
-
-
 
 	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
 
-
-
 	public Marca getMarca() {
 		return marca;
 	}
-
-
 
 	public void setMarca(Marca marca) {
 		this.marca = marca;
 	}
 
-
-
 	public String getTamanho() {
 		return tamanho;
 	}
-
-
 
 	public void setTamanho(String tamanho) {
 		this.tamanho = tamanho;
 	}
 
-
-
 	public String getCor() {
 		return cor;
 	}
-
-
 
 	public void setCor(String cor) {
 		this.cor = cor;
 	}
 
-
-
 	public double getVenda() {
 		return venda;
 	}
-
-
 
 	public void setVenda(double venda) {
 		this.venda = venda;
 	}
 
-
-
 	public int getQuantidate() {
 		return quantidate;
 	}
-
-
 
 	public void setQuantidate(int quantidate) {
 		this.quantidate = quantidate;
 	}
 
-
-
 	public double getMargemCusto() {
 		return margemCusto;
 	}
-
-
 
 	public void setMargemCusto(double margemCusto) {
 		this.margemCusto = margemCusto;
 	}
 
-
-
 	public double getMargemComissao() {
 		return margemComissao;
 	}
-
-
 
 	public void setMargemComissao(double margemComissao) {
 		this.margemComissao = margemComissao;
 	}
 
-
-
 	public double getCusto() {
 		return custo;
 	}
-
-
 
 	public void setCusto(double custo) {
 		this.custo = custo;
 	}
 
-
-
 	public double getComissao() {
 		return comissao;
 	}
-
-
 
 	public void setComissao(double comissao) {
 		this.comissao = comissao;
 	}
 
-
-
 	public Timestamp getDataEntrada() {
 		return dataEntrada;
 	}
-
-
 
 	public void setDataEntrada(Timestamp dataEntrada) {
 		this.dataEntrada = dataEntrada;
 	}
 
-
-
 	public Date getDataInicio() {
 		return dataInicio;
 	}
-
-
 
 	public void setDataInicio(Date dataInicio) {
 		this.dataInicio = dataInicio;
 	}
 
-
-
 	public Date getDataVencimento() {
 		return dataVencimento;
 	}
-
-
 
 	public void setDataVencimento(Date dataVencimento) {
 		this.dataVencimento = dataVencimento;
 	}
 
-
-
 	public Situacao getSituacao() {
 		return situacao;
 	}
-
-
 
 	public void setSituacao(Situacao situacao) {
 		this.situacao = situacao;
 	}
 
-
-
 	public Tipo getTipo() {
 		return tipo;
 	}
-
-
 
 	public void setTipo(Tipo tipo) {
 		this.tipo = tipo;
 	}
 
-
-
 	public String getObservacao() {
 		return observacao;
 	}
-
-
 
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
 	}
 
-
-
-	public List<Imagem> getImagens() {
-		return imagens;
+	public Blob getImagemBlob() {
+		return imagemBlob;
 	}
 
-
-
-	public void setImagens(List<Imagem> imagens) {
-		this.imagens = imagens;
+	public void setImagemBlob(Blob imagemBlob) {
+		this.imagemBlob = imagemBlob;
 	}
 
 	@Override
@@ -348,7 +268,8 @@ public class Entrada {
 		result = prime * result
 				+ ((headerEntrada == null) ? 0 : headerEntrada.hashCode());
 		result = prime * result + id;
-		result = prime * result + ((imagens == null) ? 0 : imagens.hashCode());
+		result = prime * result
+				+ ((imagemBlob == null) ? 0 : imagemBlob.hashCode());
 		result = prime * result + ((marca == null) ? 0 : marca.hashCode());
 		temp = Double.doubleToLongBits(margemComissao);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -365,8 +286,6 @@ public class Entrada {
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
-
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -420,10 +339,10 @@ public class Entrada {
 			return false;
 		if (id != other.id)
 			return false;
-		if (imagens == null) {
-			if (other.imagens != null)
+		if (imagemBlob == null) {
+			if (other.imagemBlob != null)
 				return false;
-		} else if (!imagens.equals(other.imagens))
+		} else if (!imagemBlob.equals(other.imagemBlob))
 			return false;
 		if (marca == null) {
 			if (other.marca != null)
@@ -463,19 +382,6 @@ public class Entrada {
 			return false;
 		return true;
 	}
-
-
-
-	public void addImage(Imagem ie) {
-		// TODO Auto-generated method stub
-		this.imagens.add(ie);
-	}
-
-	public void updateImage(Imagem ie) {
-		
-	}
 	
-	public void removeImage(Imagem ie) {
-		
-	}
+	
 }

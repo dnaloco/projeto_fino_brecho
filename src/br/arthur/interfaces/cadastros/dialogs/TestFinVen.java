@@ -372,7 +372,7 @@ public class TestFinVen extends JDialog {
 			gbc_txtData1Pagto.gridy = 2;
 			panel.add(txtData1Pagto, gbc_txtData1Pagto);
 			txtData1Pagto.setColumns(10);
-			cancelButton = new JButton("Cancelar Venda");
+			cancelButton = new JButton("Retornar p/ Venda");
 			GridBagConstraints gbc_cancelButton = new GridBagConstraints();
 			gbc_cancelButton.fill = GridBagConstraints.HORIZONTAL;
 			gbc_cancelButton.gridwidth = 2;
