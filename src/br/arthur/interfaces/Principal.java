@@ -39,6 +39,7 @@ import br.arthur.interfaces.cadastros.CadastroSaida;
 import br.arthur.interfaces.cadastros.CadastroTipo;
 // import br.arthur.interfaces.cadastros.CadastroPedido;
 import br.arthur.interfaces.cadastros.CadastroUsuario;
+import br.arthur.interfaces.cadastros.NovoCadastroEntrada;
 import br.arthur.interfaces.consultas.ConsultarProduto;
 
 public class Principal extends JFrame {
@@ -212,7 +213,7 @@ public class Principal extends JFrame {
 		JButton btnNewButton = new JButton("Entrada");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				CadastroEntrada obj = new CadastroEntrada();				
+				NovoCadastroEntrada obj = new NovoCadastroEntrada();				
 				jDesktopPanelPrincipal.add(obj);
 				obj.setVisible(true);
 			}

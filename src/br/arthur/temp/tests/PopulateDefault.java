@@ -88,6 +88,7 @@ public class PopulateDefault {
 		};
 		
 		String[] marcasStr = {
+				"genérica",
 				"prada",
 				"gucci",
 				"giorgio armani",
@@ -146,6 +147,7 @@ public class PopulateDefault {
 				"7",
 				"8",
 				"9",
+				"genérica",
 				"calçados",
 				"acessório",
 				"bandana",

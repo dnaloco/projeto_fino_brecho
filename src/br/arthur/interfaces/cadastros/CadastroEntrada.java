@@ -28,7 +28,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,7 +63,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 
-import org.hibernate.LazyInitializationException;
 import org.hibernate.LobHelper;
 import org.hibernate.Session;
 
@@ -1545,9 +1543,7 @@ public class CadastroEntrada extends JInternalFrame {
 		panel_7.add(lblValidade, gbc_lblValidade);
 
 		cmbValidade = new JComboBox();
-		cmbValidade.setModel(new DefaultComboBoxModel(new String[] { "3 meses",
-				"75 dias", "2 meses", "45 dias", "1 m\u00EAs", "15 dias",
-				"10 dias", "5 dias", "1 dia" }));
+		cmbValidade.setModel(new DefaultComboBoxModel(new String[] {"3 meses", "75 dias", "2 meses", "45 dias", "1 m\u00EAs", "15 dias", "10 dias", "5 dias", "1 dia"}));
 		GridBagConstraints gbc_cmbValidade = new GridBagConstraints();
 		gbc_cmbValidade.gridwidth = 5;
 		gbc_cmbValidade.insets = new Insets(0, 0, 5, 5);

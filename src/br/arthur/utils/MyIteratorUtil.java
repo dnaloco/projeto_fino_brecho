@@ -57,4 +57,8 @@ public class MyIteratorUtil {
 		index = iter.size() - 1;
 		return iter.get(index);
 	}
+	
+	public Object actual() {
+		return iter.get(index);
+	}
 }

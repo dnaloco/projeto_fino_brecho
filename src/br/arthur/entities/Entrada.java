@@ -21,20 +21,20 @@ import javax.persistence.Table;
 public class Entrada {
 	@Id
 	@Column(name="entrada_id")
-	private int id;
+	private long id;
 	
 	@ManyToOne
-	@JoinColumn(name="header_entrada_fk", nullable=false)
-	private HeaderEntrada headerEntrada;
+	@JoinColumn(name="consignatario_fk", nullable=false)
+	private Consignatario consignatario;
 
-	@Column(name="descricao")
+	@Column(name="descricao", nullable=false)
 	private String descricao;
 	
 	@ManyToOne
-	@JoinColumn(name="categoria_fk", nullable=false)
+	@JoinColumn(name="categoria_fk")
 	private Categoria categoria;
 	@ManyToOne
-	@JoinColumn(name="marca_fk", nullable=false)
+	@JoinColumn(name="marca_fk")
 	private Marca marca;
 	
 	@Column(length=30)
@@ -48,8 +48,8 @@ public class Entrada {
 	private double venda;
 	@Column(name="quantidate")
 	private int quantidate;
-	@Column(name="margem_custo")
-	private double margemCusto;
+	@Column(name="margem_venda")
+	private double margeVenda;
 	@Column(name="margem_comissao")
 	private double margemComissao;
 	
@@ -68,7 +68,7 @@ public class Entrada {
 	private Date dataVencimento;
 	
 	@ManyToOne
-	@JoinColumn(name="situacao_fk", nullable=false)
+	@JoinColumn(name="situacao_fk")
 	private Situacao situacao;
 	
 	@ManyToOne
@@ -80,25 +80,28 @@ public class Entrada {
 	
 	@Column(name="imagem_blob")
 	private Blob imagemBlob;
+	
+	@Column(name="localizacao")
+	private String localizacao;
 
 	public Entrada() {
 		
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
-	public HeaderEntrada getHeaderEntrada() {
-		return headerEntrada;
+	public Consignatario getConsignatario() {
+		return consignatario;
 	}
 
-	public void setHeaderEntrada(HeaderEntrada headerEntrada) {
-		this.headerEntrada = headerEntrada;
+	public void setConsignatario(Consignatario consignatario) {
+		this.consignatario = consignatario;
 	}
 
 	public String getDescricao() {
@@ -157,12 +160,12 @@ public class Entrada {
 		this.quantidate = quantidate;
 	}
 
-	public double getMargemCusto() {
-		return margemCusto;
+	public double getMargeVenda() {
+		return margeVenda;
 	}
 
-	public void setMargemCusto(double margemCusto) {
-		this.margemCusto = margemCusto;
+	public void setMargeVenda(double margeVenda) {
+		this.margeVenda = margeVenda;
 	}
 
 	public double getMargemComissao() {
@@ -245,6 +248,14 @@ public class Entrada {
 		this.imagemBlob = imagemBlob;
 	}
 
+	public String getLocalizacao() {
+		return localizacao;
+	}
+
+	public void setLocalizacao(String localizacao) {
+		this.localizacao = localizacao;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -254,6 +265,8 @@ public class Entrada {
 		long temp;
 		temp = Double.doubleToLongBits(comissao);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result
+				+ ((consignatario == null) ? 0 : consignatario.hashCode());
 		result = prime * result + ((cor == null) ? 0 : cor.hashCode());
 		temp = Double.doubleToLongBits(custo);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -265,15 +278,13 @@ public class Entrada {
 				+ ((dataVencimento == null) ? 0 : dataVencimento.hashCode());
 		result = prime * result
 				+ ((descricao == null) ? 0 : descricao.hashCode());
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result
-				+ ((headerEntrada == null) ? 0 : headerEntrada.hashCode());
-		result = prime * result + id;
-		result = prime * result
-				+ ((imagemBlob == null) ? 0 : imagemBlob.hashCode());
+				+ ((localizacao == null) ? 0 : localizacao.hashCode());
 		result = prime * result + ((marca == null) ? 0 : marca.hashCode());
-		temp = Double.doubleToLongBits(margemComissao);
+		temp = Double.doubleToLongBits(margeVenda);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(margemCusto);
+		temp = Double.doubleToLongBits(margemComissao);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
 				+ ((observacao == null) ? 0 : observacao.hashCode());
@@ -304,6 +315,11 @@ public class Entrada {
 		if (Double.doubleToLongBits(comissao) != Double
 				.doubleToLongBits(other.comissao))
 			return false;
+		if (consignatario == null) {
+			if (other.consignatario != null)
+				return false;
+		} else if (!consignatario.equals(other.consignatario))
+			return false;
 		if (cor == null) {
 			if (other.cor != null)
 				return false;
@@ -332,28 +348,23 @@ public class Entrada {
 				return false;
 		} else if (!descricao.equals(other.descricao))
 			return false;
-		if (headerEntrada == null) {
-			if (other.headerEntrada != null)
-				return false;
-		} else if (!headerEntrada.equals(other.headerEntrada))
-			return false;
 		if (id != other.id)
 			return false;
-		if (imagemBlob == null) {
-			if (other.imagemBlob != null)
+		if (localizacao == null) {
+			if (other.localizacao != null)
 				return false;
-		} else if (!imagemBlob.equals(other.imagemBlob))
+		} else if (!localizacao.equals(other.localizacao))
 			return false;
 		if (marca == null) {
 			if (other.marca != null)
 				return false;
 		} else if (!marca.equals(other.marca))
 			return false;
+		if (Double.doubleToLongBits(margeVenda) != Double
+				.doubleToLongBits(other.margeVenda))
+			return false;
 		if (Double.doubleToLongBits(margemComissao) != Double
 				.doubleToLongBits(other.margemComissao))
-			return false;
-		if (Double.doubleToLongBits(margemCusto) != Double
-				.doubleToLongBits(other.margemCusto))
 			return false;
 		if (observacao == null) {
 			if (other.observacao != null)
@@ -382,6 +393,5 @@ public class Entrada {
 			return false;
 		return true;
 	}
-	
-	
+
 }

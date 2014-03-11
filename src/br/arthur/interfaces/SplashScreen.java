@@ -93,6 +93,14 @@ public class SplashScreen extends JFrame {
 		
 		JLabel lblUsuario = new JLabel("Usu\u00E1rio:");
 		txtUsuario = new JTextField();
+		txtUsuario.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == 10) {
+					checkUserPass();
+				}
+			}
+		});
 		txtUsuario.setColumns(10);
 		
 		JLabel lblSenha = new JLabel("Senha:");
