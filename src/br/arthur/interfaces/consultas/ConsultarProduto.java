@@ -386,27 +386,27 @@ public class ConsultarProduto extends JInternalFrame {
 		
 		Vector tableData = new Vector();
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		for(Object o : EntradaModel.findAll()) {
-			Entrada e = (Entrada) o;
-			
-			Vector<Object> oneRow = new Vector<Object>();
-			
-			oneRow.add(e.getId());
-			oneRow.add(e.getHeaderEntrada().getId());
-			oneRow.add(e.getHeaderEntrada().getConsignatario().getNome());
-			oneRow.add(e.getCategoria().getName());
-			oneRow.add(e.getMarca().getName());
-			oneRow.add(e.getTamanho());
-			oneRow.add(e.getCor());
-			oneRow.add(String.valueOf(e.getVenda()));
-			oneRow.add(df.format(e.getDataEntrada()));
-			oneRow.add(df.format(e.getDataInicio()));
-			oneRow.add(df.format(e.getDataVencimento()));
-			oneRow.add(e.getSituacao().getName());
-			oneRow.add(e.getTipo().getName());
-			
-			tableData.add(oneRow);
-		}
+//		for(Object o : EntradaModel.findAll()) {
+//			Entrada e = (Entrada) o;
+//			
+//			Vector<Object> oneRow = new Vector<Object>();
+//			
+//			oneRow.add(e.getId());
+//			oneRow.add(e.getHeaderEntrada().getId());
+//			oneRow.add(e.getHeaderEntrada().getConsignatario().getNome());
+//			oneRow.add(e.getCategoria().getName());
+//			oneRow.add(e.getMarca().getName());
+//			oneRow.add(e.getTamanho());
+//			oneRow.add(e.getCor());
+//			oneRow.add(String.valueOf(e.getVenda()));
+//			oneRow.add(df.format(e.getDataEntrada()));
+//			oneRow.add(df.format(e.getDataInicio()));
+//			oneRow.add(df.format(e.getDataVencimento()));
+//			oneRow.add(e.getSituacao().getName());
+//			oneRow.add(e.getTipo().getName());
+//			
+//			tableData.add(oneRow);
+//		}
 		
 		model = new DefaultTableModel(tableData, colunas) {
 			public Class<?> getColumnClass(int column) {

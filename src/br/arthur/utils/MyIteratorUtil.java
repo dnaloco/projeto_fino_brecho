@@ -48,6 +48,21 @@ public class MyIteratorUtil {
 
 	}
 	
+	public Object getObject(int index) {
+		if (hasIndex(index)) {
+			this.index = index;
+			return iter.get(index);
+		}
+		return null;
+	}
+	
+	public boolean hasIndex(int index) {
+		if (index < iter.size() || index >= 0) {
+			return true;
+		}
+		return false;
+	}
+	
 	public Object first() {
 		index = 0;
 		return iter.get(index);

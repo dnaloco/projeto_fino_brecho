@@ -31,8 +31,6 @@ public class Categoria implements Comparator<Categoria>{
 		this.name = name;
 	}
 	
-	
-	
 	public int getId() {
 		return id;
 	}
