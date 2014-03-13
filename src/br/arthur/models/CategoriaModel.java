@@ -11,8 +11,8 @@ import br.arthur.utils.HibernateUtil;
 public class CategoriaModel {
 	static Session session;
 	private Categoria entity;
-	public int createCategoria(String categoria) {
-		Categoria c = new Categoria(categoria);
+	public int createCategoria(String categoria, boolean isVestimenta) {
+		Categoria c = new Categoria(categoria, isVestimenta);
 		
 		session = HibernateUtil.getSessionFactory().openSession();
 		
@@ -24,6 +24,22 @@ public class CategoriaModel {
 		close();
 		
 		return c.getId();
+	}
+	
+	public void saveCategoria(int id, String name, boolean isVest) {
+		entity = findOneWhere("id", String.valueOf(id));
+		
+		entity.setName(name);
+		entity.setVestimenta(isVest);
+		
+		session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+		
+		session.update(entity);
+		
+		session.getTransaction().commit();
+		
+		close();
 	}
 
 	public static List findAll() {

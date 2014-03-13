@@ -30,10 +30,11 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.arthur.entities.Categoria;
 import br.arthur.models.CategoriaModel;
+import javax.swing.JCheckBox;
 
 public class CadastroCategoria extends JInternalFrame {
 	
-	private int theId;
+	private int theId = 0;
 	private int linha_selecionada;
 	
 	private JLabel lblCategoriaID;
@@ -44,6 +45,8 @@ public class CadastroCategoria extends JInternalFrame {
 	
 	private JButton btnCancelar;
 	private JButton btnExcluir;
+	
+	private JCheckBox chckbxCategoriaDeVentimentas;
 	
 	CategoriaModel cm = new CategoriaModel();
 	
@@ -76,7 +79,7 @@ public class CadastroCategoria extends JInternalFrame {
 		setInheritsPopupMenu(true);
 		setIgnoreRepaint(true);
 
-		setBounds(100, 100, 269, 438);
+		setBounds(100, 100, 269, 458);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 		
@@ -99,7 +102,6 @@ public class CadastroCategoria extends JInternalFrame {
 		getContentPane().add(lblCategoria);
 		
 		JButton btnSalvar = new JButton("Salvar");
-		springLayout.putConstraint(SpringLayout.NORTH, btnSalvar, 6, SpringLayout.SOUTH, txtCategoria);
 		springLayout.putConstraint(SpringLayout.EAST, btnSalvar, -10, SpringLayout.EAST, getContentPane());
 		btnSalvar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -107,24 +109,37 @@ public class CadastroCategoria extends JInternalFrame {
 				String msgErro = "";
 				boolean isValid = true;
 				
+				boolean isVest = true;
+				
+				if(!chckbxCategoriaDeVentimentas.isSelected()) {
+					isVest = false;
+				}
+				
 				if(txtCategoria.getText().trim().isEmpty()) {
 					msgErro +=  "O campo 'categoria' deve ser preenchido.\n";
 					isValid = false;
 				}
 				
 				if(isValid) {
-					try {
-						theId = cm.createCategoria(txtCategoria.getText());
-					} catch(Exception ex) {
-						ex.printStackTrace();
+					if (theId > 0) {
+						cm.saveCategoria(theId, txtCategoria.getText(), isVest);
+						alterarTabela();
+						
+					} else {
+						try {
+							theId = cm.createCategoria(txtCategoria.getText(), isVest);
+							adicionarTabela();
+						} catch(Exception ex) {
+							ex.printStackTrace();
+						}
 					}
 					if(theId > 0) {
-						adicionarTabela();
-						limparCampos();
 						JOptionPane.showMessageDialog(null, "Categoria inserida com sucesso!");
 					} else {
 						JOptionPane.showMessageDialog(null, "Não foi possível inserir a categoria!");
 					}
+					
+					limparCampos();
 				} else {
 					JOptionPane.showMessageDialog(null, msgErro);
 				}
@@ -133,21 +148,23 @@ public class CadastroCategoria extends JInternalFrame {
 		getContentPane().add(btnSalvar);
 		
 		JPanel panel = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel, 6, SpringLayout.SOUTH, btnSalvar);
-		springLayout.putConstraint(SpringLayout.WEST, panel, 10, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, panel, 134, SpringLayout.NORTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, panel, -10, SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, btnSalvar, -6, SpringLayout.NORTH, panel);
+		springLayout.putConstraint(SpringLayout.WEST, panel, 10, SpringLayout.WEST, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, panel, -10, SpringLayout.EAST, getContentPane());
 		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		getContentPane().add(panel);
 		
 		btnCancelar = new JButton("Cancelar");
+		springLayout.putConstraint(SpringLayout.WEST, btnCancelar, 0, SpringLayout.WEST, lblCategoria);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnCancelar, -6, SpringLayout.NORTH, panel);
 		btnCancelar.setEnabled(false);
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				limparCampos();
 			}
 		});
-		springLayout.putConstraint(SpringLayout.SOUTH, btnCancelar, -6, SpringLayout.NORTH, panel);
 		panel.setLayout(new CardLayout(0, 0));
 		
 		Vector<String> colunas = new Vector();
@@ -208,11 +225,13 @@ public class CadastroCategoria extends JInternalFrame {
 		
 		JScrollPane scrollPaneCategoria = new JScrollPane(table);
 		panel.add(scrollPaneCategoria, "name_43359325961995");
-		springLayout.putConstraint(SpringLayout.WEST, btnSalvar, 81, SpringLayout.EAST, btnCancelar);
-		springLayout.putConstraint(SpringLayout.WEST, btnCancelar, 10, SpringLayout.WEST, getContentPane());
 		getContentPane().add(btnCancelar);
 		
 		btnExcluir = new JButton("X");
+		springLayout.putConstraint(SpringLayout.WEST, btnSalvar, 6, SpringLayout.EAST, btnExcluir);
+		springLayout.putConstraint(SpringLayout.WEST, btnExcluir, 6, SpringLayout.EAST, btnCancelar);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnExcluir, -6, SpringLayout.NORTH, panel);
+		springLayout.putConstraint(SpringLayout.EAST, btnExcluir, -94, SpringLayout.EAST, getContentPane());
 		btnExcluir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int opcao;
@@ -221,8 +240,8 @@ public class CadastroCategoria extends JInternalFrame {
 						JOptionPane.YES_NO_OPTION);
 				if (opcao == JOptionPane.YES_OPTION) {
 					try {
-						removerTabela();
 						cm.deleteById(theId);
+						removerTabela();
 						limparCampos();
 						JOptionPane.showMessageDialog(null, "Registro excluido");
 					} catch (ConstraintViolationException ex) {
@@ -233,9 +252,6 @@ public class CadastroCategoria extends JInternalFrame {
 			}
 		});
 		btnExcluir.setEnabled(false);
-		springLayout.putConstraint(SpringLayout.NORTH, btnExcluir, 6, SpringLayout.SOUTH, txtCategoria);
-		springLayout.putConstraint(SpringLayout.WEST, btnExcluir, 6, SpringLayout.EAST, btnCancelar);
-		springLayout.putConstraint(SpringLayout.EAST, btnExcluir, -6, SpringLayout.WEST, btnSalvar);
 		getContentPane().add(btnExcluir);
 		
 		JLabel lblCategoriaId = new JLabel("C\u00F3d. Categoria:");
@@ -243,8 +259,29 @@ public class CadastroCategoria extends JInternalFrame {
 		springLayout.putConstraint(SpringLayout.NORTH, lblCategoriaId, 1, SpringLayout.NORTH, lblCategoriaID);
 		springLayout.putConstraint(SpringLayout.WEST, lblCategoriaId, 0, SpringLayout.WEST, lblCategoria);
 		getContentPane().add(lblCategoriaId);
+		
+		chckbxCategoriaDeVentimentas = new JCheckBox("Categoria de Vestimentas");
+		chckbxCategoriaDeVentimentas.setSelected(true);
+		springLayout.putConstraint(SpringLayout.NORTH, chckbxCategoriaDeVentimentas, 6, SpringLayout.SOUTH, txtCategoria);
+		springLayout.putConstraint(SpringLayout.EAST, chckbxCategoriaDeVentimentas, 0, SpringLayout.EAST, lblCategoriaID);
+		getContentPane().add(chckbxCategoriaDeVentimentas);
 	}
 	
+	protected void alterarTabela() {
+		Categoria ce = cm.findOneWhere("id", String.valueOf(theId));
+		Object[] linhaAlterar = new Object[] {
+			ce.getId(),
+			ce.getName()
+		};
+		for(int i = 0; i < table.getRowCount(); i += 1) {
+			if(theId == (int) table.getValueAt(i, 0)) {
+				model.removeRow(i);
+				model.insertRow(i, linhaAlterar);
+			}
+		}
+		
+	}
+
 	protected void removerTabela() {
 		for(int i = 0; i < table.getRowCount(); i += 1) {
 			if(theId == (int) table.getValueAt(i, 0)) {

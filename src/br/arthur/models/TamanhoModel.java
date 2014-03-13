@@ -4,54 +4,63 @@ import java.util.List;
 
 import org.hibernate.Session;
 
-import br.arthur.entities.Marca;
-import br.arthur.entities.Tipo;
+import br.arthur.entities.Tamanho;
 import br.arthur.utils.HibernateUtil;
 
-public class TipoModel {
+public class TamanhoModel {
 	private static Session session;
-	private Tipo entity;
+	private Tamanho entity;
 	
 	public static List findAll() {
 		session = HibernateUtil.getSessionFactory().openSession();
-		
-		List tipos = session.createQuery("FROM Tipo ORDER BY name").list();
-		
+		List tamanhos = session.createQuery("FROM Tamanho ORDER BY name").list();
 		close();
 		
-		return tipos;
+		return tamanhos;
 	}
 	
-	
-	public static Tipo findOneWhere(String prop, String val){
+	public static Tamanho findOneWhere(String prop, String val){
 		session = HibernateUtil.getSessionFactory().openSession();
 		
-		String hql =  "FROM Tipo where " + prop + " = " + val;
-		Tipo e = (Tipo) session.createQuery(hql).uniqueResult();
+		String hql =  "FROM Tamanho where " + prop + " = " + val;
+		Tamanho t = (Tamanho) session.createQuery(hql).uniqueResult();
 		
 		close();
 		
-		return (Tipo) e;
+		return (Tamanho) t;
 	}
 	
 	public static void close() {
 		session.close();
 	}
 
-
-	public int createTipo(String tipo) {
-		Tipo t = new Tipo(tipo);
+	public int createTamanho(String marca) {
+		Tamanho c = new Tamanho(marca);
 		
 		session = HibernateUtil.getSessionFactory().openSession();
 		
 		session.beginTransaction();
-		session.save(t);
+		session.save(c);
 		session.getTransaction().commit();
 		close();
 		
-		return t.getId();
+		return c.getId();
 	}
-
+	
+	public void saveTamanho(int id, String name) {
+		entity = findOneWhere("id", String.valueOf(id));
+		
+		entity.setName(name);
+		
+		session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+		
+		session.update(entity);
+		
+		session.getTransaction().commit();
+		
+		close();
+	}
 
 	public void deleteById(int theId) {
 		entity = findOneWhere("id", String.valueOf(theId));
@@ -65,21 +74,5 @@ public class TipoModel {
 		
 		close();
 		
-	}
-
-
-	public void saveTipo(int theId, String name) {
-		entity = findOneWhere("id", String.valueOf(theId));
-		
-		entity.setName(name);
-		
-		session = HibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		
-		session.update(entity);
-		
-		session.getTransaction().commit();
-		
-		close();
 	}
 }

@@ -115,18 +115,23 @@ public class CadastroTipo extends JInternalFrame {
 				}
 				
 				if(isValid) {
-					try {
-						theId = tm.createTipo(txtTipo.getText());
-					} catch(Exception ex) {
-						ex.printStackTrace();
+					if(theId > 0) {
+						tm.saveTipo(theId, txtTipo.getText());
+						alterarTabela();
+					} else {
+						try {
+							theId = tm.createTipo(txtTipo.getText());
+							adicionarTabela();
+						} catch(Exception ex) {
+							ex.printStackTrace();
+						}
 					}
 					if(theId > 0) {
-						adicionarTabela();
-						limparCampos();
 						JOptionPane.showMessageDialog(null, "Tipo inserida com sucesso!");
 					} else {
 						JOptionPane.showMessageDialog(null, "Não foi possível inserir o tipo!");
 					}
+					limparCampos();
 				} else {
 					JOptionPane.showMessageDialog(null, msgErro);
 				}
@@ -219,8 +224,8 @@ public class CadastroTipo extends JInternalFrame {
 						JOptionPane.YES_NO_OPTION);
 				if (opcao == JOptionPane.YES_OPTION) {
 					try {
-						removerTabela();
 						tm.deleteById(theId);
+						removerTabela();
 						limparCampos();
 						JOptionPane.showMessageDialog(null, "Registro excluido");
 					} catch (ConstraintViolationException ex) {
@@ -241,6 +246,20 @@ public class CadastroTipo extends JInternalFrame {
 		springLayout.putConstraint(SpringLayout.EAST, lblTipoid, 0, SpringLayout.EAST, txtTipo);
 		getContentPane().add(lblTipoid);
 
+	}
+
+	protected void alterarTabela() {
+		Tipo te = tm.findOneWhere("id", String.valueOf(theId));
+		Object[] linhaAlterar = new Object[] {
+			te.getId(),
+			te.getName()
+		};
+		for(int i = 0; i < table.getRowCount(); i += 1) {
+			if(theId == (int) table.getValueAt(i, 0)) {
+				model.removeRow(i);
+				model.insertRow(i, linhaAlterar);
+			}
+		}
 	}
 
 	protected void removerTabela() {

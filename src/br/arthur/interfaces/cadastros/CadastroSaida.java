@@ -339,7 +339,7 @@ public class CadastroSaida extends JInternalFrame {
 	}
 
 	protected void checkProduto(int prodId, LoginController login) {
-		int qtde = Integer.parseInt(txtQtde.getText());
+	/*	int qtde = Integer.parseInt(txtQtde.getText());
 		if (qtde > 0) {
 			if(em.hasEntrada(prodId)) {
 				Entrada ee = em.getEntity();
@@ -387,7 +387,7 @@ public class CadastroSaida extends JInternalFrame {
 		} else {
 			JOptionPane.showMessageDialog(null, "Quantidade inválida");
 		}
-
+*/
 	}
 
 	private void addTProduto(Entrada entrada) {

@@ -1,18 +1,13 @@
 package br.arthur.temp.tests;
 
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import br.arthur.utils.MyIteratorUtil;
 
 public class anyTeste01 {
-	public static void main(String[] args) {
-		Date tstamp = new Date();
-		long teste = tstamp.getTime();
-		
-		long id = Long.parseLong(String.valueOf(tstamp.getTime()).concat("1"));
-		System.out.println(id);
-
+	public static void main(String[] args) throws IOException {
+		System.out.println(Integer.parseInt("000011"));
 	}
 }

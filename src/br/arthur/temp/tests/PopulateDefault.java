@@ -6,6 +6,7 @@ import org.hibernate.Session;
 
 import br.arthur.entities.CatLastId;
 import br.arthur.entities.Categoria;
+import br.arthur.entities.Cor;
 import br.arthur.entities.Estado;
 import br.arthur.entities.FormaPagto;
 import br.arthur.entities.Group;
@@ -13,6 +14,7 @@ import br.arthur.entities.Marca;
 import br.arthur.entities.Permission;
 import br.arthur.entities.Situacao;
 import br.arthur.entities.Status;
+import br.arthur.entities.Tamanho;
 import br.arthur.entities.Tipo;
 import br.arthur.utils.HibernateUtil;
 
@@ -195,6 +197,33 @@ public class PopulateDefault {
 				"débido",
 				"crédito"
 		};
+
+		String [] cores = {
+				" selecionar ",
+				"azul",
+				"amarelo",
+				"verde",
+				"vermelho"
+		};
+		
+		String [] tamanhos = {
+				" selecionar ",
+				"30",
+				"32",
+				"34",
+				"36",
+				"37",
+				"38",
+				"39",
+				"40",
+				"41",
+				"42",
+				"PP",
+				"P",
+				"M",
+				"G",
+				"GG"
+		};
 		
 		session.beginTransaction();
 		
@@ -213,8 +242,18 @@ public class PopulateDefault {
 			session.save(m);
 		}
 		
+		for(String cor : cores) {
+			Cor c = new Cor(cor);
+			session.save(c);
+		}
+		
+		for(String tamanho : tamanhos) {
+			Tamanho t = new Tamanho(tamanho);
+			session.save(t);
+		}
+		
 		for(String cat : catsStr) {
-			Categoria c = new Categoria(cat);
+			Categoria c = new Categoria(cat, true);
 			session.save(c);
 			CatLastId clid = new CatLastId(c.getId(), 1);
 			session.save(clid);

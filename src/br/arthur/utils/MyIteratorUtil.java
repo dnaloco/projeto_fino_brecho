@@ -48,16 +48,29 @@ public class MyIteratorUtil {
 
 	}
 	
-	public Object getObject(int index) {
-		if (hasIndex(index)) {
-			this.index = index;
+	public int getIndexOf(Object obj) {
+		if (iter.contains(obj)) {
+			return iter.indexOf(obj);
+		}
+		return -1;
+	}
+	
+	public Object getObject(Object obj) {
+		if (iter.contains(obj)) {
+			this.index = iter.indexOf(obj);
 			return iter.get(index);
 		}
 		return null;
 	}
 	
-	public boolean hasIndex(int index) {
-		if (index < iter.size() || index >= 0) {
+	public void setObject(int ind, Object obj) {
+		if (hasIndex(ind)) {
+			iter.set(ind, obj);
+		}
+	}
+
+	public boolean hasIndex(int ind) {
+		if (ind < iter.size() || ind >= 0) {
 			return true;
 		}
 		return false;

@@ -49,6 +49,21 @@ public class MarcaModel {
 		
 		return c.getId();
 	}
+	
+	public void saveMarca(int id, String name) {
+		entity = findOneWhere("id", String.valueOf(id));
+		
+		entity.setName(name);
+		
+		session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+		
+		session.update(entity);
+		
+		session.getTransaction().commit();
+		
+		close();
+	}
 
 	public void deleteById(int theId) {
 		entity = findOneWhere("id", String.valueOf(theId));

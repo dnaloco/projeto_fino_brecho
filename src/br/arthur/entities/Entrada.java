@@ -37,12 +37,13 @@ public class Entrada {
 	@JoinColumn(name="marca_fk")
 	private Marca marca;
 	
-	@Column(length=30)
-	private String tamanho;
+	@ManyToOne
+	@JoinColumn(name="tamanho_fk")
+	private Tamanho tamanho;
 	
-	@Column(length=30)
-	private String cor;
-
+	@ManyToOne
+	@JoinColumn(name="cor_fk")
+	private Cor cor;
 
 	@Column(name="venda")
 	private double venda;
@@ -128,19 +129,19 @@ public class Entrada {
 		this.marca = marca;
 	}
 
-	public String getTamanho() {
+	public Tamanho getTamanho() {
 		return tamanho;
 	}
 
-	public void setTamanho(String tamanho) {
+	public void setTamanho(Tamanho tamanho) {
 		this.tamanho = tamanho;
 	}
 
-	public String getCor() {
+	public Cor getCor() {
 		return cor;
 	}
 
-	public void setCor(String cor) {
+	public void setCor(Cor cor) {
 		this.cor = cor;
 	}
 

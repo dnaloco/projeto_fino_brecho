@@ -34,6 +34,9 @@
 	
 	<mapping class="br.arthur.entities.CatLastId"/>
 	
+	<mapping class="br.arthur.entities.Cor"/>
+	<mapping class="br.arthur.entities.Tamanho"/>
+	
 	<mapping class="br.arthur.entities.Categoria"/>
 	<mapping class="br.arthur.entities.Marca"/>
 	<mapping class="br.arthur.entities.Tipo"/>

@@ -33,7 +33,7 @@ import br.arthur.models.MarcaModel;
 
 public class CadastroMarca extends JInternalFrame {
 	
-	private int theId;
+	private int theId = 0;
 	private int linha_selecionada;
 	
 	private JLabel lblMarcaTtl;
@@ -109,21 +109,27 @@ public class CadastroMarca extends JInternalFrame {
 				}
 				
 				if(isValid) {
-					try {
-						theId = mm.createMarca(txtMarca.getText());
-					} catch(Exception ex) {
-						ex.printStackTrace();
+					if (theId > 0) {
+						mm.saveMarca(theId, txtMarca.getText());
+						alterarTabela();
+					} else {
+						try {
+							theId = mm.createMarca(txtMarca.getText());
+							adicionarTabela();
+						} catch(Exception ex) {
+							ex.printStackTrace();
+						}
 					}
 					if(theId > 0) {
-						adicionarTabela();
-						limparCampos();
 						JOptionPane.showMessageDialog(null, "Marca inserida com sucesso!");
 					} else {
 						JOptionPane.showMessageDialog(null, "Não foi possível inserir a marca!");
 					}
+					
+					limparCampos();
 				} else {
 					JOptionPane.showMessageDialog(null, msgErro);
-				}
+				}				
 			}
 		});
 		springLayout.putConstraint(SpringLayout.NORTH, btnSalvar, 6, SpringLayout.SOUTH, txtMarca);
@@ -220,8 +226,8 @@ public class CadastroMarca extends JInternalFrame {
 						JOptionPane.YES_NO_OPTION);
 				if (opcao == JOptionPane.YES_OPTION) {
 					try {
-						removerTabela();
 						mm.deleteById(theId);
+						removerTabela();						
 						limparCampos();
 						JOptionPane.showMessageDialog(null, "Registro excluido");
 					} catch (ConstraintViolationException ex) {
@@ -242,6 +248,20 @@ public class CadastroMarca extends JInternalFrame {
 		springLayout.putConstraint(SpringLayout.WEST, lblMarcaTtl, 0, SpringLayout.WEST, btnCancelar);
 		getContentPane().add(lblMarcaTtl);
 
+	}
+
+	protected void alterarTabela() {
+		Marca me = mm.findOneWhere("id", String.valueOf(theId));
+		Object[] linhaAlterar = new Object[] {
+			me.getId(),
+			me.getName()
+		};
+		for(int i = 0; i < table.getRowCount(); i += 1) {
+			if(theId == (int) table.getValueAt(i, 0)) {
+				model.removeRow(i);
+				model.insertRow(i, linhaAlterar);
+			}
+		}
 	}
 
 	protected void removerTabela() {

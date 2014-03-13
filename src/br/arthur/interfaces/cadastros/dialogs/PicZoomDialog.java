@@ -19,6 +19,9 @@ import javax.swing.border.EmptyBorder;
 import br.arthur.utils.MyImageUtil;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.Cursor;
 
 public class PicZoomDialog extends JDialog {
 
@@ -49,6 +52,13 @@ public class PicZoomDialog extends JDialog {
 		contentPanel.setLayout(null);
 		
 		JLabel picZoom = new JLabel("");
+		picZoom.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		picZoom.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				dispose();
+			}
+		});
 		picZoom.setHorizontalAlignment(SwingConstants.CENTER);
 		picZoom.setBounds(0, 0, 804, 582);
 		contentPanel.add(picZoom);
