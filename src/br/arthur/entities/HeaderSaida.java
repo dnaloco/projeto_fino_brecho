@@ -18,7 +18,7 @@ public class HeaderSaida {
 	@Id
 	@Column(name="header_saida_id")
 	@GeneratedValue
-	private int id;
+	private long id;
 	
 	@ManyToOne
 	@JoinColumn(name="vendedor_fk", nullable=false)
@@ -42,11 +42,11 @@ public class HeaderSaida {
 		
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -99,7 +99,7 @@ public class HeaderSaida {
 				+ ((dataVenda == null) ? 0 : dataVenda.hashCode());
 		result = prime * result
 				+ ((formaPagto == null) ? 0 : formaPagto.hashCode());
-		result = prime * result + id;
+		result = prime * result + (int) (id ^ (id >>> 32));
 		long temp;
 		temp = Double.doubleToLongBits(totalVenda);
 		result = prime * result + (int) (temp ^ (temp >>> 32));

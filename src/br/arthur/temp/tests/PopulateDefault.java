@@ -90,6 +90,7 @@ public class PopulateDefault {
 		};
 		
 		String[] marcasStr = {
+				"selecionar",
 				"genérica",
 				"prada",
 				"gucci",
@@ -140,15 +141,7 @@ public class PopulateDefault {
 		};
 		
 		String[] catsStr = {
-				"1",
-				"2",
-				"3",
-				"4",
-				"5",
-				"6",
-				"7",
-				"8",
-				"9",
+				"selecionar",
 				"genérica",
 				"calçados",
 				"acessório",
@@ -199,7 +192,7 @@ public class PopulateDefault {
 		};
 
 		String [] cores = {
-				" selecionar ",
+				"selecionar",
 				"azul",
 				"amarelo",
 				"verde",
@@ -207,7 +200,7 @@ public class PopulateDefault {
 		};
 		
 		String [] tamanhos = {
-				" selecionar ",
+				"selecionar",
 				"30",
 				"32",
 				"34",

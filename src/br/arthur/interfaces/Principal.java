@@ -40,11 +40,12 @@ import br.arthur.interfaces.cadastros.CadastroTipo;
 // import br.arthur.interfaces.cadastros.CadastroPedido;
 import br.arthur.interfaces.cadastros.CadastroUsuario;
 import br.arthur.interfaces.cadastros.NovoCadastroEntrada;
+import br.arthur.interfaces.consultas.ConsultarAReceber;
 import br.arthur.interfaces.consultas.ConsultarProduto;
 
 public class Principal extends JFrame {
 
-	private JDesktopPane jDesktopPanelPrincipal;
+	public JDesktopPane jDesktopPanelPrincipal;
 	
 	/**
 	 * Create the frame.
@@ -277,7 +278,7 @@ public class Principal extends JFrame {
 				"images/entradas-small.png")));
 		mntmPedido.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				CadastroEntrada obj = new CadastroEntrada();
+				NovoCadastroEntrada obj = new NovoCadastroEntrada();
 				jDesktopPanelPrincipal.add(obj);
 				obj.setVisible(true);
 			}
@@ -333,6 +334,12 @@ public class Principal extends JFrame {
 				obj.setVisible(true);
 			}
 		});
+		
+		JMenuItem mntmCor = new JMenuItem("Cor");
+		mnCadastro.add(mntmCor);
+		
+		JMenuItem mntmTamanho = new JMenuItem("Tamanho");
+		mnCadastro.add(mntmTamanho);
 		mnCadastro.add(mntmStatusProduto);
 		
 		JSeparator separator_5 = new JSeparator();
@@ -393,6 +400,13 @@ public class Principal extends JFrame {
 		mnFinanceiro.add(mntmContasPagar);
 		
 		JMenuItem mntmContasReceber = new JMenuItem("Contas \u00E0 Receber");
+		mntmContasReceber.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ConsultarAReceber obj = new ConsultarAReceber();
+				jDesktopPanelPrincipal.add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mntmContasReceber.setIcon(new ImageIcon("images/balance-plus-icon.png"));
 		mnFinanceiro.add(mntmContasReceber);
 		

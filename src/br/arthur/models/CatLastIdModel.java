@@ -12,7 +12,7 @@ import br.arthur.utils.HibernateUtil;
 public class CatLastIdModel {
 	private static Session session;
 
-	public static void updateLastId(int cat) {
+	public static void updateLastId(long cat) {
 		CatLastId entity = findOneWhere(cat);
 		
 		entity.setLastId(entity.getLastId() + 1);
@@ -27,7 +27,7 @@ public class CatLastIdModel {
 		close();
 	}
 	
-	public static CatLastId findOneWhere(int cat){
+	public static CatLastId findOneWhere(long cat){
 		session = HibernateUtil.getSessionFactory().openSession();
 		
 		String hql =  "FROM CatLastId where cat = " + String.valueOf(cat);
@@ -38,7 +38,7 @@ public class CatLastIdModel {
 		return (CatLastId) c;
 	}
 	
-	public static int getLastId(int cat) {
+	public static long getLastId(long cat) {
 		session = HibernateUtil.getSessionFactory().openSession();
 		
 		String hql =  "FROM CatLastId where cat = " + String.valueOf(cat);
@@ -46,7 +46,7 @@ public class CatLastIdModel {
 		
 		close();
 		
-		return ((CatLastId) c).getLastId();
+		return c.getLastId();
 	}
 	
 	public static void close() {

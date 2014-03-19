@@ -18,7 +18,7 @@ public class Cliente {
 	@Id
 	@GeneratedValue
 	@Column(name="cliente_id")
-	private int id;
+	private long id;
 	@Column(length=100)
 	private String nome;
 	@Column(length=12)
@@ -45,140 +45,94 @@ public class Cliente {
 	public Cliente() {
 		
 	}
-	
-	
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-
-
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
-
-
 
 	public String getNome() {
 		return nome;
 	}
 
-
-
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-
-
 
 	public String getTelefone() {
 		return telefone;
 	}
 
-
-
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
 	}
-
-
 
 	public String getCelular() {
 		return celular;
 	}
 
-
-
 	public void setCelular(String celular) {
 		this.celular = celular;
 	}
-
-
 
 	public String getEmail() {
 		return email;
 	}
 
-
-
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
-
 
 	public String getSite() {
 		return site;
 	}
 
-
-
 	public void setSite(String site) {
 		this.site = site;
 	}
-
-
 
 	public Date getAniversario() {
 		return aniversario;
 	}
 
-
-
 	public void setAniversario(Date aniversario) {
 		this.aniversario = aniversario;
 	}
-
-
 
 	public Timestamp getCreatedAt() {
 		return createdAt;
 	}
 
-
-
 	public void setCreatedAt(Timestamp createdAt) {
 		this.createdAt = createdAt;
 	}
-
-
 
 	public boolean isPendencia() {
 		return pendencia;
 	}
 
-
-
 	public void setPendencia(boolean pendencia) {
 		this.pendencia = pendencia;
 	}
-
-
 
 	public String getObservacao() {
 		return observacao;
 	}
 
-
-
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
 	}
-
-
 
 	public Entrada getUltimaCompra() {
 		return ultimaCompra;
 	}
 
-
-
 	public void setUltimaCompra(Entrada ultimaCompra) {
 		this.ultimaCompra = ultimaCompra;
 	}
-
-
 
 	@Override
 	public int hashCode() {
@@ -190,7 +144,7 @@ public class Cliente {
 		result = prime * result
 				+ ((createdAt == null) ? 0 : createdAt.hashCode());
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + id;
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
 		result = prime * result
 				+ ((observacao == null) ? 0 : observacao.hashCode());
@@ -263,6 +217,5 @@ public class Cliente {
 			return false;
 		return true;
 	}
-
 	
 }

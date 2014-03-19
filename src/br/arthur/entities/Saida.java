@@ -33,6 +33,9 @@ public class Saida {
 	@JoinColumn(name="header_saida_fk", nullable=false)
 	private HeaderSaida headerSaida;
 	
+	@Column(name="isDisponivel")
+	private boolean disponivel;	
+	
 	public Saida() {
 		
 	}
@@ -77,12 +80,21 @@ public class Saida {
 		this.headerSaida = headerSaida;
 	}
 
+	public boolean isDisponivel() {
+		return disponivel;
+	}
+
+	public void setDisponivel(boolean disponivel) {
+		this.disponivel = disponivel;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
 				+ ((dataSaida == null) ? 0 : dataSaida.hashCode());
+		result = prime * result + (disponivel ? 1231 : 1237);
 		result = prime * result + ((entrada == null) ? 0 : entrada.hashCode());
 		result = prime * result
 				+ ((headerSaida == null) ? 0 : headerSaida.hashCode());
@@ -105,6 +117,8 @@ public class Saida {
 				return false;
 		} else if (!dataSaida.equals(other.dataSaida))
 			return false;
+		if (disponivel != other.disponivel)
+			return false;
 		if (entrada == null) {
 			if (other.entrada != null)
 				return false;
@@ -121,5 +135,6 @@ public class Saida {
 			return false;
 		return true;
 	}
+
 	
 }

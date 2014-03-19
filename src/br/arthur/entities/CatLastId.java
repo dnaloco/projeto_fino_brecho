@@ -13,7 +13,7 @@ public class CatLastId {
 	private int cat;
 
 	@Column(name="id")
-	private int lastId;
+	private long lastId;
 	
 	public CatLastId() {
 		
@@ -32,11 +32,11 @@ public class CatLastId {
 		this.cat = cat;
 	}
 
-	public int getLastId() {
+	public long getLastId() {
 		return lastId;
 	}
 
-	public void setLastId(int lastId) {
+	public void setLastId(long lastId) {
 		this.lastId = lastId;
 	}
 	

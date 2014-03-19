@@ -7,8 +7,8 @@ import java.util.Map;
 import org.hibernate.Session;
 
 import br.arthur.entities.Entrada;
-import br.arthur.entities.Saida;
 import br.arthur.entities.HeaderSaida;
+import br.arthur.entities.Saida;
 import br.arthur.utils.HibernateUtil;
 
 public class SaidaModel {
@@ -50,8 +50,11 @@ public class SaidaModel {
 		if(saidas.size() > 0) {
 			int totalQtde = 0;
 			for(Object o : saidas) {
-				int qtde = ((Saida) o).getQuantidate();
-				totalQtde += qtde;
+				Saida s = (Saida) o;
+				if (!s.isDisponivel()) {
+					int qtde = s.getQuantidate();
+					totalQtde += qtde;
+				}
 			}
 			qtdeSaida = totalQtde;
 		} else {
@@ -78,5 +81,43 @@ public class SaidaModel {
 
 	private static void close() {
 		session.close();
+	}
+
+	public void deleteById(long entradaId) {
+		entity = findOneWhere("id", String.valueOf(entradaId));
+		
+		session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+		
+		session.delete(entity);
+		
+		session.getTransaction().commit();
+		
+		close();
+	}
+	
+	public List findWhereFks(long hSaidaId, long entradaId) {
+		session = HibernateUtil.getSessionFactory().openSession();
+		String hql = "FROM Saida where header_saida_fk = " + String.valueOf(hSaidaId) + " and entrada_fk = " + String.valueOf(entradaId);
+		
+		List saidas = session.createQuery(hql).list();
+		
+		close();
+		
+		return saidas;
+	}
+
+	public void deleteByFks(long hSaidaId, long entradaId) {
+		List saidas = findWhereFks(hSaidaId, entradaId);
+		
+		session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+		for (Object o : saidas) {
+			Saida s = (Saida) o;
+			session.delete(s);
+		}
+		session.getTransaction().commit();
+		
+		close();
 	}
 }

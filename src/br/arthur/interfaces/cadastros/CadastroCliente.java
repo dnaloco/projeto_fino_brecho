@@ -38,7 +38,7 @@ public class CadastroCliente extends JInternalFrame {
 	private JTextField txtAniversario;
 	private JTextField txtNome;
 	private JTextArea textAreaObserv;
-	private static int theId;
+	private static long theId;
 	private JLabel lblNovo;
 	
 	private JButton btnCancelar;
@@ -68,7 +68,7 @@ public class CadastroCliente extends JInternalFrame {
 	/**
 	 * Create the frame.
 	 */
-	public CadastroCliente(int id) {
+	public CadastroCliente(long id) {
 		setFrameIcon(new ImageIcon(
 				"images/clients.png"));
 		this.theId = id;

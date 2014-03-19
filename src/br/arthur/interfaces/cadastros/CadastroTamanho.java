@@ -64,6 +64,8 @@ public class CadastroTamanho extends JInternalFrame {
 	 * Create the frame.
 	 */
 	public CadastroTamanho() {
+		setIconifiable(true);
+		setClosable(true);
 		setTitle("Cadastro de Tamanho");
 		setBounds(100, 100, 230, 445);
 		SpringLayout springLayout = new SpringLayout();

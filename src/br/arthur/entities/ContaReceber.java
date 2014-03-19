@@ -16,19 +16,22 @@ import javax.persistence.Table;
 @Table(name="contas_receber")
 public class ContaReceber {
 	@Id
-	@Column(name="consignatario_id")
+	@Column(name="conta_receber_id")
 	@GeneratedValue
 	private int id;
 	
 	@ManyToOne
 	@JoinColumn(name="header_saida_fk", nullable=false)
-	private HeaderSaida header_saida;
+	private HeaderSaida headerSaida;
 	
 	@Column(name="data_vencimento")
 	private Date dataVencimento;
 	
 	@Column(name="valor")
 	private double valor;
+	
+	@Column(name="desconto")
+	private double desconto; 
 	
 	@Column(name="data_pagto")
 	private Date dataPagto;
@@ -37,10 +40,10 @@ public class ContaReceber {
 	private byte parcela;
 	
 	@Column(name="total_parcela")
-	private byte total_parcela;	
+	private byte totalParcela;	
 
 	@Column(name="pagto")
-	private Pagto pagto;
+	private boolean pagto;
 	
 	public ContaReceber() {
 		
@@ -54,12 +57,12 @@ public class ContaReceber {
 		this.id = id;
 	}
 
-	public HeaderSaida getHeader_saida() {
-		return header_saida;
+	public HeaderSaida getHeaderSaida() {
+		return headerSaida;
 	}
 
-	public void setHeader_saida(HeaderSaida header_saida) {
-		this.header_saida = header_saida;
+	public void setHeaderSaida(HeaderSaida headerSaida) {
+		this.headerSaida = headerSaida;
 	}
 
 	public Date getDataVencimento() {
@@ -78,6 +81,14 @@ public class ContaReceber {
 		this.valor = valor;
 	}
 
+	public double getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(double desconto) {
+		this.desconto = desconto;
+	}
+
 	public Date getDataPagto() {
 		return dataPagto;
 	}
@@ -94,20 +105,19 @@ public class ContaReceber {
 		this.parcela = parcela;
 	}
 
-	public byte getTotal_parcela() {
-		return total_parcela;
+	public byte getTotalParcela() {
+		return totalParcela;
 	}
 
-	public void setTotal_parcela(byte total_parcela) {
-		this.total_parcela = total_parcela;
+	public void setTotalParcela(byte totalParcela) {
+		this.totalParcela = totalParcela;
 	}
 
-	@Enumerated(EnumType.STRING)
-	public Pagto getPagto() {
+	public boolean isPagto() {
 		return pagto;
 	}
 
-	public void setPagto(Pagto pagto) {
+	public void setPagto(boolean pagto) {
 		this.pagto = pagto;
 	}
 
@@ -119,13 +129,15 @@ public class ContaReceber {
 				+ ((dataPagto == null) ? 0 : dataPagto.hashCode());
 		result = prime * result
 				+ ((dataVencimento == null) ? 0 : dataVencimento.hashCode());
-		result = prime * result
-				+ ((header_saida == null) ? 0 : header_saida.hashCode());
-		result = prime * result + id;
-		result = prime * result + ((pagto == null) ? 0 : pagto.hashCode());
-		result = prime * result + parcela;
-		result = prime * result + total_parcela;
 		long temp;
+		temp = Double.doubleToLongBits(desconto);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result
+				+ ((headerSaida == null) ? 0 : headerSaida.hashCode());
+		result = prime * result + id;
+		result = prime * result + (pagto ? 1231 : 1237);
+		result = prime * result + parcela;
+		result = prime * result + totalParcela;
 		temp = Double.doubleToLongBits(valor);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
@@ -150,10 +162,13 @@ public class ContaReceber {
 				return false;
 		} else if (!dataVencimento.equals(other.dataVencimento))
 			return false;
-		if (header_saida == null) {
-			if (other.header_saida != null)
+		if (Double.doubleToLongBits(desconto) != Double
+				.doubleToLongBits(other.desconto))
+			return false;
+		if (headerSaida == null) {
+			if (other.headerSaida != null)
 				return false;
-		} else if (!header_saida.equals(other.header_saida))
+		} else if (!headerSaida.equals(other.headerSaida))
 			return false;
 		if (id != other.id)
 			return false;
@@ -161,14 +176,12 @@ public class ContaReceber {
 			return false;
 		if (parcela != other.parcela)
 			return false;
-		if (total_parcela != other.total_parcela)
+		if (totalParcela != other.totalParcela)
 			return false;
 		if (Double.doubleToLongBits(valor) != Double
 				.doubleToLongBits(other.valor))
 			return false;
 		return true;
 	}
-
-	
 
 }

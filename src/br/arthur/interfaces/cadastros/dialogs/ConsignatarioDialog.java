@@ -38,8 +38,8 @@ public class ConsignatarioDialog extends JDialog {
 	private int theId;
 	private TableModel model;
 	private JTextField txtNome;
-	private JTextField txtRG;
-	private JTextField txtCPF;
+	private JTextField txtTelefone;
+	private JTextField txtCelular;
 
 	public int getTheId() {
 		return theId;
@@ -53,7 +53,7 @@ public class ConsignatarioDialog extends JDialog {
 	public ConsignatarioDialog() {
 		setTitle("Buscar Consignat\u00E1rio");
 		setModal(true);
-		setBounds(100, 100, 618, 431);
+		setBounds(100, 100, 679, 431);
 		getContentPane().setLayout(new BorderLayout());
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -135,7 +135,7 @@ public class ConsignatarioDialog extends JDialog {
 			scrollPane = new JScrollPane(table);
 			sl_contentPanel.putConstraint(SpringLayout.NORTH, scrollPane, 33, SpringLayout.NORTH, contentPanel);
 			sl_contentPanel.putConstraint(SpringLayout.WEST, scrollPane, 5, SpringLayout.WEST, contentPanel);
-			sl_contentPanel.putConstraint(SpringLayout.SOUTH, scrollPane, -8, SpringLayout.SOUTH, contentPanel);
+			sl_contentPanel.putConstraint(SpringLayout.SOUTH, scrollPane, -5, SpringLayout.SOUTH, contentPanel);
 			sl_contentPanel.putConstraint(SpringLayout.EAST, scrollPane, -5, SpringLayout.EAST, contentPanel);
 			contentPanel.add(scrollPane);
 		}
@@ -148,10 +148,10 @@ public class ConsignatarioDialog extends JDialog {
 				
 				if(!txtNome.getText().trim().isEmpty()) {
 					filter.put("nome", txtNome.getText());
-				} else if (!txtCPF.getText().trim().isEmpty()) {
-					filter.put("cpf", txtCPF.getText());
-				} else if (!txtRG.getText().trim().isEmpty()) {
-					filter.put("rg", txtRG.getText());
+				} else if (!txtCelular.getText().trim().isEmpty()) {
+					filter.put("cpf", txtCelular.getText());
+				} else if (!txtTelefone.getText().trim().isEmpty()) {
+					filter.put("rg", txtTelefone.getText());
 				} else {
 					RowFilter<Object, Object> f = new RowFilter<Object, Object>() {
 					      public boolean include(Entry entry) {
@@ -172,25 +172,26 @@ public class ConsignatarioDialog extends JDialog {
 		contentPanel.add(btnFiltrar);
 		
 		txtNome = new JTextField();
-		sl_contentPanel.putConstraint(SpringLayout.WEST, txtNome, 42, SpringLayout.WEST, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtNome, -6, SpringLayout.NORTH, scrollPane);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, txtNome, 48, SpringLayout.WEST, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtNome, -11, SpringLayout.NORTH, scrollPane);
 		contentPanel.add(txtNome);
 		txtNome.setColumns(10);
 		
 		JLabel lblNome = new JLabel("Nome:");
-		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblNome, 4, SpringLayout.NORTH, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.WEST, lblNome, -1, SpringLayout.WEST, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblNome, 6, SpringLayout.NORTH, btnFiltrar);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, lblNome, -6, SpringLayout.WEST, txtNome);
 		contentPanel.add(lblNome);
 		
-		JLabel lblRg = new JLabel("RG:");
+		JLabel lblRg = new JLabel("Telefone:");
 		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblRg, 6, SpringLayout.NORTH, btnFiltrar);
 		contentPanel.add(lblRg);
 		
-		txtRG = new JTextField();
-		sl_contentPanel.putConstraint(SpringLayout.EAST, lblRg, -6, SpringLayout.WEST, txtRG);
-		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtRG, -6, SpringLayout.NORTH, scrollPane);
-		contentPanel.add(txtRG);
-		txtRG.setColumns(10);
+		txtTelefone = new JTextField();
+		sl_contentPanel.putConstraint(SpringLayout.EAST, lblRg, -6, SpringLayout.WEST, txtTelefone);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, txtTelefone, 248, SpringLayout.WEST, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtTelefone, -11, SpringLayout.NORTH, scrollPane);
+		contentPanel.add(txtTelefone);
+		txtTelefone.setColumns(10);
 		
 		MaskFormatter frmtCpf = null;
 		try {
@@ -200,17 +201,16 @@ public class ConsignatarioDialog extends JDialog {
 			e1.printStackTrace();
 		}
 
-		txtCPF = new javax.swing.JFormattedTextField(frmtCpf);
-		sl_contentPanel.putConstraint(SpringLayout.EAST, txtCPF, -68, SpringLayout.EAST, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.WEST, btnFiltrar, 6, SpringLayout.EAST, txtCPF);
-		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtCPF, -6, SpringLayout.NORTH, scrollPane);
-		contentPanel.add(txtCPF);
-		txtCPF.setColumns(10);
+		txtCelular = new javax.swing.JFormattedTextField(frmtCpf);
+		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtCelular, -11, SpringLayout.NORTH, scrollPane);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, txtCelular, -68, SpringLayout.EAST, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, btnFiltrar, 6, SpringLayout.EAST, txtCelular);
+		contentPanel.add(txtCelular);
+		txtCelular.setColumns(10);
 		
-		JLabel lblCpf = new JLabel("CPF:");
-		sl_contentPanel.putConstraint(SpringLayout.EAST, txtRG, -33, SpringLayout.WEST, lblCpf);
-		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblCpf, 4, SpringLayout.NORTH, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.EAST, lblCpf, -6, SpringLayout.WEST, txtCPF);
+		JLabel lblCpf = new JLabel("Celular:");
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblCpf, 6, SpringLayout.NORTH, btnFiltrar);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, lblCpf, -5, SpringLayout.WEST, txtCelular);
 		contentPanel.add(lblCpf);
 		{
 			JPanel buttonPane = new JPanel();

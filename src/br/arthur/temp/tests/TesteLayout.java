@@ -18,6 +18,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.Color;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.JCheckBox;
 
 public class TesteLayout extends JFrame {
 
@@ -64,6 +65,10 @@ public class TesteLayout extends JFrame {
 		gbl_panel.columnWeights = new double[]{Double.MIN_VALUE};
 		gbl_panel.rowWeights = new double[]{Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
+		
+		JCheckBox chckbxPagar = new JCheckBox("Pagar");
+		sl_contentPane.putConstraint(SpringLayout.NORTH, chckbxPagar, 6, SpringLayout.SOUTH, panel);
+		sl_contentPane.putConstraint(SpringLayout.WEST, chckbxPagar, 0, SpringLayout.WEST, panel);
+		contentPane.add(chckbxPagar);
 	}
-
 }

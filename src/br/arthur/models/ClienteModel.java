@@ -25,7 +25,7 @@ public class ClienteModel {
 		return clientes;
 	}
 	
-	public int createCliente(Map<String, Object> data) {
+	public long createCliente(Map<String, Object> data) {
 		entity = new Cliente();
 		
 		setData(data);
@@ -70,7 +70,7 @@ public class ClienteModel {
 	}
 	
 
-	public void saveCliente(int theId, HashMap<String, Object> data) {
+	public void saveCliente(long theId, HashMap<String, Object> data) {
 		entity = findOneWhere("id", String.valueOf(theId));
 		
 		setData(data);

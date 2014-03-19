@@ -1,6 +1,8 @@
 package br.arthur.interfaces.cadastros;
 
 import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -69,6 +71,7 @@ import br.arthur.entities.Marca;
 import br.arthur.entities.Situacao;
 import br.arthur.entities.Tamanho;
 import br.arthur.entities.Tipo;
+import br.arthur.interfaces.Principal;
 import br.arthur.interfaces.cadastros.dialogs.ConsignatarioDialog;
 import br.arthur.interfaces.cadastros.dialogs.PicZoomDialog;
 import br.arthur.models.CategoriaModel;
@@ -83,15 +86,15 @@ import br.arthur.utils.HibernateUtil;
 import br.arthur.utils.JNumericField;
 import br.arthur.utils.MyImageUtil;
 import br.arthur.utils.MyIteratorUtil;
-import java.awt.Color;
 
 public class NovoCadastroEntrada extends JInternalFrame {
 	private JTextField txtCodprod;
 	private JComboBox cmbCor;
 	private JComboBox cmbTamanho;
 	private JTextField txtConsign;
-	private JTextField txtQtde;
+	private JNumericField txtQtde;
 	private JTextField txtDescricao;
+	private JTextArea textAreaObserv;
 	private JTextField txtDataInicio;
 	private JNumericField txtComis;
 	private JNumericField txtMargem;
@@ -112,7 +115,6 @@ public class NovoCadastroEntrada extends JInternalFrame {
 	private JButton btnAdicionarFoto;
 	private JComboBox cmbCategoria;
 	private JComboBox cmbMarca;
-	private JTextArea textAreaObserv;
 	private JComboBox cmbValidade;
 	private JComboBox cmbTipo;
 	private JComboBox cmbSituacao;
@@ -136,9 +138,9 @@ public class NovoCadastroEntrada extends JInternalFrame {
 	private double custo;
 	private double comissao;
 
-	private String[] colunas = new String[] { "Cód. Produto",
-			"Descricao", "Consignatário", "Categoria", "Marca", "Situacao",
-			"Venda", "Qtde", "Vencimento" };
+	private String[] colunas = new String[] { "Cód. Produto", "Descricao",
+			"Consignatário", "Categoria", "Marca", "Situacao", "Venda", "Qtde",
+			"Vencimento" };
 
 	private String[][] dataTable = new String[][] {};
 
@@ -180,7 +182,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		setTitle("Cadastro de Entradas");
 		setIconifiable(true);
 		setClosable(true);
-		setBounds(100, 100, 919, 584);
+		setBounds(100, 100, 941, 584);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 
@@ -213,7 +215,8 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(lblNewLabel);
 
 		JLabel lblConsignatrio = new JLabel("Consignat\u00E1rio:");
-		springLayout.putConstraint(SpringLayout.WEST, lblConsignatrio, 461, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, lblConsignatrio, 461,
+				SpringLayout.WEST, getContentPane());
 		springLayout.putConstraint(SpringLayout.NORTH, lblConsignatrio, 0,
 				SpringLayout.NORTH, lblCdProduto);
 		lblConsignatrio.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -265,27 +268,33 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(btnBuscarConsig);
 
 		JPanel panel = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel, 146, SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, panel, 146,
+				SpringLayout.NORTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, panel, 461,
 				SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, panel, 0, SpringLayout.EAST, btnBuscarConsig);
+		springLayout.putConstraint(SpringLayout.EAST, panel, 0,
+				SpringLayout.EAST, btnBuscarConsig);
 		panel.setBorder(new TitledBorder(null,
 				"Descri\u00E7\u00E3o do Produto", TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
 		getContentPane().add(panel);
 
 		JPanel panel_1 = new JPanel();
-		springLayout.putConstraint(SpringLayout.SOUTH, panel, -6, SpringLayout.NORTH, panel_1);
-		springLayout.putConstraint(SpringLayout.WEST, panel_1, 0, SpringLayout.WEST, lblConsignatrio);
-		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -39, SpringLayout.SOUTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, panel_1, -10, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel, -6,
+				SpringLayout.NORTH, panel_1);
+		springLayout.putConstraint(SpringLayout.WEST, panel_1, 0,
+				SpringLayout.WEST, lblConsignatrio);
+		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -39,
+				SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, panel_1, -10,
+				SpringLayout.EAST, getContentPane());
 		panel_1.setBorder(new TitledBorder(null,
 				"Avalia\u00E7\u00E3o do Produto", TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		gbl_panel.rowHeights = new int[] { 0, 0, 0, 0, 0, 0 };
-		gbl_panel.columnWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+		gbl_panel.columnWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
 				0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE };
 		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 1.0,
 				Double.MIN_VALUE };
@@ -300,18 +309,18 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		panel.add(lblNewLabel_1, gbc_lblNewLabel_1);
 
 		txtDescricao = new JTextField();
-		
+
 		txtDescricao.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == 10) {
+				if (e.getKeyCode() == 10) {
 					cmbCategoria.requestFocus();
 				}
 			}
 		});
 		txtDescricao.setEnabled(false);
 		GridBagConstraints gbc_txtDescricao = new GridBagConstraints();
-		gbc_txtDescricao.gridwidth = 9;
+		gbc_txtDescricao.gridwidth = 11;
 		gbc_txtDescricao.insets = new Insets(0, 0, 5, 0);
 		gbc_txtDescricao.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtDescricao.gridx = 1;
@@ -328,28 +337,19 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		panel.add(lblNewLabel_2, gbc_lblNewLabel_2);
 
 		cmbCategoria = new JComboBox();
-		
+
 		cmbCategoria.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == 10) {
+				if (e.getKeyCode() == 10) {
 					cmbMarca.requestFocus();
 				}
 			}
 		});
 
-		Iterator categorias = CategoriaModel.findAll().iterator();
-
-		while (categorias.hasNext()) {
-			Categoria c = (Categoria) categorias.next();
-			cmbCategoria.addItem(c.getName());
-		}
-
-		cmbCategoria.setSelectedItem("genérica");
-		
 		cmbCategoria.setEnabled(false);
 		GridBagConstraints gbc_cmbCategoria = new GridBagConstraints();
-		gbc_cmbCategoria.gridwidth = 4;
+		gbc_cmbCategoria.gridwidth = 6;
 		gbc_cmbCategoria.insets = new Insets(0, 0, 5, 5);
 		gbc_cmbCategoria.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cmbCategoria.gridx = 1;
@@ -360,36 +360,27 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
 		gbc_lblNewLabel_3.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel_3.anchor = GridBagConstraints.EAST;
-		gbc_lblNewLabel_3.gridx = 5;
+		gbc_lblNewLabel_3.gridx = 7;
 		gbc_lblNewLabel_3.gridy = 1;
 		panel.add(lblNewLabel_3, gbc_lblNewLabel_3);
 
 		cmbMarca = new JComboBox();
-		
+
 		cmbMarca.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == 10) {
+				if (e.getKeyCode() == 10) {
 					cmbCor.requestFocus();
 				}
 			}
 		});
 
-		Iterator marcas = MarcaModel.findAll().iterator();
-
-		while (marcas.hasNext()) {
-			Marca m = (Marca) marcas.next();
-			cmbMarca.addItem(m.getName());
-		}
-
-		cmbMarca.setSelectedItem("genérica");
-		
 		cmbMarca.setEnabled(false);
 		GridBagConstraints gbc_cmbMarca = new GridBagConstraints();
 		gbc_cmbMarca.gridwidth = 4;
 		gbc_cmbMarca.insets = new Insets(0, 0, 5, 0);
 		gbc_cmbMarca.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbMarca.gridx = 6;
+		gbc_cmbMarca.gridx = 8;
 		gbc_cmbMarca.gridy = 1;
 		panel.add(cmbMarca, gbc_cmbMarca);
 
@@ -400,52 +391,45 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		gbc_lblTamanho.gridx = 0;
 		gbc_lblTamanho.gridy = 2;
 		panel.add(lblTamanho, gbc_lblTamanho);
-
-		txtQtde = new JTextField();
-		txtQtde.setEnabled(false);
-		GridBagConstraints gbc_txtQtde = new GridBagConstraints();
-		gbc_txtQtde.gridwidth = 2;
-		gbc_txtQtde.insets = new Insets(0, 0, 5, 5);
-		gbc_txtQtde.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtQtde.gridx = 1;
-		gbc_txtQtde.gridy = 2;
-		panel.add(txtQtde, gbc_txtQtde);
-		txtQtde.setColumns(10);
+		
+				txtQtde = new JNumericField();
+				txtQtde.setMaxLength(3);
+				txtQtde.setFormat(JNumericField.NUMERIC);
+				txtQtde.setEnabled(false);
+				GridBagConstraints gbc_txtQtde = new GridBagConstraints();
+				gbc_txtQtde.gridwidth = 4;
+				gbc_txtQtde.insets = new Insets(0, 0, 5, 5);
+				gbc_txtQtde.fill = GridBagConstraints.HORIZONTAL;
+				gbc_txtQtde.gridx = 1;
+				gbc_txtQtde.gridy = 2;
+				panel.add(txtQtde, gbc_txtQtde);
+				txtQtde.setColumns(10);
 
 		JLabel lblNewLabel_4 = new JLabel("Cor:");
 		GridBagConstraints gbc_lblNewLabel_4 = new GridBagConstraints();
 		gbc_lblNewLabel_4.anchor = GridBagConstraints.EAST;
 		gbc_lblNewLabel_4.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_4.gridx = 3;
+		gbc_lblNewLabel_4.gridx = 5;
 		gbc_lblNewLabel_4.gridy = 2;
 		panel.add(lblNewLabel_4, gbc_lblNewLabel_4);
-		
+
 		cmbCor = new JComboBox();
-		
+
 		cmbCor.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == 10) {
+				if (e.getKeyCode() == 10) {
 					cmbTamanho.requestFocus();
 				}
 			}
 		});
-		
-		Iterator cores = CorModel.findAll().iterator();
 
-		while (cores.hasNext()) {
-			Cor c = (Cor) cores.next();
-			cmbCor.addItem(c.getName());
-		}
-		
-		cmbCor.setSelectedItem(" selecionar ");
-		
 		cmbCor.setEnabled(false);
 		GridBagConstraints gbc_cmbCor = new GridBagConstraints();
 		gbc_cmbCor.gridwidth = 3;
 		gbc_cmbCor.insets = new Insets(0, 0, 5, 5);
 		gbc_cmbCor.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbCor.gridx = 4;
+		gbc_cmbCor.gridx = 6;
 		gbc_cmbCor.gridy = 2;
 		panel.add(cmbCor, gbc_cmbCor);
 
@@ -453,36 +437,28 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		GridBagConstraints gbc_lblNewLabel_5 = new GridBagConstraints();
 		gbc_lblNewLabel_5.anchor = GridBagConstraints.EAST;
 		gbc_lblNewLabel_5.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel_5.gridx = 7;
+		gbc_lblNewLabel_5.gridx = 9;
 		gbc_lblNewLabel_5.gridy = 2;
 		panel.add(lblNewLabel_5, gbc_lblNewLabel_5);
-		
+
 		cmbTamanho = new JComboBox();
-		
+
 		cmbTamanho.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == 10) {
+				if (e.getKeyCode() == 10) {
 					txtVenda.requestFocus();
 					txtVenda.selectAll();
 				}
 			}
 		});
-		
-		Iterator tamanhos = TamanhoModel.findAll().iterator();
 
-		while (tamanhos.hasNext()) {
-			Tamanho t = (Tamanho) tamanhos.next();
-			cmbTamanho.addItem(t.getName());
-		}
-		
-		cmbTamanho.setSelectedItem(" selecionar ");
 		cmbTamanho.setEnabled(false);
 		GridBagConstraints gbc_cmbTamanho = new GridBagConstraints();
 		gbc_cmbTamanho.gridwidth = 2;
-		gbc_cmbTamanho.insets = new Insets(0, 0, 5, 5);
+		gbc_cmbTamanho.insets = new Insets(0, 0, 5, 0);
 		gbc_cmbTamanho.fill = GridBagConstraints.HORIZONTAL;
-		gbc_cmbTamanho.gridx = 8;
+		gbc_cmbTamanho.gridx = 10;
 		gbc_cmbTamanho.gridy = 2;
 		panel.add(cmbTamanho, gbc_cmbTamanho);
 
@@ -492,21 +468,13 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		gbc_lblObservao.gridx = 0;
 		gbc_lblObservao.gridy = 3;
 		panel.add(lblObservao, gbc_lblObservao);
-
-		textAreaObserv = new JTextArea();
-		textAreaObserv.setEnabled(false);
-		GridBagConstraints gbc_textAreaObserv = new GridBagConstraints();
-		gbc_textAreaObserv.gridwidth = 9;
-		gbc_textAreaObserv.gridheight = 2;
-		gbc_textAreaObserv.fill = GridBagConstraints.BOTH;
-		gbc_textAreaObserv.gridx = 1;
-		gbc_textAreaObserv.gridy = 3;
-		panel.add(textAreaObserv, gbc_textAreaObserv);
 		getContentPane().add(panel_1);
 
 		btnImportarFotos = new JButton("IMPORTAR FOTOS");
-		springLayout.putConstraint(SpringLayout.WEST, btnImportarFotos, 0, SpringLayout.WEST, lblConsignatrio);
-		springLayout.putConstraint(SpringLayout.EAST, btnImportarFotos, -272, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, btnImportarFotos, 0,
+				SpringLayout.WEST, lblConsignatrio);
+		springLayout.putConstraint(SpringLayout.EAST, btnImportarFotos, -272,
+				SpringLayout.EAST, getContentPane());
 		btnImportarFotos.setEnabled(false);
 		btnImportarFotos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -540,7 +508,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 								lobHelper = session.getLobHelper();
 								imgBlob = lobHelper.createBlob(fileStream,
 										file.length());
-								
+
 							} catch (FileNotFoundException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -572,8 +540,8 @@ public class NovoCadastroEntrada extends JInternalFrame {
 									ee.getMarca().getName(), ee.getSituacao()
 											.getName(), String.valueOf(ee
 											.getVenda()), String.valueOf(ee
-											.getQuantidate()),
-									sdf.format(ee.getDataVencimento()));
+											.getQuantidate()), sdf.format(ee
+											.getDataVencimento()));
 
 							data.clear();
 						}
@@ -602,8 +570,10 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(btnImportarFotos);
 
 		btnLast = new JButton(new ImageIcon("images/last-view-icon.png"));
-		springLayout.putConstraint(SpringLayout.NORTH, btnImportarFotos, 0, SpringLayout.NORTH, btnLast);
-		springLayout.putConstraint(SpringLayout.EAST, btnLast, 0, SpringLayout.EAST, btnBuscarConsig);
+		springLayout.putConstraint(SpringLayout.NORTH, btnImportarFotos, 0,
+				SpringLayout.NORTH, btnLast);
+		springLayout.putConstraint(SpringLayout.EAST, btnLast, 0,
+				SpringLayout.EAST, btnBuscarConsig);
 		btnLast.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				selecionarUltima();
@@ -613,8 +583,10 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(btnLast);
 
 		btnNext = new JButton(new ImageIcon("images/next-view-icon.png"));
-		springLayout.putConstraint(SpringLayout.NORTH, btnNext, 0, SpringLayout.NORTH, btnLast);
-		springLayout.putConstraint(SpringLayout.EAST, btnNext, -6, SpringLayout.WEST, btnLast);
+		springLayout.putConstraint(SpringLayout.NORTH, btnNext, 0,
+				SpringLayout.NORTH, btnLast);
+		springLayout.putConstraint(SpringLayout.EAST, btnNext, -6,
+				SpringLayout.WEST, btnLast);
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (entradasListIter.hasNext()) {
@@ -628,8 +600,10 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		lblEntradasList = new JLabel("0/0");
 		springLayout.putConstraint(SpringLayout.NORTH, lblEntradasList, 4,
 				SpringLayout.NORTH, btnLast);
-		springLayout.putConstraint(SpringLayout.WEST, lblEntradasList, 736, SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, lblEntradasList, -6, SpringLayout.WEST, btnNext);
+		springLayout.putConstraint(SpringLayout.WEST, lblEntradasList, 736,
+				SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, lblEntradasList, -6,
+				SpringLayout.WEST, btnNext);
 		lblEntradasList.setHorizontalAlignment(SwingConstants.CENTER);
 		lblEntradasList.setFont(new Font("SansSerif", Font.BOLD, 14));
 		getContentPane().add(lblEntradasList);
@@ -638,7 +612,8 @@ public class NovoCadastroEntrada extends JInternalFrame {
 				new ImageIcon("images/previous-view-icon.png"));
 		springLayout.putConstraint(SpringLayout.NORTH, btnPrevious, 0,
 				SpringLayout.NORTH, btnLast);
-		springLayout.putConstraint(SpringLayout.EAST, btnPrevious, -6, SpringLayout.WEST, lblEntradasList);
+		springLayout.putConstraint(SpringLayout.EAST, btnPrevious, -6,
+				SpringLayout.WEST, lblEntradasList);
 		btnPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (entradasListIter.hasPrevious()) {
@@ -650,8 +625,10 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(btnPrevious);
 
 		btnFirst = new JButton(new ImageIcon("images/first-view-icon.png"));
-		springLayout.putConstraint(SpringLayout.NORTH, btnFirst, 0, SpringLayout.NORTH, btnLast);
-		springLayout.putConstraint(SpringLayout.EAST, btnFirst, -6, SpringLayout.WEST, btnPrevious);
+		springLayout.putConstraint(SpringLayout.NORTH, btnFirst, 0,
+				SpringLayout.NORTH, btnLast);
+		springLayout.putConstraint(SpringLayout.EAST, btnFirst, -6,
+				SpringLayout.WEST, btnPrevious);
 		btnFirst.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				selecionarPrimeira();
@@ -665,10 +642,11 @@ public class NovoCadastroEntrada extends JInternalFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO
 				int opcao;
-				opcao = JOptionPane.showConfirmDialog(null,
-						"Deseja Realmente excluir o produto "
-								+ entradaId + "?", "Atencão",
-						JOptionPane.YES_NO_OPTION);
+				opcao = JOptionPane
+						.showConfirmDialog(null,
+								"Deseja Realmente excluir o produto "
+										+ entradaId + "?", "Atencão",
+								JOptionPane.YES_NO_OPTION);
 				if (opcao == JOptionPane.YES_OPTION) {
 					try {
 						em.deleteById(entradaId);
@@ -677,12 +655,12 @@ public class NovoCadastroEntrada extends JInternalFrame {
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
-					
+
 					pupularIterator();
-					
+
 					if (entradas.size() > 0) {
 						selecionarPrimeira();
-						
+
 					} else {
 						entradaId = 0;
 						entradaSelecionada = 0;
@@ -690,20 +668,26 @@ public class NovoCadastroEntrada extends JInternalFrame {
 					}
 
 					habilitarEdicaoProduto();
-					
-					lblEntradasList.setText(entradaSelecionada + "/" + entradasTotal);
+
+					lblEntradasList.setText(entradaSelecionada + "/"
+							+ entradasTotal);
 				}
 			}
 		});
-		springLayout.putConstraint(SpringLayout.SOUTH, btnLast, -6, SpringLayout.NORTH, btnExcluirProd);
-		springLayout.putConstraint(SpringLayout.EAST, btnExcluirProd, -10, SpringLayout.EAST, getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, btnExcluirProd, -6, SpringLayout.NORTH, panel);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnLast, -6,
+				SpringLayout.NORTH, btnExcluirProd);
+		springLayout.putConstraint(SpringLayout.EAST, btnExcluirProd, -10,
+				SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, btnExcluirProd, -6,
+				SpringLayout.NORTH, panel);
 		btnExcluirProd.setEnabled(false);
 		getContentPane().add(btnExcluirProd);
 
 		btnTrocarFoto = new JButton("TROCAR FOTO");
-		springLayout.putConstraint(SpringLayout.WEST, btnTrocarFoto, 10, SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, btnTrocarFoto, -6, SpringLayout.WEST, panel);
+		springLayout.putConstraint(SpringLayout.WEST, btnTrocarFoto, 10,
+				SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, btnTrocarFoto, -6,
+				SpringLayout.WEST, panel);
 		btnTrocarFoto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -712,19 +696,27 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(btnTrocarFoto);
 
 		JPanel panel_2 = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel_2, 6, SpringLayout.SOUTH, txtCodprod);
-		springLayout.putConstraint(SpringLayout.WEST, panel_2, 10, SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, panel_2, -228, SpringLayout.SOUTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, panel_2, -6, SpringLayout.WEST, panel);
-		springLayout.putConstraint(SpringLayout.NORTH, btnTrocarFoto, 6, SpringLayout.SOUTH, panel_2);
+		springLayout.putConstraint(SpringLayout.NORTH, panel_2, 6,
+				SpringLayout.SOUTH, txtCodprod);
+		springLayout.putConstraint(SpringLayout.WEST, panel_2, 10,
+				SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel_2, -228,
+				SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, panel_2, -6,
+				SpringLayout.WEST, panel);
+		springLayout.putConstraint(SpringLayout.NORTH, btnTrocarFoto, 6,
+				SpringLayout.SOUTH, panel_2);
 		panel_2.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
 				null, null));
 		getContentPane().add(panel_2);
 
 		JPanel panel_3 = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 0, SpringLayout.NORTH, panel_3);
-		springLayout.putConstraint(SpringLayout.NORTH, panel_3, 342, SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, panel_3, -10, SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 0,
+				SpringLayout.NORTH, panel_3);
+		springLayout.putConstraint(SpringLayout.NORTH, panel_3, 342,
+				SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel_3, -10,
+				SpringLayout.SOUTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, panel_3, 10,
 				SpringLayout.WEST, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, panel_3, -452,
@@ -753,8 +745,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		txtComis.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
-				if (entradaId > 0
-						&& !txtComis.getText().trim().isEmpty() ) {
+				if (entradaId > 0 && !txtComis.getText().trim().isEmpty()) {
 					calcularComissao();
 				} else {
 					lblComis.setText("R$ 0.00");
@@ -763,8 +754,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
-				if (entradaId > 0
-						&& !txtComis.getText().trim().isEmpty() ) {
+				if (entradaId > 0 && !txtComis.getText().trim().isEmpty()) {
 					calcularComissao();
 				} else {
 					lblComis.setText("R$ 0.00");
@@ -773,8 +763,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
-				if (entradaId > 0
-						&& !txtComis.getText().trim().isEmpty() ) {
+				if (entradaId > 0 && !txtComis.getText().trim().isEmpty()) {
 					calcularComissao();
 				} else {
 					lblComis.setText("R$ 0.00");
@@ -803,11 +792,11 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		panel_1.add(lblVendaR, gbc_lblVendaR);
 
 		txtVenda = new JNumericField();
-		
+
 		txtVenda.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == 10) {
+				if (e.getKeyCode() == 10) {
 					btnSalvarProduto.doClick();
 				}
 			}
@@ -817,8 +806,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
-				if (entradaId > 0
-						&& !txtVenda.getText().trim().isEmpty() ) {
+				if (entradaId > 0 && !txtVenda.getText().trim().isEmpty()) {
 					calcularCusto();
 					calcularComissao();
 				} else {
@@ -828,8 +816,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
-				if (entradaId > 0
-						&& !txtVenda.getText().trim().isEmpty() ) {
+				if (entradaId > 0 && !txtVenda.getText().trim().isEmpty()) {
 					calcularCusto();
 					calcularComissao();
 				} else {
@@ -839,8 +826,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
-				if (entradaId > 0
-						&& !txtVenda.getText().trim().isEmpty() ) {
+				if (entradaId > 0 && !txtVenda.getText().trim().isEmpty()) {
 					calcularCusto();
 					calcularComissao();
 				} else {
@@ -873,8 +859,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		txtMargem.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
-				if (entradaId > 0
-						&& !txtMargem.getText().trim().isEmpty() ) {
+				if (entradaId > 0 && !txtMargem.getText().trim().isEmpty()) {
 					calcularCusto();
 				} else {
 					lblCusto.setText("R$ 0.00");
@@ -883,8 +868,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
-				if (entradaId > 0
-						&& !txtMargem.getText().trim().isEmpty() ) {
+				if (entradaId > 0 && !txtMargem.getText().trim().isEmpty()) {
 					calcularCusto();
 				} else {
 					lblCusto.setText("R$ 0.00");
@@ -893,8 +877,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
-				if (entradaId > 0
-						&& !txtMargem.getText().trim().isEmpty() ) {
+				if (entradaId > 0 && !txtMargem.getText().trim().isEmpty()) {
 					calcularCusto();
 				} else {
 					lblCusto.setText("R$ 0.00");
@@ -972,15 +955,6 @@ public class NovoCadastroEntrada extends JInternalFrame {
 
 		cmbTipo = new JComboBox();
 
-		Iterator tipos = TipoModel.findAll().iterator();
-
-		while (tipos.hasNext()) {
-			Tipo t = (Tipo) tipos.next();
-			cmbTipo.addItem(t.getName());
-		}
-
-		cmbTipo.setSelectedItem("usado");
-		
 		cmbTipo.setEnabled(false);
 		GridBagConstraints gbc_cmbTipo = new GridBagConstraints();
 		gbc_cmbTipo.gridwidth = 3;
@@ -1049,11 +1023,13 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		jtableProdutos.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				limparProdutoData();
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				jtableProdutos.setCursor(Cursor
 						.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				
-				long idRow = Long.parseLong((String) jtableProdutos.getValueAt(jtableProdutos.getSelectedRow(), 0));
+
+				long idRow = Long.parseLong((String) jtableProdutos.getValueAt(
+						jtableProdutos.getSelectedRow(), 0));
 				selecionarItem(idRow);
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				jtableProdutos.setCursor(Cursor
@@ -1062,7 +1038,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		});
 
 		jtableProdutos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
+
 		jtableProdutos.getColumnModel().getColumn(0).setPreferredWidth(90);
 		jtableProdutos.getColumnModel().getColumn(1).setPreferredWidth(120);
 		jtableProdutos.getColumnModel().getColumn(2).setPreferredWidth(120);
@@ -1077,10 +1053,26 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		panel_3.add(scrollPaneTabela, "name_7514832869496");
 
 		btnAdicionarFoto = new JButton("ADICIONAR FOTO");
-		springLayout.putConstraint(SpringLayout.WEST, btnAdicionarFoto, 6, SpringLayout.EAST, panel_2);
-		springLayout.putConstraint(SpringLayout.EAST, btnAdicionarFoto, -272, SpringLayout.EAST, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, btnExcluirProd, 6, SpringLayout.EAST, btnAdicionarFoto);
-		springLayout.putConstraint(SpringLayout.SOUTH, btnAdicionarFoto, -6, SpringLayout.NORTH, panel);
+		springLayout.putConstraint(SpringLayout.WEST, btnAdicionarFoto, 6,
+				SpringLayout.EAST, panel_2);
+		springLayout.putConstraint(SpringLayout.EAST, btnAdicionarFoto, -272,
+				SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, btnExcluirProd, 6,
+				SpringLayout.EAST, btnAdicionarFoto);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnAdicionarFoto, -6,
+				SpringLayout.NORTH, panel);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.gridheight = 2;
+		gbc_scrollPane.gridwidth = 11;
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.gridx = 1;
+		gbc_scrollPane.gridy = 3;
+		panel.add(scrollPane, gbc_scrollPane);
+		
+		textAreaObserv = new JTextArea();
+		scrollPane.setViewportView(textAreaObserv);
 		btnAdicionarFoto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -1089,7 +1081,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 
 				int retorno = arquivo.showOpenDialog(null);
 				String caminhoArquivo = "";
-				
+
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				if (retorno == JFileChooser.APPROVE_OPTION) {
 					System.out.println("Abriu");
@@ -1104,7 +1096,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 								"Erro ao carregar o arquivo!",
 								JOptionPane.ERROR_MESSAGE);
 					} else {
-						
+
 						Session session = HibernateUtil.getSessionFactory()
 								.openSession();
 						try {
@@ -1113,13 +1105,13 @@ public class NovoCadastroEntrada extends JInternalFrame {
 							LobHelper lobHelper = session.getLobHelper();
 							Blob imgBlob = lobHelper.createBlob(fileStream,
 									fileSize);
-							
+
 							itemNum += 1;
-							
+
 							HashMap<String, Object> data = pegarValoresProduto();
 							data.put("id", String.valueOf(itemNum));
 							data.put("image", imgBlob);
-							
+
 							entradaId = em.criarEntradaComPic(data);
 							Entrada ee = em.getEntity();
 							entradas.add(entradaId);
@@ -1132,11 +1124,11 @@ public class NovoCadastroEntrada extends JInternalFrame {
 									ee.getMarca().getName(), ee.getSituacao()
 											.getName(), String.valueOf(ee
 											.getVenda()), String.valueOf(ee
-											.getQuantidate()),
-									sdf.format(ee.getDataVencimento()));
+											.getQuantidate()), sdf.format(ee
+											.getDataVencimento()));
 
 							data.clear();
-							
+
 							pupularIterator();
 
 							selecionarUltima();
@@ -1187,33 +1179,48 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		btnSalvarProduto = new JButton("SALVAR PRODUTO");
 		btnSalvarProduto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Consignatario ce = cm.findOneWhere("id", String.valueOf(consigId));
+				Consignatario ce = cm.findOneWhere("id",
+						String.valueOf(consigId));
 				System.out.println(entradaId);
 				if (entradaId > 0) {
 					String msgErro = "";
 					boolean isValid = true;
 					System.out.println(entradaId);
-					Entrada ee = em.findOneWhere("id", String.valueOf(entradaId));
-					
+					Entrada ee = em.findOneWhere("id",
+							String.valueOf(entradaId));
+
 					if (txtDescricao.getText().trim().isEmpty()) {
 						msgErro += "O campo 'título' deve ser informado!\n";
 						isValid = false;
 					}
-					
-					if (txtQtde.getText().trim().isEmpty() || Integer.parseInt(txtQtde.getText()) <= 0) {
+
+					if (txtQtde.getText().trim().isEmpty()
+							|| Integer.parseInt(txtQtde.getText()) <= 0) {
 						msgErro += "O campo 'quantidade' deve ser informado e ser maior do que zero!\n";
 						isValid = false;
 					}
-					
-					if (ee.getCategoria().isVestimenta() ) {
-						System.out.println("VESTIMENTA");
-						System.out.println(cmbCor.getSelectedItem());
-						if (cmbCor.getSelectedItem().toString().contains(" selecionar ")) {
-							msgErro += "O campo 'cor' deve ser informado selecionado!\n";
+
+					if (ee.getCategoria().isVestimenta()) {
+						if (cmbCategoria.getSelectedItem().toString()
+								.contains("selecionar")) {
+							msgErro += "O campo 'categoria' deve ser informado selecionado!\n";
 							isValid = false;
 						}
 						
-						if (cmbTamanho.getSelectedItem().toString().contains(" selecionar ")) {
+						if (cmbMarca.getSelectedItem().toString()
+								.contains("selecionar")) {
+							msgErro += "O campo 'marca' deve ser informado selecionado!\n";
+							isValid = false;
+						}
+
+						if (cmbCor.getSelectedItem().toString()
+								.contains("selecionar")) {
+							msgErro += "O campo 'cor' deve ser informado selecionado!\n";
+							isValid = false;
+						}
+
+						if (cmbTamanho.getSelectedItem().toString()
+								.contains("selecionar")) {
 							msgErro += "O campo 'tamanho' deve ser informado selecionado!\n";
 							isValid = false;
 						}
@@ -1221,60 +1228,58 @@ public class NovoCadastroEntrada extends JInternalFrame {
 						System.out.println("NÃO É VESTIMENTA????");
 						System.out.println(ee.getCategoria().isVestimenta());
 					}
-					
+
 					if (Double.parseDouble(txtComis.getText()) <= 0.0) {
 						msgErro += "O campo 'comissão' deve ser informado e ser maior do que zero!\n";
 						isValid = false;
 					}
-					
+
 					if (Double.parseDouble(txtVenda.getText()) <= 0.0) {
 						msgErro += "O campo 'venda' deve ser informado e ser maior do que zero!\n";
 						isValid = false;
 					}
-					
+
 					if (Double.parseDouble(txtMargem.getText()) <= 0.0) {
 						msgErro += "O campo 'margem' deve ser informado e ser maior do que zero!\n";
 						isValid = false;
 					}
-					
+
 					if (isValid) {
 						cmbSituacao.setSelectedItem("disponível");
-						
+
 						HashMap<String, Object> data = pegarValoresProduto();
-						
+
 						Entrada nee = em.salvarEntrada(entradaId, data);
-						
+
 						SimpleDateFormat sdf = new SimpleDateFormat(
 								"dd/MM/yyyy");
-						
-						alterarProdutoTabela(String.valueOf(nee.getId()),
-								nee.getDescricao(), nee.getConsignatario()
-										.getNome(), nee.getCategoria()
-										.getName(),
-								nee.getMarca().getName(), nee.getSituacao()
-										.getName(), String.valueOf(nee
-										.getVenda()), String.valueOf(nee
-										.getQuantidate()),
-								sdf.format(nee.getDataVencimento()));
+
+						alterarProdutoTabela(String.valueOf(nee.getId()), nee
+								.getDescricao(), nee.getConsignatario()
+								.getNome(), nee.getCategoria().getName(), nee
+								.getMarca().getName(), nee.getSituacao()
+								.getName(), String.valueOf(nee.getVenda()),
+								String.valueOf(nee.getQuantidate()), sdf
+										.format(nee.getDataVencimento()));
 
 						data.clear();
 
 						long newId = nee.getId();
-						
-						if (newId != entradaId) {		
+
+						if (newId != entradaId) {
 							int index = entradas.indexOf(entradaId);
 							entradas.set(index, newId);
 							entradasListIter.setObject(index, newId);
 						}
 
 						txtCodprod.setText(String.valueOf(nee.getId()));
-						
+
 						if (entradasListIter.hasNext()) {
 							selecionarProxima();
 						} else {
 							selecionarPrimeira();
 						}
-						
+
 						JOptionPane.showMessageDialog(null, "Produto salvo");
 					} else {
 						JOptionPane.showMessageDialog(null, msgErro);
@@ -1282,35 +1287,40 @@ public class NovoCadastroEntrada extends JInternalFrame {
 				}
 			}
 		});
-		springLayout.putConstraint(SpringLayout.WEST, btnSalvarProduto, 0, SpringLayout.WEST, lblConsignatrio);
-		springLayout.putConstraint(SpringLayout.SOUTH, btnSalvarProduto, -10, SpringLayout.SOUTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, btnSalvarProduto, 0, SpringLayout.EAST, btnBuscarConsig);
+		springLayout.putConstraint(SpringLayout.WEST, btnSalvarProduto, 0,
+				SpringLayout.WEST, lblConsignatrio);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnSalvarProduto, -10,
+				SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, btnSalvarProduto, 0,
+				SpringLayout.EAST, btnBuscarConsig);
 		btnSalvarProduto.setEnabled(false);
 		getContentPane().add(btnSalvarProduto);
-		
+
 		btnAtualizarCads = new JButton("ATUALIZAR CADASTROS");
-		springLayout.putConstraint(SpringLayout.NORTH, btnAtualizarCads, 6, SpringLayout.SOUTH, txtConsign);
-		springLayout.putConstraint(SpringLayout.WEST, btnAtualizarCads, 0, SpringLayout.WEST, lblConsignatrio);
-		springLayout.putConstraint(SpringLayout.EAST, btnAtualizarCads, 0, SpringLayout.EAST, btnBuscarConsig);
+		btnAtualizarCads.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				atualizarCombos();
+			}
+		});
+		springLayout.putConstraint(SpringLayout.NORTH, btnAtualizarCads, 6,
+				SpringLayout.SOUTH, txtConsign);
+		springLayout.putConstraint(SpringLayout.WEST, btnAtualizarCads, 0,
+				SpringLayout.WEST, lblConsignatrio);
+		springLayout.putConstraint(SpringLayout.EAST, btnAtualizarCads, 0,
+				SpringLayout.EAST, btnBuscarConsig);
 		getContentPane().add(btnAtualizarCads);
-		
+
 		cmbSituacao = new JComboBox();
 		cmbSituacao.setBackground(Color.WHITE);
 		cmbSituacao.setFont(new Font("SansSerif", Font.BOLD, 12));
 		cmbSituacao.setEnabled(false);
-		
-		Iterator situacoes = SituacaoModel.findAll().iterator();
 
-		while (situacoes.hasNext()) {
-			Situacao s = (Situacao) situacoes.next();
-			cmbSituacao.addItem(s.getName());
-		}
-		
-		cmbSituacao.setSelectedItem("avaliando");
-		
-		springLayout.putConstraint(SpringLayout.WEST, cmbSituacao, 6, SpringLayout.EAST, lblNewLabel);
-		springLayout.putConstraint(SpringLayout.SOUTH, cmbSituacao, -8, SpringLayout.NORTH, panel_2);
-		springLayout.putConstraint(SpringLayout.EAST, cmbSituacao, -6, SpringLayout.WEST, lblConsignatrio);
+		springLayout.putConstraint(SpringLayout.WEST, cmbSituacao, 6,
+				SpringLayout.EAST, lblNewLabel);
+		springLayout.putConstraint(SpringLayout.SOUTH, cmbSituacao, -8,
+				SpringLayout.NORTH, panel_2);
+		springLayout.putConstraint(SpringLayout.EAST, cmbSituacao, -6,
+				SpringLayout.WEST, lblConsignatrio);
 		getContentPane().add(cmbSituacao);
 
 		JMenuBar menuBar = new JMenuBar();
@@ -1319,37 +1329,64 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		JMenu mnCadastro = new JMenu("Cadastro");
 		menuBar.add(mnCadastro);
 
-		JMenu mnProdutos = new JMenu("Produtos");
-		mnCadastro.add(mnProdutos);
-
-		JMenuItem mntmImportarFotos = new JMenuItem("Importar Fotos");
-		mnProdutos.add(mntmImportarFotos);
-
-		JMenuItem mntmExcluirLista = new JMenuItem("Excluir Lista");
-		mnProdutos.add(mntmExcluirLista);
-
-		JMenuItem mntmAdicionarProduto = new JMenuItem("Adicionar Produto");
-		mnProdutos.add(mntmAdicionarProduto);
-
-		JMenuItem mntmExcluirProduto = new JMenuItem("Excluir Produto");
-		mnProdutos.add(mntmExcluirProduto);
-
 		JMenuItem mntmConsignatrio = new JMenuItem("Consignat\u00E1rio");
+		mntmConsignatrio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				CadastroConsignatario obj = new CadastroConsignatario(0);
+				getDesktopPane().add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mnCadastro.add(mntmConsignatrio);
 
 		JMenuItem mntmCategoria = new JMenuItem("Categoria");
+		mntmCategoria.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				CadastroCategoria obj = new CadastroCategoria();
+				getDesktopPane().add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mnCadastro.add(mntmCategoria);
 
 		JMenuItem mntmMarca = new JMenuItem("Marca");
+		mntmMarca.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CadastroMarca obj = new CadastroMarca();
+				getDesktopPane().add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mnCadastro.add(mntmMarca);
 
 		JMenuItem mntmCor = new JMenuItem("Cor");
+		mntmCor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CadastroCor obj = new CadastroCor();
+				getDesktopPane().add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mnCadastro.add(mntmCor);
 
 		JMenuItem mntmTamanho = new JMenuItem("Tamanho");
+		mntmTamanho.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CadastroTamanho obj = new CadastroTamanho();
+				getDesktopPane().add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mnCadastro.add(mntmTamanho);
 
 		JMenuItem mntmTipo = new JMenuItem("Tipo");
+		mntmTipo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CadastroTipo obj = new CadastroTipo();
+				getDesktopPane().add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mnCadastro.add(mntmTipo);
 
 		JMenu mnCdigoDeBarras = new JMenu("C\u00F3digo de Barras");
@@ -1358,16 +1395,18 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		JMenuItem mntmImprimirCdigos = new JMenuItem("Imprimir C\u00F3digos");
 		mnCdigoDeBarras.add(mntmImprimirCdigos);
 
+		atualizarCombos();
 	}
 
-	protected void alterarProdutoTabela(String cod, String desc,
-			String consig, String categ, String marca, String situacao,
-			String venda, String qtde, String vencimento) {
-		String[] linha = new String[] { cod, desc,
-				consig, categ, marca, situacao, venda, qtde, vencimento };
-		
+	protected void alterarProdutoTabela(String cod, String desc, String consig,
+			String categ, String marca, String situacao, String venda,
+			String qtde, String vencimento) {
+		String[] linha = new String[] { cod, desc, consig, categ, marca,
+				situacao, venda, qtde, vencimento };
+
 		for (int i = 0; i < jtableProdutos.getRowCount(); i += 1) {
-			if (entradaId == Long.parseLong((String) jtableProdutos.getValueAt(i, 0))) {
+			if (entradaId == Long.parseLong((String) jtableProdutos.getValueAt(
+					i, 0))) {
 				System.out.println();
 				model.removeRow(i);
 				model.insertRow(i, linha);
@@ -1420,7 +1459,8 @@ public class NovoCadastroEntrada extends JInternalFrame {
 
 	protected void removerProdutoTabela() {
 		for (int i = 0; i < jtableProdutos.getRowCount(); i += 1) {
-			if (entradaId == Long.parseLong((String) jtableProdutos.getValueAt(i, 0))) {
+			if (entradaId == Long.parseLong((String) jtableProdutos.getValueAt(
+					i, 0))) {
 				model.removeRow(i);
 			}
 		}
@@ -1438,8 +1478,8 @@ public class NovoCadastroEntrada extends JInternalFrame {
 			String consig, String categ, String marca, String situacao,
 			String venda, String qtde, String vencimento) {
 
-		String[] linha = new String[] { cod, desc,
-				consig, categ, marca, situacao, venda, qtde, vencimento };
+		String[] linha = new String[] { cod, desc, consig, categ, marca,
+				situacao, venda, qtde, vencimento };
 
 		model.addRow(linha);
 	}
@@ -1494,11 +1534,11 @@ public class NovoCadastroEntrada extends JInternalFrame {
 	private void limparProdutoData() {
 		cmbSituacao.setSelectedItem("avaliando");
 		txtDescricao.setText("");
-		cmbCategoria.setSelectedItem("genérica");
-		cmbMarca.setSelectedItem("genérica");
+		cmbCategoria.setSelectedItem("selecionar");
+		cmbMarca.setSelectedItem("selecionar");
 		txtQtde.setText("1");
-		cmbCor.setSelectedItem(" selecionar ");
-		cmbTamanho.setSelectedItem(" selecionar ");
+		cmbCor.setSelectedItem("selecionar");
+		cmbTamanho.setSelectedItem("selecionar");
 		textAreaObserv.setText("");
 		txtComis.setText("");
 		txtVenda.setText("");
@@ -1507,6 +1547,8 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		txtDataInicio.setText("");
 		cmbValidade.setSelectedItem("3 meses");
 		txtLocal.setText("");
+		lblComis.setText("R$ 0,00");
+		lblCusto.setText("R$ 0,00");
 	}
 
 	protected void selecionarPrimeira() {
@@ -1626,15 +1668,17 @@ public class NovoCadastroEntrada extends JInternalFrame {
 	}
 
 	private void popularEntrada() {
+		limparProdutoData();
+		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		Entrada ee = em.findOneWhere("id", String.valueOf(entradaId));
-		
+
 		txtCodprod.setText(String.valueOf(ee.getId()));
-		
+
 		consigId = ee.getConsignatario().getId();
 		txtConsign.setText(ee.getConsignatario().getNome());
-		
+
 		txtDescricao.setText(ee.getDescricao());
 		cmbCor.setSelectedItem(ee.getCor().getName());
 		cmbTamanho.setSelectedItem(ee.getTamanho().getName());
@@ -1646,14 +1690,15 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		txtQtde.setText(String.valueOf(ee.getQuantidate()));
 		txtVenda.setText(String.valueOf(ee.getVenda()));
 		txtMargem.setText(String.valueOf(ee.getMargeVenda()));
-		lblCusto.setText("R$ " + String.format("%.2f", (double) ee.getVenda()));
-		lblComis.setText("R$ " + String.format("%.2f", (double) ee.getComissao()));
+		lblCusto.setText("R$ " + String.format("%.2f", (double) ee.getCusto()));
+		lblComis.setText("R$ "
+				+ String.format("%.2f", (double) ee.getComissao()));
 		txtDataInicio.setText(sdf.format(ee.getDataInicio()));
 		cmbValidade.setSelectedItem("3 meses");
 		cmbSituacao.setSelectedItem(ee.getSituacao().getName());
 		cmbTipo.setSelectedItem(ee.getTipo().getName());
 		txtLocal.setText(ee.getLocalizacao());
-		
+
 		txtDescricao.requestFocus();
 		txtDescricao.selectAll();
 	}
@@ -1690,14 +1735,12 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		Consignatario ce = cm.findOneWhere("id", String.valueOf(consigId));
 
 		data.put("consig", ce);
-		
+
 		if (txtDescricao.getText().trim().isEmpty()) {
 			data.put("descricao", "Novo Produto " + itemNum);
 		} else {
 			data.put("descricao", txtDescricao.getText());
 		}
-		
-		
 
 		if (txtQtde.getText().trim().isEmpty()) {
 			data.put("qtde", 1);
@@ -1820,5 +1863,55 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		data.put("local", txtLocal.getText());
 
 		return data;
+	}
+
+	public void atualizarCombos() {
+		cmbCategoria.removeAllItems();
+		Iterator categorias = CategoriaModel.findAll().iterator();
+		while (categorias.hasNext()) {
+			Categoria c = (Categoria) categorias.next();
+			cmbCategoria.addItem(c.getName());
+		}
+		cmbCategoria.setSelectedItem("selecionar");
+
+		cmbMarca.removeAllItems();
+		Iterator marcas = MarcaModel.findAll().iterator();
+		while (marcas.hasNext()) {
+			Marca m = (Marca) marcas.next();
+			cmbMarca.addItem(m.getName());
+		}
+		cmbMarca.setSelectedItem("selecionar");
+
+		cmbCor.removeAllItems();
+		Iterator cores = CorModel.findAll().iterator();
+		while (cores.hasNext()) {
+			Cor c = (Cor) cores.next();
+			cmbCor.addItem(c.getName());
+		}
+		cmbCor.setSelectedItem("selecionar");
+
+		cmbTamanho.removeAllItems();
+		Iterator tamanhos = TamanhoModel.findAll().iterator();
+		while (tamanhos.hasNext()) {
+			Tamanho t = (Tamanho) tamanhos.next();
+			cmbTamanho.addItem(t.getName());
+		}
+		cmbTamanho.setSelectedItem("selecionar");
+
+		cmbTipo.removeAllItems();
+		Iterator tipos = TipoModel.findAll().iterator();
+		while (tipos.hasNext()) {
+			Tipo t = (Tipo) tipos.next();
+			cmbTipo.addItem(t.getName());
+		}
+		cmbTipo.setSelectedItem("usado");
+		
+		cmbSituacao.removeAllItems();
+		Iterator situacoes = SituacaoModel.findAll().iterator();
+		while (situacoes.hasNext()) {
+			Situacao s = (Situacao) situacoes.next();
+			cmbSituacao.addItem(s.getName());
+		}
+		cmbSituacao.setSelectedItem("avaliando");
 	}
 }

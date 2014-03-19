@@ -63,6 +63,8 @@ public class CadastroCor extends JInternalFrame {
 	 * Create the frame.
 	 */
 	public CadastroCor() {
+		setIconifiable(true);
+		setClosable(true);
 		setTitle("Cadastro de Cor");
 		setBounds(100, 100, 204, 459);
 		SpringLayout springLayout = new SpringLayout();

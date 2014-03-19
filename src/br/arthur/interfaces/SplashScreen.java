@@ -90,7 +90,7 @@ public class SplashScreen extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		setLocationRelativeTo(null);
-		
+
 		JLabel lblUsuario = new JLabel("Usu\u00E1rio:");
 		txtUsuario = new JTextField();
 		txtUsuario.addKeyListener(new KeyAdapter() {

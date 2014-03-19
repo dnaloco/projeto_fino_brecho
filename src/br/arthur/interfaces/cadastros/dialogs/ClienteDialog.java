@@ -34,11 +34,11 @@ public class ClienteDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textField;
 	private JLabel lblNome;
-	private int theId;
+	private Long theId;
 	private TableModel model;
 	private JTable table;
 	private JScrollPane scrollPane;
-	
+	private JButton okButton;
 	/**
 	 * Launch the application.
 	 */
@@ -143,15 +143,19 @@ public class ClienteDialog extends JDialog {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				int linha_selecionada = table.getSelectedRow();
-				theId = (int) table.getValueAt(linha_selecionada, 0);
+				theId = (Long) table.getValueAt(linha_selecionada, 0);
+				
+				if (theId > 0) {
+					okButton.setEnabled(true);
+				}
 			}
 		});
 		
 		
 		RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
 		      public boolean include(Entry entry) {
-		        Integer population = (Integer) entry.getValue(0);
-		        return population.intValue() > 0;
+		        Long population = (Long) entry.getValue(0);
+		        return population.longValue() > 0;
 		      }
 		    };
 	    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
@@ -183,12 +187,13 @@ public class ClienteDialog extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
+				okButton = new JButton("OK");
+				okButton.setEnabled(false);
 				okButton.addActionListener(new ActionListener() {
 					
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						JOptionPane.showMessageDialog(null, "Consignatário Selecionado: " + theId);
+						JOptionPane.showMessageDialog(null, "Cliente Selecionado: " + theId);
 						dispose();
 					}
 				});
@@ -202,7 +207,7 @@ public class ClienteDialog extends JDialog {
 					
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						theId = 0;
+						theId = (long) 0;
 						dispose();
 					}
 				});
@@ -212,11 +217,11 @@ public class ClienteDialog extends JDialog {
 		}
 	}
 
-	public int getTheId() {
+	public long getTheId() {
 		return theId;
 	}
 
-	public void setTheId(int theId) {
+	public void setTheId(long theId) {
 		this.theId = theId;
 	}
 }

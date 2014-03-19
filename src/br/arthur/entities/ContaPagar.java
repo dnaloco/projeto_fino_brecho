@@ -19,8 +19,12 @@ public class ContaPagar {
 	private int id;
 	
 	@ManyToOne
-	@JoinColumn(name="entrada_fk", nullable=false)
-	private Entrada entrada;
+	@JoinColumn(name="consignatario_fk", nullable=false)
+	private Consignatario consignatario;
+	
+	@ManyToOne
+	@JoinColumn(name="contaRecebimento", nullable=false)
+	private ContaReceber contaRecebimento;
 	
 	@Column(name="parcela")
 	private byte parcela;
@@ -44,63 +48,6 @@ public class ContaPagar {
 		
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((dataPagto == null) ? 0 : dataPagto.hashCode());
-		result = prime * result
-				+ ((dataVencimento == null) ? 0 : dataVencimento.hashCode());
-		result = prime * result + ((entrada == null) ? 0 : entrada.hashCode());
-		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + (pagto ? 1231 : 1237);
-		result = prime * result + parcela;
-		result = prime * result + total_parcela;
-		long temp;
-		temp = Double.doubleToLongBits(valor);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ContaPagar other = (ContaPagar) obj;
-		if (dataPagto == null) {
-			if (other.dataPagto != null)
-				return false;
-		} else if (!dataPagto.equals(other.dataPagto))
-			return false;
-		if (dataVencimento == null) {
-			if (other.dataVencimento != null)
-				return false;
-		} else if (!dataVencimento.equals(other.dataVencimento))
-			return false;
-		if (entrada == null) {
-			if (other.entrada != null)
-				return false;
-		} else if (!entrada.equals(other.entrada))
-			return false;
-		if (id != other.id)
-			return false;
-		if (pagto != other.pagto)
-			return false;
-		if (parcela != other.parcela)
-			return false;
-		if (total_parcela != other.total_parcela)
-			return false;
-		if (Double.doubleToLongBits(valor) != Double
-				.doubleToLongBits(other.valor))
-			return false;
-		return true;
-	}
-
 	public int getId() {
 		return id;
 	}
@@ -109,12 +56,20 @@ public class ContaPagar {
 		this.id = id;
 	}
 
-	public Entrada getEntrada() {
-		return entrada;
+	public Consignatario getConsignatario() {
+		return consignatario;
 	}
 
-	public void setEntrada(Entrada entrada) {
-		this.entrada = entrada;
+	public void setConsignatario(Consignatario consignatario) {
+		this.consignatario = consignatario;
+	}
+
+	public ContaReceber getContaRecebimento() {
+		return contaRecebimento;
+	}
+
+	public void setContaRecebimento(ContaReceber contaRecebimento) {
+		this.contaRecebimento = contaRecebimento;
 	}
 
 	public byte getParcela() {
@@ -164,5 +119,71 @@ public class ContaPagar {
 	public void setPagto(boolean pagto) {
 		this.pagto = pagto;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((consignatario == null) ? 0 : consignatario.hashCode());
+		result = prime
+				* result
+				+ ((contaRecebimento == null) ? 0 : contaRecebimento.hashCode());
+		result = prime * result
+				+ ((dataPagto == null) ? 0 : dataPagto.hashCode());
+		result = prime * result
+				+ ((dataVencimento == null) ? 0 : dataVencimento.hashCode());
+		result = prime * result + id;
+		result = prime * result + (pagto ? 1231 : 1237);
+		result = prime * result + parcela;
+		result = prime * result + total_parcela;
+		long temp;
+		temp = Double.doubleToLongBits(valor);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ContaPagar other = (ContaPagar) obj;
+		if (consignatario == null) {
+			if (other.consignatario != null)
+				return false;
+		} else if (!consignatario.equals(other.consignatario))
+			return false;
+		if (contaRecebimento == null) {
+			if (other.contaRecebimento != null)
+				return false;
+		} else if (!contaRecebimento.equals(other.contaRecebimento))
+			return false;
+		if (dataPagto == null) {
+			if (other.dataPagto != null)
+				return false;
+		} else if (!dataPagto.equals(other.dataPagto))
+			return false;
+		if (dataVencimento == null) {
+			if (other.dataVencimento != null)
+				return false;
+		} else if (!dataVencimento.equals(other.dataVencimento))
+			return false;
+		if (id != other.id)
+			return false;
+		if (pagto != other.pagto)
+			return false;
+		if (parcela != other.parcela)
+			return false;
+		if (total_parcela != other.total_parcela)
+			return false;
+		if (Double.doubleToLongBits(valor) != Double
+				.doubleToLongBits(other.valor))
+			return false;
+		return true;
+	}
+
 }

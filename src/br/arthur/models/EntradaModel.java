@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.hibernate.Session;
 
@@ -107,25 +108,25 @@ public class EntradaModel {
 		
 		if (String.valueOf(entity.getId()).length() >= 13 ) {
 			int cat = ((Categoria) data.get("categoria")).getId();
-			int clid = CatLastIdModel.getLastId(cat);
+			long clid = CatLastIdModel.getLastId(cat);
 			entity.setId((cat * 1000000) + clid);
 			CatLastIdModel.updateLastId(cat);
-		}
-		
-		else {
-			if (entity.getCategoria() != ((Categoria) data.get("categoria"))) {
-				String idStr = String.valueOf(entity.getId()).substring(2, 8);
+		} else {
+			if (!entity.getCategoria().getName().contains(((Categoria) data.get("categoria")).getName())) {
+				System.out.println("POOOOOOORRRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+				System.out.println("ENTIDADE " + entity.getCategoria().getName());
+				System.out.println("DATA GET " + ((Categoria) data.get("categoria")).getName());
 				int cat = ((Categoria) data.get("categoria")).getId();
-				int clid = Integer.parseInt(idStr);
+				long clid = CatLastIdModel.getLastId(cat);
 				entity.setId((cat * 1000000) + clid);
 				CatLastIdModel.updateLastId(cat);
 			}
 		}
 		
-		comporDataEntidate(data);
-		
 		long newId = entity.getId();
 		
+		comporDataEntidate(data);
+
 		session = HibernateUtil.getSessionFactory().openSession();
 		
 		session.beginTransaction();
@@ -146,4 +147,41 @@ public class EntradaModel {
 		return entity;
 	}
 	
+	private Entrada findOneWhereDisponivel(String id) {
+		session = HibernateUtil.getSessionFactory().openSession();
+		
+		String hql =  "FROM Entrada where id  = " + id + " and situacao_fk = 4";
+		Entrada e = (Entrada) session.createQuery(hql).uniqueResult();
+		
+		close();
+		
+		return (Entrada) e;
+	}
+
+	public boolean hasEntrada(int productId) {
+		Entrada entrada =  findOneWhereDisponivel(String.valueOf(productId));
+		long entradaId = 0;
+		
+		try {
+			entradaId = entrada.getId();
+		} catch (NullPointerException ex) {
+			ex.printStackTrace();
+		}
+		
+		if (entradaId ==  0) {
+			return false;
+		}
+		entity = entrada;
+		return true;
+	}
+	
+	public static List findAll() {
+		session = HibernateUtil.getSessionFactory().openSession();
+		
+		List estados = session.createQuery("FROM Entrada ORDER BY descricao").list();
+		
+		close();
+		
+		return estados;
+	}
 }
