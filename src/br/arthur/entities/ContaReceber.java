@@ -38,9 +38,6 @@ public class ContaReceber {
 	
 	@Column(name="parcela")
 	private byte parcela;
-	
-	@Column(name="total_parcela")
-	private byte totalParcela;	
 
 	@Column(name="pagto")
 	private boolean pagto;
@@ -105,14 +102,6 @@ public class ContaReceber {
 		this.parcela = parcela;
 	}
 
-	public byte getTotalParcela() {
-		return totalParcela;
-	}
-
-	public void setTotalParcela(byte totalParcela) {
-		this.totalParcela = totalParcela;
-	}
-
 	public boolean isPagto() {
 		return pagto;
 	}
@@ -137,7 +126,6 @@ public class ContaReceber {
 		result = prime * result + id;
 		result = prime * result + (pagto ? 1231 : 1237);
 		result = prime * result + parcela;
-		result = prime * result + totalParcela;
 		temp = Double.doubleToLongBits(valor);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
@@ -175,8 +163,6 @@ public class ContaReceber {
 		if (pagto != other.pagto)
 			return false;
 		if (parcela != other.parcela)
-			return false;
-		if (totalParcela != other.totalParcela)
 			return false;
 		if (Double.doubleToLongBits(valor) != Double
 				.doubleToLongBits(other.valor))

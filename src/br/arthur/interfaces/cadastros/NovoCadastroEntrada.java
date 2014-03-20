@@ -268,10 +268,6 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(btnBuscarConsig);
 
 		JPanel panel = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel, 146,
-				SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, panel, 461,
-				SpringLayout.WEST, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, panel, 0,
 				SpringLayout.EAST, btnBuscarConsig);
 		panel.setBorder(new TitledBorder(null,
@@ -280,12 +276,10 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(panel);
 
 		JPanel panel_1 = new JPanel();
-		springLayout.putConstraint(SpringLayout.SOUTH, panel, -6,
-				SpringLayout.NORTH, panel_1);
-		springLayout.putConstraint(SpringLayout.WEST, panel_1, 0,
-				SpringLayout.WEST, lblConsignatrio);
-		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -39,
-				SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, panel, 0,
+				SpringLayout.WEST, panel_1);
+		springLayout.putConstraint(SpringLayout.SOUTH, panel, -6, SpringLayout.NORTH, panel_1);
+		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 342, SpringLayout.NORTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, panel_1, -10,
 				SpringLayout.EAST, getContentPane());
 		panel_1.setBorder(new TitledBorder(null,
@@ -471,10 +465,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(panel_1);
 
 		btnImportarFotos = new JButton("IMPORTAR FOTOS");
-		springLayout.putConstraint(SpringLayout.WEST, btnImportarFotos, 0,
-				SpringLayout.WEST, lblConsignatrio);
-		springLayout.putConstraint(SpringLayout.EAST, btnImportarFotos, -272,
-				SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, btnImportarFotos, 0, SpringLayout.WEST, panel);
 		btnImportarFotos.setEnabled(false);
 		btnImportarFotos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -600,7 +591,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		lblEntradasList = new JLabel("0/0");
 		springLayout.putConstraint(SpringLayout.NORTH, lblEntradasList, 4,
 				SpringLayout.NORTH, btnLast);
-		springLayout.putConstraint(SpringLayout.WEST, lblEntradasList, 736,
+		springLayout.putConstraint(SpringLayout.WEST, lblEntradasList, 746,
 				SpringLayout.WEST, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, lblEntradasList, -6,
 				SpringLayout.WEST, btnNext);
@@ -610,10 +601,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 
 		btnPrevious = new JButton(
 				new ImageIcon("images/previous-view-icon.png"));
-		springLayout.putConstraint(SpringLayout.NORTH, btnPrevious, 0,
-				SpringLayout.NORTH, btnLast);
-		springLayout.putConstraint(SpringLayout.EAST, btnPrevious, -6,
-				SpringLayout.WEST, lblEntradasList);
+		springLayout.putConstraint(SpringLayout.EAST, btnPrevious, -6, SpringLayout.WEST, lblEntradasList);
 		btnPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (entradasListIter.hasPrevious()) {
@@ -625,10 +613,7 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(btnPrevious);
 
 		btnFirst = new JButton(new ImageIcon("images/first-view-icon.png"));
-		springLayout.putConstraint(SpringLayout.NORTH, btnFirst, 0,
-				SpringLayout.NORTH, btnLast);
-		springLayout.putConstraint(SpringLayout.EAST, btnFirst, -6,
-				SpringLayout.WEST, btnPrevious);
+		springLayout.putConstraint(SpringLayout.EAST, btnFirst, -6, SpringLayout.WEST, btnPrevious);
 		btnFirst.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				selecionarPrimeira();
@@ -638,6 +623,14 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(btnFirst);
 
 		btnExcluirProd = new JButton("EXCLUIR PRODUTO");
+		springLayout.putConstraint(SpringLayout.SOUTH, btnFirst, -6, SpringLayout.NORTH, btnExcluirProd);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnPrevious, -6, SpringLayout.NORTH, btnExcluirProd);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnLast, -6, SpringLayout.NORTH, btnExcluirProd);
+		springLayout.putConstraint(SpringLayout.NORTH, panel, 6, SpringLayout.SOUTH, btnExcluirProd);
+		springLayout.putConstraint(SpringLayout.WEST, btnExcluirProd, 0, SpringLayout.WEST, btnFirst);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnExcluirProd, -390,
+				SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, btnExcluirProd, -10, SpringLayout.EAST, getContentPane());
 		btnExcluirProd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// TODO
@@ -674,20 +667,12 @@ public class NovoCadastroEntrada extends JInternalFrame {
 				}
 			}
 		});
-		springLayout.putConstraint(SpringLayout.SOUTH, btnLast, -6,
-				SpringLayout.NORTH, btnExcluirProd);
-		springLayout.putConstraint(SpringLayout.EAST, btnExcluirProd, -10,
-				SpringLayout.EAST, getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, btnExcluirProd, -6,
-				SpringLayout.NORTH, panel);
 		btnExcluirProd.setEnabled(false);
 		getContentPane().add(btnExcluirProd);
 
 		btnTrocarFoto = new JButton("TROCAR FOTO");
 		springLayout.putConstraint(SpringLayout.WEST, btnTrocarFoto, 10,
 				SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, btnTrocarFoto, -6,
-				SpringLayout.WEST, panel);
 		btnTrocarFoto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -696,31 +681,30 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(btnTrocarFoto);
 
 		JPanel panel_2 = new JPanel();
+		springLayout.putConstraint(SpringLayout.WEST, panel_2, 10, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, panel_2, -6, SpringLayout.WEST, panel);
+		springLayout.putConstraint(SpringLayout.NORTH, btnTrocarFoto, 6, SpringLayout.SOUTH, panel_2);
+		springLayout.putConstraint(SpringLayout.EAST, btnTrocarFoto, 0,
+				SpringLayout.EAST, panel_2);
 		springLayout.putConstraint(SpringLayout.NORTH, panel_2, 6,
 				SpringLayout.SOUTH, txtCodprod);
-		springLayout.putConstraint(SpringLayout.WEST, panel_2, 10,
-				SpringLayout.WEST, getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, panel_2, -228,
 				SpringLayout.SOUTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, panel_2, -6,
-				SpringLayout.WEST, panel);
-		springLayout.putConstraint(SpringLayout.NORTH, btnTrocarFoto, 6,
-				SpringLayout.SOUTH, panel_2);
 		panel_2.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
 				null, null));
 		getContentPane().add(panel_2);
 
 		JPanel panel_3 = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 0,
-				SpringLayout.NORTH, panel_3);
+		springLayout.putConstraint(SpringLayout.WEST, panel_1, 6,
+				SpringLayout.EAST, panel_3);
+		springLayout.putConstraint(SpringLayout.EAST, panel_3, -499,
+				SpringLayout.EAST, getContentPane());
 		springLayout.putConstraint(SpringLayout.NORTH, panel_3, 342,
 				SpringLayout.NORTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, panel_3, -10,
 				SpringLayout.SOUTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, panel_3, 10,
 				SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, panel_3, -452,
-				SpringLayout.EAST, getContentPane());
 		panel_3.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
 				null, null));
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
@@ -1053,14 +1037,11 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		panel_3.add(scrollPaneTabela, "name_7514832869496");
 
 		btnAdicionarFoto = new JButton("ADICIONAR FOTO");
-		springLayout.putConstraint(SpringLayout.WEST, btnAdicionarFoto, 6,
-				SpringLayout.EAST, panel_2);
-		springLayout.putConstraint(SpringLayout.EAST, btnAdicionarFoto, -272,
-				SpringLayout.EAST, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, btnExcluirProd, 6,
+		springLayout.putConstraint(SpringLayout.EAST, btnImportarFotos, 0,
 				SpringLayout.EAST, btnAdicionarFoto);
-		springLayout.putConstraint(SpringLayout.SOUTH, btnAdicionarFoto, -6,
-				SpringLayout.NORTH, panel);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnAdicionarFoto, -6, SpringLayout.NORTH, panel);
+		springLayout.putConstraint(SpringLayout.WEST, btnAdicionarFoto, 0, SpringLayout.WEST, panel);
+		springLayout.putConstraint(SpringLayout.EAST, btnAdicionarFoto, -297, SpringLayout.EAST, getContentPane());
 		
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
@@ -1177,6 +1158,9 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(btnAdicionarFoto);
 
 		btnSalvarProduto = new JButton("SALVAR PRODUTO");
+		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -1, SpringLayout.NORTH, btnSalvarProduto);
+		springLayout.putConstraint(SpringLayout.WEST, btnSalvarProduto, 0,
+				SpringLayout.WEST, panel_1);
 		btnSalvarProduto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Consignatario ce = cm.findOneWhere("id",
@@ -1287,8 +1271,6 @@ public class NovoCadastroEntrada extends JInternalFrame {
 				}
 			}
 		});
-		springLayout.putConstraint(SpringLayout.WEST, btnSalvarProduto, 0,
-				SpringLayout.WEST, lblConsignatrio);
 		springLayout.putConstraint(SpringLayout.SOUTH, btnSalvarProduto, -10,
 				SpringLayout.SOUTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, btnSalvarProduto, 0,
@@ -1297,6 +1279,8 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		getContentPane().add(btnSalvarProduto);
 
 		btnAtualizarCads = new JButton("ATUALIZAR CADASTROS");
+		springLayout.putConstraint(SpringLayout.WEST, btnAtualizarCads, 0,
+				SpringLayout.WEST, panel);
 		btnAtualizarCads.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				atualizarCombos();
@@ -1304,21 +1288,18 @@ public class NovoCadastroEntrada extends JInternalFrame {
 		});
 		springLayout.putConstraint(SpringLayout.NORTH, btnAtualizarCads, 6,
 				SpringLayout.SOUTH, txtConsign);
-		springLayout.putConstraint(SpringLayout.WEST, btnAtualizarCads, 0,
-				SpringLayout.WEST, lblConsignatrio);
 		springLayout.putConstraint(SpringLayout.EAST, btnAtualizarCads, 0,
 				SpringLayout.EAST, btnBuscarConsig);
 		getContentPane().add(btnAtualizarCads);
 
 		cmbSituacao = new JComboBox();
+		springLayout.putConstraint(SpringLayout.SOUTH, cmbSituacao, -8, SpringLayout.NORTH, panel_2);
 		cmbSituacao.setBackground(Color.WHITE);
 		cmbSituacao.setFont(new Font("SansSerif", Font.BOLD, 12));
 		cmbSituacao.setEnabled(false);
 
 		springLayout.putConstraint(SpringLayout.WEST, cmbSituacao, 6,
 				SpringLayout.EAST, lblNewLabel);
-		springLayout.putConstraint(SpringLayout.SOUTH, cmbSituacao, -8,
-				SpringLayout.NORTH, panel_2);
 		springLayout.putConstraint(SpringLayout.EAST, cmbSituacao, -6,
 				SpringLayout.WEST, lblConsignatrio);
 		getContentPane().add(cmbSituacao);

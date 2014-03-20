@@ -440,6 +440,7 @@ public class TestFinVen extends JDialog {
 						FormaPagto pagtoSelecionado = FormaPagtoModel.findOneWhere("name",
 								"'" + cmbPagto.getSelectedItem() + "'");
 						data.put("formaPagto", pagtoSelecionado);
+						data.put("totalParcela", (byte) parc);
 						
 						hsm.updateVenda(hSaida.getId(), data);
 						
@@ -452,7 +453,6 @@ public class TestFinVen extends JDialog {
 							dataReceber.put("desconto", desconto);
 							dataReceber.put("dataPagto", null);
 							dataReceber.put("parcela", (byte) (i + 1) );
-							dataReceber.put("totalParcela", (byte) parc);
 							
 							if (sameDay && i == 0) {
 								dataReceber.put("pagto", true);

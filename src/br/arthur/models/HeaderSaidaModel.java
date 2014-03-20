@@ -42,6 +42,7 @@ public class HeaderSaidaModel {
 
 		entity.setTotalVenda((double) data.get("totalVenda"));
 		entity.setFormaPagto((FormaPagto) data.get("formaPagto"));
+		entity.setTotalParcela((byte) data.get("totalParcela"));
 
 		session = HibernateUtil.getSessionFactory().openSession();
 

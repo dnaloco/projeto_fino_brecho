@@ -148,7 +148,7 @@ public class ConsultarProduto extends JInternalFrame {
 
 		JLabel lblDescrio = new JLabel("Descri\u00E7\u00E3o:");
 		GridBagConstraints gbc_lblDescrio = new GridBagConstraints();
-		gbc_lblDescrio.anchor = GridBagConstraints.WEST;
+		gbc_lblDescrio.anchor = GridBagConstraints.EAST;
 		gbc_lblDescrio.insets = new Insets(0, 0, 5, 5);
 		gbc_lblDescrio.gridx = 0;
 		gbc_lblDescrio.gridy = 0;
@@ -244,7 +244,7 @@ public class ConsultarProduto extends JInternalFrame {
 		gbc_cmbSit.gridy = 1;
 		panel.add(cmbSit, gbc_cmbSit);
 
-		JLabel lblPreco = new JLabel("Pre\u00E7o (>):");
+		JLabel lblPreco = new JLabel("Pre\u00E7o (>=):");
 		GridBagConstraints gbc_lblPreco = new GridBagConstraints();
 		gbc_lblPreco.anchor = GridBagConstraints.EAST;
 		gbc_lblPreco.insets = new Insets(0, 0, 5, 5);
@@ -263,7 +263,7 @@ public class ConsultarProduto extends JInternalFrame {
 		panel.add(txtVendaMaiorQ, gbc_txtVendaMaiorQ);
 		txtVendaMaiorQ.setColumns(10);
 
-		lblDataIncio = new JLabel("Data In\u00EDcio");
+		lblDataIncio = new JLabel("Data In\u00EDcio (>=):");
 		GridBagConstraints gbc_lblDataIncio = new GridBagConstraints();
 		gbc_lblDataIncio.anchor = GridBagConstraints.EAST;
 		gbc_lblDataIncio.insets = new Insets(0, 0, 5, 5);
@@ -304,7 +304,7 @@ public class ConsultarProduto extends JInternalFrame {
 		panel.add(txtConsig, gbc_txtConsig);
 		txtConsig.setColumns(10);
 
-		JLabel lblVencimento = new JLabel("Vencimento:");
+		JLabel lblVencimento = new JLabel("Vencimento (=):");
 		GridBagConstraints gbc_lblVencimento = new GridBagConstraints();
 		gbc_lblVencimento.anchor = GridBagConstraints.EAST;
 		gbc_lblVencimento.insets = new Insets(0, 0, 0, 5);
@@ -390,19 +390,19 @@ public class ConsultarProduto extends JInternalFrame {
 
 			Vector<Object> oneRow = new Vector<Object>();
 
-			oneRow.add(e.getId());
-			oneRow.add(e.getDescricao());
-			oneRow.add(e.getConsignatario().getNome());
-			oneRow.add(e.getCategoria().getName());
-			oneRow.add(e.getMarca().getName());
-			oneRow.add(e.getTamanho().getName());
-			oneRow.add(e.getCor().getName());
-			oneRow.add(String.valueOf(e.getVenda()));
-			oneRow.add(df.format(e.getDataEntrada()));
-			oneRow.add(df.format(e.getDataInicio()));
-			oneRow.add(df.format(e.getDataVencimento()));
-			oneRow.add(e.getSituacao().getName());
-			oneRow.add(e.getTipo().getName());
+			oneRow.add(e.getId()); // 0
+			oneRow.add(e.getDescricao()); // 1
+			oneRow.add(e.getConsignatario().getNome()); // 2
+			oneRow.add(e.getCategoria().getName()); // 3
+			oneRow.add(e.getMarca().getName()); // 4
+			oneRow.add(e.getTamanho().getName()); // 5
+			oneRow.add(e.getCor().getName()); // 6
+			oneRow.add(String.valueOf(e.getVenda())); // 7
+			oneRow.add(df.format(e.getDataEntrada())); // 8
+			oneRow.add(df.format(e.getDataInicio())); // 9
+			oneRow.add(df.format(e.getDataVencimento())); // 10
+			oneRow.add(e.getSituacao().getName()); // 11
+			oneRow.add(e.getTipo().getName()); // 12
 
 			tableData.add(oneRow);
 		}
@@ -452,6 +452,7 @@ public class ConsultarProduto extends JInternalFrame {
 		table.getColumnModel().getColumn(9).setPreferredWidth(120);
 		table.getColumnModel().getColumn(10).setPreferredWidth(120);
 		table.getColumnModel().getColumn(11).setPreferredWidth(120);
+		table.getColumnModel().getColumn(11).setPreferredWidth(120);
 
 		RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
 			public boolean include(Entry entry) {
@@ -483,6 +484,23 @@ public class ConsultarProduto extends JInternalFrame {
 				SpringLayout.SOUTH, getContentPane());
 
 		JButton btnLimparFiltro = new JButton("Limpar Filtro");
+		btnLimparFiltro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				txtDesc.setText("");
+				cmbMarca.setSelectedItem("todos");
+				cmbCat.setSelectedItem("todos");
+				cmbTam.setSelectedItem("todos");
+				cmbCor.setSelectedItem("todos");
+				cmbSit.setSelectedItem("todos");
+				txtVendaMaiorQ.setText("");
+				txtConsig.setText("");
+				txtDataInicio.setText("");
+				txtDataVenc.setText("");
+				cmbTipo.setSelectedItem("todos");
+				
+				filtrar();
+			}
+		});
 		GridBagConstraints gbc_btnLimparFiltro = new GridBagConstraints();
 		gbc_btnLimparFiltro.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnLimparFiltro.anchor = GridBagConstraints.NORTH;
@@ -688,10 +706,10 @@ public class ConsultarProduto extends JInternalFrame {
 		if (!txtConsig.getText().trim().isEmpty()) {
 			filtro.put("consignatario", txtConsig.getText());
 		}
-		if (!(txtDataInicio.getText().length() > 9)) {
+		if (!(txtDataInicio.getText().trim().length() < 10)) {
 			filtro.put("dataInicio", txtDataInicio.getText());
 		}
-		if (!(txtDataVenc.getText().length() > 9)) {
+		if (!(txtDataVenc.getText().trim().length() < 10)) {
 			filtro.put("dataVencimento", txtDataVenc.getText());
 		}
 		if (!cmbTipo.getSelectedItem().equals("todos")) {
@@ -707,45 +725,42 @@ public class ConsultarProduto extends JInternalFrame {
 				boolean isValid = true;
 
 				if (filter.containsKey("descricao")) {
-					isValid = ((String) entry.getValue(1)).toLowerCase()
-							.contains(
-									((String) filter.get("descricao"))
-											.toLowerCase());
+					isValid = (((String) entry.getValue(1)).toLowerCase().contains(((String) filter.get("descricao")).toLowerCase()) && isValid);
 				}
 
 				if (filter.containsKey("categoria")) {
-					isValid = ((String) entry.getValue(3))
-							.equals((String) filter.get("categoria"));
+					isValid = (((String) entry.getValue(3))
+							.equals((String) filter.get("categoria")) && isValid);
 				}
 
 				if (filter.containsKey("marca")) {
-					isValid = ((String) entry.getValue(4))
-							.equals((String) filter.get("marca"));
+					isValid = (((String) entry.getValue(4))
+							.equals((String) filter.get("marca")) && isValid);
 				}
 
 				if (filter.containsKey("tamanho")) {
-					isValid = ((String) entry.getValue(5))
-							.equals((String) filter.get("tamanho"));
+					isValid = (((String) entry.getValue(5))
+							.equals((String) filter.get("tamanho")) && isValid);
 				}
 
 				if (filter.containsKey("cor")) {
-					isValid = ((String) entry.getValue(6))
-							.equals((String) filter.get("cor"));
+					isValid = (((String) entry.getValue(6))
+							.equals((String) filter.get("cor")) && isValid);
 				}
 
 				if (filter.containsKey("situacao")) {
-					isValid = ((String) entry.getValue(11))
-							.equals((String) filter.get("situacao"));
+					isValid = (((String) entry.getValue(11))
+							.equals((String) filter.get("situacao")) && isValid);
 				}
 
 				if (filter.containsKey("vendaMaior")) {
-					isValid = (Double.parseDouble((String) entry.getValue(7)) >= Double
-							.parseDouble((String) filter.get("vendaMaior")));
+					isValid = ((Double.parseDouble((String) entry.getValue(7)) >= Double
+							.parseDouble((String) filter.get("vendaMaior"))) && isValid);
 				}
 
 				if (filter.containsKey("consignatario")) {
-					isValid = ((String) entry.getValue(2))
-							.contains((String) filter.get("consignatario"));
+					isValid = (((String) entry.getValue(2))
+							.contains((String) filter.get("consignatario")) && isValid);
 				}
 
 				if (filter.containsKey("dataInicio")) {
@@ -763,11 +778,8 @@ public class ConsultarProduto extends JInternalFrame {
 						cal1.setTime(dataInicioTabela);
 						cal2.setTime(dataInicioFiltro);
 
-						boolean sameDay = cal1.get(Calendar.YEAR) == cal2
-								.get(Calendar.YEAR)
-								&& cal1.get(Calendar.DAY_OF_YEAR) == cal2
-										.get(Calendar.DAY_OF_YEAR);
-						isValid = (cal1.after(cal2) || sameDay);
+						
+						isValid = ((cal1.after(cal2) || cal1.equals(cal2)) && isValid);
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -781,9 +793,8 @@ public class ConsultarProduto extends JInternalFrame {
 					try {
 						Date dataVencimentoTabela = formatter
 								.parse((String) entry.getValue(10));
-						Date dataVencimentoFiltro = new Date(
-								((java.sql.Date) filter.get("dataVencimento"))
-										.getTime());
+						Date dataVencimentoFiltro = formatter
+								.parse((String) filter.get("dataVencimento"));
 
 						Calendar cal1 = Calendar.getInstance();
 						Calendar cal2 = Calendar.getInstance();
@@ -795,6 +806,7 @@ public class ConsultarProduto extends JInternalFrame {
 								.get(Calendar.YEAR)
 								&& cal1.get(Calendar.DAY_OF_YEAR) == cal2
 										.get(Calendar.DAY_OF_YEAR);
+
 						isValid = (sameDay);
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
@@ -803,8 +815,8 @@ public class ConsultarProduto extends JInternalFrame {
 				}
 
 				if (filter.containsKey("tipo")) {
-					isValid = ((String) entry.getValue(12))
-							.equals((String) filter.get("tipo"));
+					isValid = (((String) entry.getValue(12))
+							.equals((String) filter.get("tipo")) && isValid);
 				}
 
 				return isValid;

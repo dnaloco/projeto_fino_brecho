@@ -23,7 +23,6 @@ public class ContaReceberModel {
 		entity.setDesconto((double) data.get("desconto"));
 		entity.setDataPagto((Date) data.get("dataPagto"));
 		entity.setParcela((byte) data.get("parcela"));
-		entity.setTotalParcela((byte) data.get("totalParcela"));
 		entity.setPagto((boolean) data.get("pagto"));
 		
 		session = HibernateUtil.getSessionFactory().openSession();

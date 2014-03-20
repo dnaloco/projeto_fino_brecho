@@ -38,6 +38,9 @@ public class HeaderSaida {
 	@JoinColumn(name="forma_pagto_fk")
 	private FormaPagto formaPagto;
 	
+	@Column(name="total_parcela")
+	private byte totalParcela;
+	
 	public HeaderSaida() {
 		
 	}
@@ -90,6 +93,14 @@ public class HeaderSaida {
 		this.formaPagto = formaPagto;
 	}
 
+	public byte getTotalParcela() {
+		return totalParcela;
+	}
+
+	public void setTotalParcela(byte totalParcela) {
+		this.totalParcela = totalParcela;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -100,6 +111,7 @@ public class HeaderSaida {
 		result = prime * result
 				+ ((formaPagto == null) ? 0 : formaPagto.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + totalParcela;
 		long temp;
 		temp = Double.doubleToLongBits(totalVenda);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -134,6 +146,8 @@ public class HeaderSaida {
 			return false;
 		if (id != other.id)
 			return false;
+		if (totalParcela != other.totalParcela)
+			return false;
 		if (Double.doubleToLongBits(totalVenda) != Double
 				.doubleToLongBits(other.totalVenda))
 			return false;
@@ -144,6 +158,6 @@ public class HeaderSaida {
 			return false;
 		return true;
 	}
-	
-	
+
+
 }
