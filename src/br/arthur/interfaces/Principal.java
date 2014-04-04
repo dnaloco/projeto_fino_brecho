@@ -206,7 +206,7 @@ public class Principal extends JFrame {
 		gbc_lblUsergroup.gridy = 3;
 		panel.add(lblUsergroup, gbc_lblUsergroup);
 		
-		JButton btnNewButton_3 = new JButton("Trocar de Usu\u00E1rio");
+		JButton btnNewButton_3 = new JButton("Alterar Senha");
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				trocarUsuario();
@@ -215,7 +215,7 @@ public class Principal extends JFrame {
 		GridBagConstraints gbc_btnNewButton_3 = new GridBagConstraints();
 		gbc_btnNewButton_3.insets = new Insets(0, 0, 0, 5);
 		gbc_btnNewButton_3.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnNewButton_3.gridwidth = 2;
+		gbc_btnNewButton_3.gridwidth = 3;
 		gbc_btnNewButton_3.gridx = 1;
 		gbc_btnNewButton_3.gridy = 4;
 		panel.add(btnNewButton_3, gbc_btnNewButton_3);
