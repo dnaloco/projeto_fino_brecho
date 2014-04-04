@@ -13,6 +13,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
+import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
@@ -48,12 +50,12 @@ import br.arthur.relatorios.RelatorioUsuarios;
 public class Principal extends JFrame {
 
 	public JDesktopPane jDesktopPanelPrincipal;
-	
+	private User ulog;
 	/**
 	 * Create the frame.
 	 */
 	public Principal(final LoginController login) {
-		User ulog = login.getLoggedUser();
+		ulog = login.getLoggedUser();
 		setIconImage((new ImageIcon(
 				"images/Store-icon.png").getImage()));
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -81,6 +83,11 @@ public class Principal extends JFrame {
 		jDesktopPanelPrincipal.setLayout(null);
 		
 		JButton btnNewButton = new JButton("Entrada");
+		if (ulog.getGroup().getName().equals("gerente")) {
+			btnNewButton.setVisible(true);;
+		} else {
+			btnNewButton.setVisible(false);
+		}
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				CadastroEntrada obj = new CadastroEntrada();				
@@ -95,7 +102,7 @@ public class Principal extends JFrame {
 		btnNewButton.setVerticalAlignment(SwingConstants.TOP);
 		btnNewButton.setIcon(new ImageIcon(
 				"images/entradas.png"));
-		btnNewButton.setBounds(20, 71, 122, 109);
+		btnNewButton.setBounds(528, 393, 122, 109);
 		jDesktopPanelPrincipal.add(btnNewButton);
 		
 		JLabel lblSistemaLoja = new JLabel("Sistema de Loja - Fino Brech\u00F3");
@@ -110,13 +117,13 @@ public class Principal extends JFrame {
 		panel.setOpaque(false);
 		panel.setBackground(new Color(204, 153, 51));
 		panel.setForeground(UIManager.getColor("MenuBar:Menu[Enabled].textForeground"));
-		panel.setBounds(486, 11, 201, 103);
+		panel.setBounds(486, 11, 211, 128);
 		jDesktopPanelPrincipal.add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{0, 0, 0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
 		JLabel label = new JLabel("   ");
@@ -132,7 +139,7 @@ public class Principal extends JFrame {
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel.gridwidth = 2;
-		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel.gridx = 1;
 		gbc_lblNewLabel.gridy = 0;
 		panel.add(lblNewLabel, gbc_lblNewLabel);
@@ -152,7 +159,7 @@ public class Principal extends JFrame {
 		lblUserid.setForeground(new Color(0, 0, 255));
 		GridBagConstraints gbc_lblUserid = new GridBagConstraints();
 		gbc_lblUserid.anchor = GridBagConstraints.WEST;
-		gbc_lblUserid.insets = new Insets(0, 0, 5, 0);
+		gbc_lblUserid.insets = new Insets(0, 0, 5, 5);
 		gbc_lblUserid.gridx = 2;
 		gbc_lblUserid.gridy = 1;
 		panel.add(lblUserid, gbc_lblUserid);
@@ -173,7 +180,7 @@ public class Principal extends JFrame {
 		lblUsername.setForeground(new Color(0, 0, 255));
 		GridBagConstraints gbc_lblUsername = new GridBagConstraints();
 		gbc_lblUsername.anchor = GridBagConstraints.WEST;
-		gbc_lblUsername.insets = new Insets(0, 0, 5, 0);
+		gbc_lblUsername.insets = new Insets(0, 0, 5, 5);
 		gbc_lblUsername.gridx = 2;
 		gbc_lblUsername.gridy = 2;
 		panel.add(lblUsername, gbc_lblUsername);
@@ -182,7 +189,7 @@ public class Principal extends JFrame {
 		lblGrupoUsurio.setForeground(UIManager.getColor("MenuBar:Menu[Enabled].textForeground"));
 		lblGrupoUsurio.setFont(new Font("Tahoma", Font.BOLD, 11));
 		GridBagConstraints gbc_lblGrupoUsurio = new GridBagConstraints();
-		gbc_lblGrupoUsurio.insets = new Insets(0, 0, 0, 5);
+		gbc_lblGrupoUsurio.insets = new Insets(0, 0, 5, 5);
 		gbc_lblGrupoUsurio.anchor = GridBagConstraints.EAST;
 		gbc_lblGrupoUsurio.gridx = 1;
 		gbc_lblGrupoUsurio.gridy = 3;
@@ -193,10 +200,25 @@ public class Principal extends JFrame {
 		lblUsergroup.setHorizontalAlignment(SwingConstants.LEFT);
 		lblUsergroup.setForeground(new Color(0, 0, 255));
 		GridBagConstraints gbc_lblUsergroup = new GridBagConstraints();
+		gbc_lblUsergroup.insets = new Insets(0, 0, 5, 5);
 		gbc_lblUsergroup.anchor = GridBagConstraints.WEST;
 		gbc_lblUsergroup.gridx = 2;
 		gbc_lblUsergroup.gridy = 3;
 		panel.add(lblUsergroup, gbc_lblUsergroup);
+		
+		JButton btnNewButton_3 = new JButton("Trocar de Usu\u00E1rio");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				trocarUsuario();
+			}
+		});
+		GridBagConstraints gbc_btnNewButton_3 = new GridBagConstraints();
+		gbc_btnNewButton_3.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNewButton_3.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnNewButton_3.gridwidth = 2;
+		gbc_btnNewButton_3.gridx = 1;
+		gbc_btnNewButton_3.gridy = 4;
+		panel.add(btnNewButton_3, gbc_btnNewButton_3);
 		
 		JButton btnNewButton_2 = new JButton("Relat\u00F3rios");
 		btnNewButton_2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -206,7 +228,7 @@ public class Principal extends JFrame {
 		btnNewButton_2.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnNewButton_2.setIcon(new ImageIcon(
 				"images/reports.png"));
-		btnNewButton_2.setBounds(659, 277, 122, 109);
+		btnNewButton_2.setBounds(528, 272, 122, 109);
 		jDesktopPanelPrincipal.add(btnNewButton_2);
 		
 		JButton btnLogs = new JButton("Produtos");
@@ -217,7 +239,7 @@ public class Principal extends JFrame {
 		btnLogs.setVerticalAlignment(SwingConstants.TOP);
 		btnLogs.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnLogs.setBackground(Color.WHITE);
-		btnLogs.setBounds(394, 277, 122, 109);
+		btnLogs.setBounds(394, 272, 122, 109);
 		jDesktopPanelPrincipal.add(btnLogs);
 		
 		JButton btnNewButton_1 = new JButton("Consignat\u00E1rio");
@@ -239,7 +261,7 @@ public class Principal extends JFrame {
 		btnBackup.setVerticalAlignment(SwingConstants.TOP);
 		btnBackup.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnBackup.setBackground(Color.WHITE);
-		btnBackup.setBounds(528, 277, 122, 109);
+		btnBackup.setBounds(528, 151, 122, 109);
 		jDesktopPanelPrincipal.add(btnBackup);
 		
 		JButton btnCaixa = new JButton("Venda");
@@ -257,18 +279,62 @@ public class Principal extends JFrame {
 		btnCaixa.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnCaixa.setIcon(new ImageIcon(
 				"images/vendas.png"));
-		btnCaixa.setBounds(528, 151, 119, 109);
+		btnCaixa.setBounds(397, 151, 119, 109);
 		jDesktopPanelPrincipal.add(btnCaixa);
 		
 		JButton btnTrocarUsurio = new JButton("Trocar Usu\u00E1rio");
+		btnTrocarUsurio.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnTrocarUsurio.setIcon(new ImageIcon(
+				"images/user_change.png"));
+		btnTrocarUsurio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				trocarUsuario();
+			}
+		});
 		btnTrocarUsurio.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnTrocarUsurio.setVerticalAlignment(SwingConstants.TOP);
 		btnTrocarUsurio.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnTrocarUsurio.setBackground(Color.WHITE);
-		btnTrocarUsurio.setBounds(394, 154, 122, 109);
+		btnTrocarUsurio.setBounds(659, 272, 122, 109);
 		jDesktopPanelPrincipal.add(btnTrocarUsurio);
 		
+		JButton btnNewButton_4 = new JButton("SAIR");
+		btnNewButton_4.setBackground(Color.WHITE);
+		btnNewButton_4.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnNewButton_4.setVerticalTextPosition(SwingConstants.BOTTOM);
+		btnNewButton_4.setIcon(new ImageIcon(
+				"images/sair.png"));
+		btnNewButton_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		btnNewButton_4.setBounds(709, 11, 72, 128);
+		jDesktopPanelPrincipal.add(btnNewButton_4);
+		
+		JButton btnNewButton_5 = new JButton("");
+		btnNewButton_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Runtime.getRuntime().exec("calc");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnNewButton_5.setBackground(Color.WHITE);
+		btnNewButton_5.setIcon(new ImageIcon(
+				"images/calculator.png"));
+		btnNewButton_5.setBounds(394, 55, 80, 84);
+		jDesktopPanelPrincipal.add(btnNewButton_5);
+		
 		JMenu mnCadastro = new JMenu("Cadastro");
+		if (ulog.getGroup().getName().equals("gerente")) {
+			mnCadastro.setEnabled(true);
+		} else {
+			mnCadastro.setEnabled(false);
+		}
 		menuBar.add(mnCadastro);
 		
 		JMenuItem mntmConsignatrio = new JMenuItem("Novo Consignat\u00E1rio");
@@ -391,6 +457,11 @@ public class Principal extends JFrame {
 				mnCadastro.add(mntmSair);
 		
 		JMenu mnFinanceiro = new JMenu("Financeiro");
+		if (ulog.getGroup().getName().equals("gerente")) {
+			mnFinanceiro.setEnabled(true);
+		} else {
+			mnFinanceiro.setEnabled(false);
+		}
 		menuBar.add(mnFinanceiro);
 		
 		JMenuItem mntmCaixa = new JMenuItem("Caixa");
@@ -444,6 +515,11 @@ public class Principal extends JFrame {
 		mnFinanceiro.add(mntmSaldoEmAberto);
 		
 		JMenu mnManuteno = new JMenu("Manuten\u00E7\u00E3o");
+		if (ulog.getGroup().getName().equals("gerente")) {
+			mnManuteno.setEnabled(true);
+		} else {
+			mnManuteno.setEnabled(false);
+		}
 		menuBar.add(mnManuteno);
 		
 		JMenuItem mntmEcf = new JMenuItem("ECF");
@@ -488,6 +564,11 @@ public class Principal extends JFrame {
 		mnManuteno.add(mntmUsurios);
 		
 		JMenu mnRelatrio = new JMenu("Relat\u00F3rio");
+		if (ulog.getGroup().getName().equals("gerente")) {
+			mnRelatrio.setEnabled(true);
+		} else {
+			mnRelatrio.setEnabled(false);
+		}
 		menuBar.add(mnRelatrio);
 		
 		JMenuItem mntmCosignatrios = new JMenuItem("Consignat\u00E1rios");
@@ -539,5 +620,10 @@ public class Principal extends JFrame {
 	
 	public void checkPermissions() {
 		
+	}
+
+	private void trocarUsuario() {
+		dispose();
+		new SplashScreen();
 	}
 }

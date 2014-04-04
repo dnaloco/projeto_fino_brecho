@@ -305,12 +305,16 @@ public class CadastroSaida extends JInternalFrame {
 		btnCancelarVenda = new JButton("Cancelar Venda");
 		btnCancelarVenda.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int opcao;
-				opcao = JOptionPane.showConfirmDialog(
-						null,
-						"Deseja Realmente excluir a venda "
-								+ String.format("%09d", hSaidaId) + "?",
-						"Atencão", JOptionPane.YES_NO_OPTION);
+				int opcao = JOptionPane.NO_OPTION;
+				if (hSaidaId > 0) {
+					opcao = JOptionPane.showConfirmDialog(
+							null,
+							"Deseja Realmente excluir a venda "
+									+ String.format("%09d", hSaidaId) + "?",
+							"Atencão", JOptionPane.YES_NO_OPTION);
+				} else {
+					JOptionPane.showMessageDialog(null, "Não existe ainda nenhuma venda gerada. Precisa existir ao menos um produto inserido!");
+				}
 				if (opcao == JOptionPane.YES_OPTION) {
 					List produtos = sm.findWhere("header_saida_fk",
 							String.valueOf(hSaidaId));

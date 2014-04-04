@@ -59,8 +59,7 @@ public class SplashScreen extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					SplashScreen frame = new SplashScreen();
-					frame.setVisible(true);
+					new SplashScreen();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -183,6 +182,8 @@ public class SplashScreen extends JFrame {
 		);
 		
 		contentPane.setLayout(gl_contentPane);
+		
+		setVisible(true);
 	}
 
 	private void lblFecharMouseEvents(JLabel lblFechar) {
@@ -202,7 +203,7 @@ public class SplashScreen extends JFrame {
 		});
 	}
 
-	private void checkUserPass() {
+	private void checkUserPass() {		
 		String user = txtUsuario.getText().trim();
 		String pass = new String(txtSenha.getPassword()).trim();
 
@@ -210,33 +211,10 @@ public class SplashScreen extends JFrame {
 
 		login.checkUser(user, pass);
 		
-		if (login.isLogged()) {
-			txtUsuario.setEditable(false);
-			txtSenha.setEditable(false);
-			txtSenha.setEnabled(false);
-			btnLogar.setVisible(false);
-			progressBar.setVisible(true);
-			lblCarregando.setText("Carregando o Sistema.");
-			lblCarregando.setVisible(true);
+		if (login.isLogged()) {			
+			dispose();
 			
-			new Thread() {
-				public void run() {
-					
-					for(int i = 0; i < 1; i += 1) {
-						try {
-							sleep(1);
-							progressBar.setValue(i);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					dispose();
-					
-					new Principal(login);
-				}
-			}.start();
-			
+			new Principal(login);
 
 		} else {
 			txtSenha.setText("");

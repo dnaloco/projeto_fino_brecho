@@ -1,4 +1,4 @@
-000000000000000000000000package br.arthur.interfaces.consultas;
+package br.arthur.interfaces.consultas;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
