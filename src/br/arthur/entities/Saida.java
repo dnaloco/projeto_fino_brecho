@@ -34,7 +34,7 @@ public class Saida {
 	private HeaderSaida headerSaida;
 	
 	@Column(name="isDisponivel")
-	private boolean disponivel;	
+	private boolean disponivel;
 	
 	public Saida() {
 		

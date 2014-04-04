@@ -1,11 +1,13 @@
 package br.arthur.models;
 
 import java.sql.Timestamp;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Session;
 
+import br.arthur.entities.ContaReceber;
 import br.arthur.entities.Entrada;
 import br.arthur.entities.HeaderSaida;
 import br.arthur.entities.Saida;
@@ -44,8 +46,8 @@ public class SaidaModel {
 		return (Saida) e;
 	}
 	
-	public boolean hasSaida(int entradaId) {
-		List saidas = SaidaModel.findWhere("entrada_fk", String.valueOf(entradaId));
+	public boolean hasSaida(long theId) {
+		List saidas = SaidaModel.findWhere("entrada_fk", String.valueOf(theId));
 		
 		if(saidas.size() > 0) {
 			int totalQtde = 0;
@@ -56,12 +58,21 @@ public class SaidaModel {
 					totalQtde += qtde;
 				}
 			}
-			qtdeSaida = totalQtde;
+			setQtdeSaida(totalQtde);
 		} else {
+			setQtdeSaida(0);
 			return false;
 		}
 		
 		return true;
+	}
+	
+	public void setQtdeSaida(int qtdeSaida) {
+		this.qtdeSaida = qtdeSaida;
+	}
+	
+	public int getQtdeSaida() {
+		return qtdeSaida;
 	}
 	
 	public static List findWhere(String prop, String val) {
@@ -75,9 +86,7 @@ public class SaidaModel {
 		return saidas;
 	}
 
-	public int getQtdeSaida() {
-		return qtdeSaida;
-	}
+	
 
 	private static void close() {
 		session.close();
@@ -116,6 +125,23 @@ public class SaidaModel {
 			Saida s = (Saida) o;
 			session.delete(s);
 		}
+		session.getTransaction().commit();
+		
+		close();
+	}
+	
+	public void deleteWhere(String prop, String val) {
+		session = HibernateUtil.getSessionFactory().openSession();
+		
+		Iterator saidas = session.createQuery("FROM Saida where " + prop + " = " + val).list().iterator();
+		
+		session.beginTransaction();
+		
+		while (saidas.hasNext()) {
+			Saida entity = (Saida) saidas.next();
+			session.delete(entity);
+		}		
+		
 		session.getTransaction().commit();
 		
 		close();

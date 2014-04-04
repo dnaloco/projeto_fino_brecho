@@ -149,9 +149,9 @@ public class ConsignatarioDialog extends JDialog {
 				if(!txtNome.getText().trim().isEmpty()) {
 					filter.put("nome", txtNome.getText());
 				} else if (!txtCelular.getText().trim().isEmpty()) {
-					filter.put("cpf", txtCelular.getText());
+					filter.put("celular", txtCelular.getText());
 				} else if (!txtTelefone.getText().trim().isEmpty()) {
-					filter.put("rg", txtTelefone.getText());
+					filter.put("telefone", txtTelefone.getText());
 				} else {
 					RowFilter<Object, Object> f = new RowFilter<Object, Object>() {
 					      public boolean include(Entry entry) {
@@ -186,22 +186,22 @@ public class ConsignatarioDialog extends JDialog {
 		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblRg, 6, SpringLayout.NORTH, btnFiltrar);
 		contentPanel.add(lblRg);
 		
-		txtTelefone = new JTextField();
+		MaskFormatter frmtTefelone = null;
+		try {
+			frmtTefelone = new MaskFormatter("####-####");
+		} catch (java.text.ParseException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
+		txtTelefone = new javax.swing.JFormattedTextField(frmtTefelone);
 		sl_contentPanel.putConstraint(SpringLayout.EAST, lblRg, -6, SpringLayout.WEST, txtTelefone);
 		sl_contentPanel.putConstraint(SpringLayout.WEST, txtTelefone, 248, SpringLayout.WEST, contentPanel);
 		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtTelefone, -11, SpringLayout.NORTH, scrollPane);
 		contentPanel.add(txtTelefone);
 		txtTelefone.setColumns(10);
-		
-		MaskFormatter frmtCpf = null;
-		try {
-			frmtCpf = new MaskFormatter("###.###.###-##");
-		} catch (java.text.ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 
-		txtCelular = new javax.swing.JFormattedTextField(frmtCpf);
+		txtCelular = new javax.swing.JFormattedTextField(frmtTefelone);
 		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtCelular, -11, SpringLayout.NORTH, scrollPane);
 		sl_contentPanel.putConstraint(SpringLayout.EAST, txtCelular, -68, SpringLayout.EAST, contentPanel);
 		sl_contentPanel.putConstraint(SpringLayout.WEST, btnFiltrar, 6, SpringLayout.EAST, txtCelular);
@@ -252,12 +252,12 @@ public class ConsignatarioDialog extends JDialog {
 		    		  isValid = ((String)entry.getValue(1)).toLowerCase().contains(filter.get("nome").toLowerCase());
 		    	  }
 		    	  
-		    	  if(filter.containsKey("cpf")) {
-		    		  isValid = ((String)entry.getValue(6)).contains(filter.get("cpf"));
+		    	  if(filter.containsKey("telefone")) {
+		    		  isValid = ((String)entry.getValue(2)).contains(filter.get("telefone"));
 		    	  }
 		    	  
-		    	  if(filter.containsKey("rg")) {
-		    		  isValid = ((String)entry.getValue(7)).contains(filter.get("rg"));
+		    	  if(filter.containsKey("celular")) {
+		    		  isValid = ((String)entry.getValue(3)).contains(filter.get("celular"));
 		    	  }
 		    	  
 		    	  return isValid;

@@ -50,12 +50,14 @@ public class UserModel {
 		return u.getId();
 	}
 	
-	public List findAll() {
+	public static List findAll() {
 		session = HibernateUtil.getSessionFactory().openSession();
+		
+		List users = session.createQuery("FROM User").list();
 		
 		close();
 		
-		return session.createQuery("FROM User").list();
+		return users;
 	}
 	
 	public User findOneWhere(String prop, String val) {

@@ -34,6 +34,9 @@ public class HeaderSaida {
 	@Column(name="total_venda")
 	private double totalVenda;
 	
+	@Column(name="desconto")
+	private double desconto;
+	
 	@ManyToOne
 	@JoinColumn(name="forma_pagto_fk")
 	private FormaPagto formaPagto;
@@ -85,6 +88,14 @@ public class HeaderSaida {
 		this.totalVenda = totalVenda;
 	}
 
+	public double getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(double desconto) {
+		this.desconto = desconto;
+	}
+
 	public FormaPagto getFormaPagto() {
 		return formaPagto;
 	}
@@ -108,11 +119,13 @@ public class HeaderSaida {
 		result = prime * result + ((cliente == null) ? 0 : cliente.hashCode());
 		result = prime * result
 				+ ((dataVenda == null) ? 0 : dataVenda.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(desconto);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
 				+ ((formaPagto == null) ? 0 : formaPagto.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + totalParcela;
-		long temp;
 		temp = Double.doubleToLongBits(totalVenda);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
@@ -139,6 +152,9 @@ public class HeaderSaida {
 				return false;
 		} else if (!dataVenda.equals(other.dataVenda))
 			return false;
+		if (Double.doubleToLongBits(desconto) != Double
+				.doubleToLongBits(other.desconto))
+			return false;
 		if (formaPagto == null) {
 			if (other.formaPagto != null)
 				return false;
@@ -159,5 +175,6 @@ public class HeaderSaida {
 		return true;
 	}
 
+	
 
 }

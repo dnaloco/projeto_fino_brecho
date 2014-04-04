@@ -10,12 +10,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
-public class ButtonEditorUtil extends DefaultCellEditor {
+public class ButtonConfirmOptionEditorUtil extends DefaultCellEditor {
 	protected JButton button;
 	private String label;
 	private boolean isPushed;
 
-	public ButtonEditorUtil(JCheckBox checkBox) {
+	public ButtonConfirmOptionEditorUtil(JCheckBox checkBox) {
 		super(checkBox);
 		button = new JButton();
 		button.setOpaque(true);
@@ -44,22 +44,19 @@ public class ButtonEditorUtil extends DefaultCellEditor {
 	public Object getCellEditorValue() {
 		if (isPushed) {
 			String value = null;
-			while (isPushed) {
-				
-				value = JOptionPane.showInputDialog("Qual o valor que será pago desta parcela?");
-				
-				try
-				{
-					value = value.replace(",", ".").trim();
-					Double.parseDouble(value);
-					isPushed = false;
-				}
-				catch(NumberFormatException e)
-				{
-					JOptionPane.showMessageDialog(null, "Esse não é um valor válido!");
-				}
-			}
+			int opcao;
+			opcao = JOptionPane
+					.showConfirmDialog(
+							null,
+							"ATENÇÃO: Deseja realizar o extorno desta venda? (Será excluida a venda e as devidas parcelas de conta a pagar e receber. O produto voltará para o estoque!)", 
+							"Atencão",
+							JOptionPane.YES_NO_OPTION);
 			
+			if (opcao == JOptionPane.YES_OPTION) {
+				value = "aguarde...";
+			} else {
+				value = "EXTORNAR";
+			}
 			
 			label = value;
 		}

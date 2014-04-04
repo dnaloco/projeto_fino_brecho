@@ -13,7 +13,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public class RelatorioUtil {
 	public static boolean gerarRelatorio(List data, String file) {
-		String fileReports = "relatorios/reports/Tree.jrxml";
+		String fileReports = "relatorios/reports/" + file +  ".jrxml";
 		String fileRelator = "relatorios/" + file + ".pdf";
 
 	    // A File object to represent the filename

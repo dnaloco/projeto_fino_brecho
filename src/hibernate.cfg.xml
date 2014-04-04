@@ -10,7 +10,7 @@
       	root
     </property>
     <property name="hibernate.connection.password">
-    	artdna
+		artdna
     </property>
     <property name="hibernate.connection.url">
       	jdbc:mysql://localhost/r2_finobrecho_teste

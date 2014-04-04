@@ -14,7 +14,7 @@ import br.arthur.entities.User;
 import br.arthur.utils.HibernateUtil;
 
 public class HeaderSaidaModel {
-	private HeaderSaida entity;
+	private static HeaderSaida entity;
 	private static Session session;
 
 	public long createVenda(Map<String, Object> data) {
@@ -42,6 +42,7 @@ public class HeaderSaidaModel {
 
 		entity.setTotalVenda((double) data.get("totalVenda"));
 		entity.setFormaPagto((FormaPagto) data.get("formaPagto"));
+		entity.setDesconto((double) data.get("desconto"));
 		entity.setTotalParcela((byte) data.get("totalParcela"));
 
 		session = HibernateUtil.getSessionFactory().openSession();
@@ -57,7 +58,7 @@ public class HeaderSaidaModel {
 		session.close();
 	}
 
-	public HeaderSaida findOneWhere(String prop, String val) {
+	public static HeaderSaida findOneWhere(String prop, String val) {
 		session = HibernateUtil.getSessionFactory().openSession();
 
 		String hql = "FROM HeaderSaida where " + prop + " = " + val;
@@ -83,6 +84,7 @@ public class HeaderSaidaModel {
 		entity = findOneWhere("id", String.valueOf(hSaidaId));
 
 		session = HibernateUtil.getSessionFactory().openSession();
+		
 		session.beginTransaction();
 
 		session.delete(entity);
@@ -90,5 +92,34 @@ public class HeaderSaidaModel {
 		session.getTransaction().commit();
 
 		close();
+	}
+
+	public static void adicionarParcela(long idCodVenda, byte totalParcela) {
+
+		System.out.println(idCodVenda);
+		System.out.println(totalParcela);
+		
+		entity = findOneWhere("id", String.valueOf(idCodVenda));
+
+		entity.setTotalParcela(Byte.parseByte(String.valueOf(totalParcela)));
+		
+		session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+
+		session.update(entity);
+
+		session.getTransaction().commit();
+
+		close();
+	}
+
+	public static List findAll() {
+		session = HibernateUtil.getSessionFactory().openSession();
+		
+		List vendas = session.createQuery("FROM HeaderSaida").list();
+		
+		close();
+		
+		return vendas;
 	}
 }

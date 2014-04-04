@@ -30,9 +30,6 @@ public class ContaReceber {
 	@Column(name="valor")
 	private double valor;
 	
-	@Column(name="desconto")
-	private double desconto; 
-	
 	@Column(name="data_pagto")
 	private Date dataPagto;
 	
@@ -78,14 +75,6 @@ public class ContaReceber {
 		this.valor = valor;
 	}
 
-	public double getDesconto() {
-		return desconto;
-	}
-
-	public void setDesconto(double desconto) {
-		this.desconto = desconto;
-	}
-
 	public Date getDataPagto() {
 		return dataPagto;
 	}
@@ -118,14 +107,12 @@ public class ContaReceber {
 				+ ((dataPagto == null) ? 0 : dataPagto.hashCode());
 		result = prime * result
 				+ ((dataVencimento == null) ? 0 : dataVencimento.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(desconto);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
 				+ ((headerSaida == null) ? 0 : headerSaida.hashCode());
 		result = prime * result + id;
 		result = prime * result + (pagto ? 1231 : 1237);
 		result = prime * result + parcela;
+		long temp;
 		temp = Double.doubleToLongBits(valor);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
@@ -149,9 +136,6 @@ public class ContaReceber {
 			if (other.dataVencimento != null)
 				return false;
 		} else if (!dataVencimento.equals(other.dataVencimento))
-			return false;
-		if (Double.doubleToLongBits(desconto) != Double
-				.doubleToLongBits(other.desconto))
 			return false;
 		if (headerSaida == null) {
 			if (other.headerSaida != null)

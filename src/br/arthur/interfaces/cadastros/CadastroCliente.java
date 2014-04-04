@@ -399,13 +399,7 @@ public class CadastroCliente extends JInternalFrame {
 			lblPend.setText("Não");
 			lblPend.setForeground (Color.black);
 		}
-		
-		if (c.getUltimaCompra() != null) {
-			lblUltCompra.setText(String.valueOf(c.getUltimaCompra().getId()));
-		} else {
-			lblUltCompra.setText("000000");
-		}
-		
+
 		enabledEditionButtons();
 	}
 

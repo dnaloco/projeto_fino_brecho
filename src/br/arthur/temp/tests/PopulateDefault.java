@@ -74,10 +74,7 @@ public class PopulateDefault {
 		
 		String[] situacoesStr = {
 			"avaliando",
-			"indisponível",
-			"reservado",
-			"disponível",
-			"devolvido"
+			"disponível"
 		};
 		
 		String[] tiposStr = {
@@ -193,6 +190,7 @@ public class PopulateDefault {
 
 		String [] cores = {
 				"selecionar",
+				"genérica",
 				"azul",
 				"amarelo",
 				"verde",
@@ -201,6 +199,7 @@ public class PopulateDefault {
 		
 		String [] tamanhos = {
 				"selecionar",
+				"genérica",
 				"30",
 				"32",
 				"34",

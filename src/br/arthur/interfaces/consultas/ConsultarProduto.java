@@ -2,7 +2,9 @@ package br.arthur.interfaces.consultas;
 
 import java.awt.CardLayout;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -11,29 +13,39 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
@@ -46,6 +58,9 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.MaskFormatter;
 
+import org.hibernate.LobHelper;
+import org.hibernate.Session;
+
 import br.arthur.entities.Categoria;
 import br.arthur.entities.Cor;
 import br.arthur.entities.Entrada;
@@ -53,22 +68,33 @@ import br.arthur.entities.Marca;
 import br.arthur.entities.Situacao;
 import br.arthur.entities.Tamanho;
 import br.arthur.entities.Tipo;
+import br.arthur.interfaces.cadastros.CadastroCategoria;
+import br.arthur.interfaces.cadastros.CadastroCor;
+import br.arthur.interfaces.cadastros.CadastroEntrada;
+import br.arthur.interfaces.cadastros.CadastroMarca;
+import br.arthur.interfaces.cadastros.CadastroTamanho;
+import br.arthur.interfaces.cadastros.CadastroTipo;
+import br.arthur.interfaces.cadastros.dialogs.PicZoomDialog;
+import br.arthur.interfaces.cadastros.dialogs.ProdutoCadastroDialog;
 import br.arthur.models.CategoriaModel;
 import br.arthur.models.CorModel;
 import br.arthur.models.EntradaModel;
 import br.arthur.models.MarcaModel;
+import br.arthur.models.SaidaModel;
 import br.arthur.models.SituacaoModel;
 import br.arthur.models.TamanhoModel;
 import br.arthur.models.TipoModel;
+import br.arthur.relatorios.RelatorioProdutos;
+import br.arthur.utils.HibernateUtil;
 import br.arthur.utils.JNumericField;
 import br.arthur.utils.MyImageUtil;
 import br.arthur.utils.MyIteratorUtil;
 
+import com.lowagie.text.pdf.codec.Base64.InputStream;
+
 public class ConsultarProduto extends JInternalFrame {
 	private JTextField txtDesc;
 	private JNumericField txtVendaMaiorQ;
-
-	private int prodId;
 
 	private DefaultTableModel model;
 	private JTable table;
@@ -83,15 +109,24 @@ public class ConsultarProduto extends JInternalFrame {
 	private JComboBox cmbCat;
 	private JComboBox cmbMarca;
 	private JComboBox cmbTam;
+	private JLabel lblDescrioDoProduto;
 
 	private JLabel picProduto;
 
 	private EntradaModel em = new EntradaModel();
+	private SaidaModel sm = new SaidaModel();
 	private JTextField txtConsig;
 	private JTextField txtDataInicio;
 	private JTextField txtDataVenc;
 
 	private JLabel lblDataIncio;
+	
+	private long prodId = 0;
+	private JTextField txtCodigo;
+	private JCheckBox ckDevolvidos;
+	private JCheckBox ckEstoque;
+	private JCheckBox ckNEncontrados;
+	private JCheckBox ckVencidos;
 
 	/**
 	 * Launch the application.
@@ -116,33 +151,31 @@ public class ConsultarProduto extends JInternalFrame {
 		setIconifiable(true);
 		setClosable(true);
 		setTitle("Gerenciar Produtos");
-		setBounds(100, 100, 1059, 498);
+		setBounds(100, 100, 1185, 498);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 
 		JPanel panel = new JPanel();
-		springLayout.putConstraint(SpringLayout.SOUTH, panel, -10,
-				SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, panel, 10, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel, -10, SpringLayout.SOUTH, getContentPane());
 		panel.setBorder(new TitledBorder(null, "Filtrar Produtos",
 				TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		getContentPane().add(panel);
 
 		JPanel panel_1 = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel_1, 10,
-				SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, panel, 6, SpringLayout.SOUTH, panel_1);
 		springLayout.putConstraint(SpringLayout.WEST, panel_1, 10,
 				SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, panel_1, 265,
-				SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -152, SpringLayout.SOUTH, getContentPane());
 		panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
 				null, null));
 		getContentPane().add(panel_1);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] { 59, 210, 120, 90, 90, 81, 120,
-				122, 120 };
+		gbl_panel.columnWidths = new int[] { 59, 160, 120, 90, 90, 81, 120,
+				90, 130, 0 };
 		gbl_panel.rowHeights = new int[] { 28, 28, 28, 0 };
 		gbl_panel.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-				0.0, 0.0, Double.MIN_VALUE };
+				0.0, 0.0, 0.0, 1.0 };
 		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
 
@@ -211,6 +244,23 @@ public class ConsultarProduto extends JInternalFrame {
 		gbc_cmbTam.gridx = 7;
 		gbc_cmbTam.gridy = 0;
 		panel.add(cmbTam, gbc_cmbTam);
+		
+		JLabel lblNewLabel = new JLabel("C\u00F3digo Produto:");
+		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+		gbc_lblNewLabel.anchor = GridBagConstraints.EAST;
+		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel.gridx = 8;
+		gbc_lblNewLabel.gridy = 0;
+		panel.add(lblNewLabel, gbc_lblNewLabel);
+		
+		txtCodigo = new JTextField();
+		GridBagConstraints gbc_txtCodigo = new GridBagConstraints();
+		gbc_txtCodigo.insets = new Insets(0, 0, 5, 0);
+		gbc_txtCodigo.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtCodigo.gridx = 9;
+		gbc_txtCodigo.gridy = 0;
+		panel.add(txtCodigo, gbc_txtCodigo);
+		txtCodigo.setColumns(10);
 
 		JLabel lblMarca = new JLabel("Marca:");
 		GridBagConstraints gbc_lblMarca = new GridBagConstraints();
@@ -285,6 +335,20 @@ public class ConsultarProduto extends JInternalFrame {
 		gbc_txtDataInicio.gridy = 1;
 		panel.add(txtDataInicio, gbc_txtDataInicio);
 		txtDataInicio.setColumns(10);
+		
+		ckDevolvidos = new JCheckBox("Devolvidos");
+		GridBagConstraints gbc_ckDevolvidos = new GridBagConstraints();
+		gbc_ckDevolvidos.insets = new Insets(0, 0, 5, 5);
+		gbc_ckDevolvidos.gridx = 8;
+		gbc_ckDevolvidos.gridy = 1;
+		panel.add(ckDevolvidos, gbc_ckDevolvidos);
+		
+		ckEstoque = new JCheckBox("Em Estoque");
+		GridBagConstraints gbc_ckEstoque = new GridBagConstraints();
+		gbc_ckEstoque.insets = new Insets(0, 0, 5, 0);
+		gbc_ckEstoque.gridx = 9;
+		gbc_ckEstoque.gridy = 1;
+		panel.add(ckEstoque, gbc_ckEstoque);
 
 		JLabel lblDataEntrada = new JLabel("Consignat\u00E1rio:");
 		GridBagConstraints gbc_lblDataEntrada = new GridBagConstraints();
@@ -344,91 +408,58 @@ public class ConsultarProduto extends JInternalFrame {
 		panel.add(cmbTipo, gbc_cmbTipo);
 
 		JPanel panel_2 = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel, 6,
-				SpringLayout.SOUTH, panel_2);
-		springLayout.putConstraint(SpringLayout.EAST, panel, 0,
-				SpringLayout.EAST, panel_2);
+		springLayout.putConstraint(SpringLayout.EAST, panel_1, -6, SpringLayout.WEST, panel_2);
+		springLayout.putConstraint(SpringLayout.EAST, panel, 0, SpringLayout.EAST, panel_2);
+		springLayout.putConstraint(SpringLayout.WEST, panel_2, 305, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, panel_2, -10, SpringLayout.EAST, getContentPane());
 		springLayout.putConstraint(SpringLayout.NORTH, panel_2, 10,
 				SpringLayout.NORTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, panel_2, -144,
 				SpringLayout.SOUTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, panel_2, 6,
-				SpringLayout.EAST, panel_1);
-		springLayout.putConstraint(SpringLayout.EAST, panel_2, -10,
-				SpringLayout.EAST, getContentPane());
 		panel_2.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null,
 				null, null));
 		panel_1.setLayout(new CardLayout(0, 0));
 
 		picProduto = new JLabel("Imagem");
+		picProduto.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		picProduto.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if (picProduto.getIcon() != null) {
+					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					picProduto.setCursor(Cursor
+							.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					Entrada eSelecionada = em.findOneWhere("id",
+							String.valueOf(prodId));
+					Blob blob_img = eSelecionada.getImagemBlob();
+					String descricao = eSelecionada.getDescricao();
+					PicZoomDialog picDiag = new PicZoomDialog(blob_img,
+							descricao);
+					picDiag.setVisible(true);
+					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					picProduto.setCursor(Cursor
+							.getPredefinedCursor(Cursor.HAND_CURSOR));
+				} else {
+					JOptionPane.showMessageDialog(null,
+							"Não há nenhuma imagem para ser visualizada!");
+				}
+			}
+		});
 		picProduto.setHorizontalAlignment(SwingConstants.CENTER);
 		panel_1.add(picProduto, "name_11027006424649");
 		getContentPane().add(panel_2);
 		panel_2.setLayout(new CardLayout(0, 0));
+		
+		table = new JTable();
 
-		Vector<String> colunas = new Vector();
+		populateModel();
 
-		colunas.add("Cód. Produto");
-		colunas.add("Descrição");
-		colunas.add("Consignatário");
-		colunas.add("Categoria");
-		colunas.add("Marca");
-		colunas.add("Tamanho");
-		colunas.add("Cor");
-		colunas.add("Preço");
-		colunas.add("Data Entrada");
-		colunas.add("Data Início");
-		colunas.add("Data Vencim.");
-		colunas.add("Situação");
-		colunas.add("Tipo");
-
-		Vector tableData = new Vector();
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
-		for (Object o : EntradaModel.findAll()) {
-			Entrada e = (Entrada) o;
-
-			Vector<Object> oneRow = new Vector<Object>();
-
-			oneRow.add(e.getId()); // 0
-			oneRow.add(e.getDescricao()); // 1
-			oneRow.add(e.getConsignatario().getNome()); // 2
-			oneRow.add(e.getCategoria().getName()); // 3
-			oneRow.add(e.getMarca().getName()); // 4
-			oneRow.add(e.getTamanho().getName()); // 5
-			oneRow.add(e.getCor().getName()); // 6
-			oneRow.add(String.valueOf(e.getVenda())); // 7
-			oneRow.add(df.format(e.getDataEntrada())); // 8
-			oneRow.add(df.format(e.getDataInicio())); // 9
-			oneRow.add(df.format(e.getDataVencimento())); // 10
-			oneRow.add(e.getSituacao().getName()); // 11
-			oneRow.add(e.getTipo().getName()); // 12
-
-			tableData.add(oneRow);
-		}
-
-		model = new DefaultTableModel(tableData, colunas) {
-			public Class<?> getColumnClass(int column) {
-				return getValueAt(0, column).getClass();
-			}
-
-			boolean[] columnEditables = new boolean[] { false, false, false,
-					false, false, false };
-
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
-			}
-
-		};
-
-		table = new JTable(model);
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				int linhaSelecionadaProduto = table.getSelectedRow();
 
-				long prodId = (long) table.getValueAt(linhaSelecionadaProduto,
-						0);
+				prodId = (long) table.getValueAt(linhaSelecionadaProduto, 0);
 
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				table.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -452,7 +483,11 @@ public class ConsultarProduto extends JInternalFrame {
 		table.getColumnModel().getColumn(9).setPreferredWidth(120);
 		table.getColumnModel().getColumn(10).setPreferredWidth(120);
 		table.getColumnModel().getColumn(11).setPreferredWidth(120);
-		table.getColumnModel().getColumn(11).setPreferredWidth(120);
+		table.getColumnModel().getColumn(12).setPreferredWidth(120);
+		table.getColumnModel().getColumn(13).setPreferredWidth(120);
+		table.getColumnModel().getColumn(14).setPreferredWidth(120);
+		table.getColumnModel().getColumn(15).setPreferredWidth(120);
+		table.getColumnModel().getColumn(16).setPreferredWidth(120);
 
 		RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
 			public boolean include(Entry entry) {
@@ -467,68 +502,56 @@ public class ConsultarProduto extends JInternalFrame {
 
 		JScrollPane scrollPaneProdutos = new JScrollPane(table);
 		panel_2.add(scrollPaneProdutos, "name_10326065285220");
-
-		JButton btnTrocarFoto = new JButton("Trocar Foto");
-		springLayout.putConstraint(SpringLayout.WEST, panel, 10,
-				SpringLayout.WEST, btnTrocarFoto);
-		springLayout.putConstraint(SpringLayout.NORTH, btnTrocarFoto, 272,
-				SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, panel_1, -6,
-				SpringLayout.NORTH, btnTrocarFoto);
-		springLayout.putConstraint(SpringLayout.WEST, btnTrocarFoto, 10,
-				SpringLayout.WEST, getContentPane());
-		getContentPane().add(btnTrocarFoto);
-
-		JButton btnExcluirProduto = new JButton("Excluir Produto");
-		springLayout.putConstraint(SpringLayout.SOUTH, btnExcluirProduto, -144,
-				SpringLayout.SOUTH, getContentPane());
-
-		JButton btnLimparFiltro = new JButton("Limpar Filtro");
-		btnLimparFiltro.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				txtDesc.setText("");
-				cmbMarca.setSelectedItem("todos");
-				cmbCat.setSelectedItem("todos");
-				cmbTam.setSelectedItem("todos");
-				cmbCor.setSelectedItem("todos");
-				cmbSit.setSelectedItem("todos");
-				txtVendaMaiorQ.setText("");
-				txtConsig.setText("");
-				txtDataInicio.setText("");
-				txtDataVenc.setText("");
-				cmbTipo.setSelectedItem("todos");
+		
+				JButton btnFiltrar = new JButton("Filtrar");
+				btnFiltrar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						filtrar();
+					}
+				});
 				
-				filtrar();
-			}
-		});
-		GridBagConstraints gbc_btnLimparFiltro = new GridBagConstraints();
-		gbc_btnLimparFiltro.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnLimparFiltro.anchor = GridBagConstraints.NORTH;
-		gbc_btnLimparFiltro.insets = new Insets(0, 0, 0, 5);
-		gbc_btnLimparFiltro.gridx = 6;
-		gbc_btnLimparFiltro.gridy = 2;
-		panel.add(btnLimparFiltro, gbc_btnLimparFiltro);
-
-		JButton btnFiltrar = new JButton("Filtrar");
-		btnFiltrar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				filtrar();
-			}
-		});
-		GridBagConstraints gbc_btnFiltrar = new GridBagConstraints();
-		gbc_btnFiltrar.insets = new Insets(0, 0, 0, 5);
-		gbc_btnFiltrar.anchor = GridBagConstraints.NORTH;
-		gbc_btnFiltrar.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnFiltrar.gridx = 7;
-		gbc_btnFiltrar.gridy = 2;
-		panel.add(btnFiltrar, gbc_btnFiltrar);
-		springLayout.putConstraint(SpringLayout.EAST, btnTrocarFoto, -6,
-				SpringLayout.WEST, btnExcluirProduto);
-		springLayout.putConstraint(SpringLayout.WEST, btnExcluirProduto, 145,
-				SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, btnExcluirProduto, 0,
-				SpringLayout.EAST, panel_1);
-		getContentPane().add(btnExcluirProduto);
+						JButton btnLimparFiltro = new JButton("Limpar Filtro");
+						btnLimparFiltro.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								resetarFiltro();
+								
+								filtrar();
+							}
+						});
+						
+						ckNEncontrados = new JCheckBox("N\u00E3o Encontrados");
+						GridBagConstraints gbc_ckNEncontrados = new GridBagConstraints();
+						gbc_ckNEncontrados.insets = new Insets(0, 0, 0, 5);
+						gbc_ckNEncontrados.gridx = 6;
+						gbc_ckNEncontrados.gridy = 2;
+						panel.add(ckNEncontrados, gbc_ckNEncontrados);
+						
+						ckVencidos = new JCheckBox("Vencidos");
+						GridBagConstraints gbc_ckVencidos = new GridBagConstraints();
+						gbc_ckVencidos.insets = new Insets(0, 0, 0, 5);
+						gbc_ckVencidos.gridx = 7;
+						gbc_ckVencidos.gridy = 2;
+						panel.add(ckVencidos, gbc_ckVencidos);
+						GridBagConstraints gbc_btnLimparFiltro = new GridBagConstraints();
+						gbc_btnLimparFiltro.fill = GridBagConstraints.HORIZONTAL;
+						gbc_btnLimparFiltro.anchor = GridBagConstraints.NORTH;
+						gbc_btnLimparFiltro.insets = new Insets(0, 0, 0, 5);
+						gbc_btnLimparFiltro.gridx = 8;
+						gbc_btnLimparFiltro.gridy = 2;
+						panel.add(btnLimparFiltro, gbc_btnLimparFiltro);
+				GridBagConstraints gbc_btnFiltrar = new GridBagConstraints();
+				gbc_btnFiltrar.anchor = GridBagConstraints.NORTH;
+				gbc_btnFiltrar.fill = GridBagConstraints.HORIZONTAL;
+				gbc_btnFiltrar.gridx = 9;
+				gbc_btnFiltrar.gridy = 2;
+				panel.add(btnFiltrar, gbc_btnFiltrar);
+				
+				lblDescrioDoProduto = new JLabel("Descri\u00E7\u00E3o do Produto");
+				lblDescrioDoProduto.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 13));
+				springLayout.putConstraint(SpringLayout.NORTH, panel_1, 6, SpringLayout.SOUTH, lblDescrioDoProduto);
+				springLayout.putConstraint(SpringLayout.NORTH, lblDescrioDoProduto, 0, SpringLayout.NORTH, panel_2);
+				springLayout.putConstraint(SpringLayout.WEST, lblDescrioDoProduto, 10, SpringLayout.WEST, getContentPane());
+				getContentPane().add(lblDescrioDoProduto);
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -536,51 +559,202 @@ public class ConsultarProduto extends JInternalFrame {
 		JMenu mnCadastrar = new JMenu("Cadastrar");
 		menuBar.add(mnCadastrar);
 
-		JMenuItem mntmNovaEntrada = new JMenuItem("Nova entrada");
+		JMenuItem mntmNovaEntrada = new JMenuItem("Nova Entrada");
+		mntmNovaEntrada.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				CadastroEntrada obj = new CadastroEntrada();
+				getDesktopPane().add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mnCadastrar.add(mntmNovaEntrada);
 
-		JMenuItem mntmNovaCategoria = new JMenuItem("Nova categoria");
+		JMenuItem mntmNovaCategoria = new JMenuItem("Nova Categoria");
+		mntmNovaCategoria.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CadastroCategoria obj = new CadastroCategoria();
+				getDesktopPane().add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mnCadastrar.add(mntmNovaCategoria);
 
-		JMenuItem mntmNovaMarca = new JMenuItem("Nova marca");
+		JMenuItem mntmNovaMarca = new JMenuItem("Nova Marca");
+		mntmNovaMarca.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CadastroMarca obj = new CadastroMarca();
+				getDesktopPane().add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mnCadastrar.add(mntmNovaMarca);
+		
+				JMenuItem mntmNewMenuItem = new JMenuItem("Nova Cor");
+				mntmNewMenuItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						CadastroCor obj = new CadastroCor();
+						getDesktopPane().add(obj);
+						obj.setVisible(true);
+					}
+				});
+				mnCadastrar.add(mntmNewMenuItem);
+		
+				JMenuItem mntmNewMenuItem_1 = new JMenuItem("Novo Tamanho");
+				mntmNewMenuItem_1.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						CadastroTamanho obj = new CadastroTamanho();
+						getDesktopPane().add(obj);
+						obj.setVisible(true);
+					}
+				});
+				mnCadastrar.add(mntmNewMenuItem_1);
 
-		JMenuItem mntmNovoTipo = new JMenuItem("Novo tipo");
+		JMenuItem mntmNovoTipo = new JMenuItem("Novo Tipo");
+		mntmNovoTipo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CadastroTipo obj = new CadastroTipo();
+				getDesktopPane().add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mnCadastrar.add(mntmNovoTipo);
-
-		JMenuItem mntmNewMenuItem = new JMenuItem("New menu item");
-		mnCadastrar.add(mntmNewMenuItem);
-
-		JMenuItem mntmNewMenuItem_1 = new JMenuItem("New menu item");
-		mnCadastrar.add(mntmNewMenuItem_1);
 
 		JMenu mnEditar = new JMenu("Editar");
 		menuBar.add(mnEditar);
 
 		JMenuItem mntmAlterarImagem = new JMenuItem("Alterar imagem");
+		mntmAlterarImagem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO
+				
+				if (prodId > 0) {
+					setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					// TODO
+					JFileChooser arquivo = new JFileChooser();
+
+					int retorno = arquivo.showOpenDialog(null);
+					String caminhoArquivo = "";
+
+					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					if (retorno == JFileChooser.APPROVE_OPTION) {
+
+						caminhoArquivo = arquivo.getSelectedFile()
+								.getAbsolutePath();
+						File file = new File(caminhoArquivo);
+						long fileSize = file.length();
+
+						if ((fileSize / 1024) > (long) 1 * 1024) {
+							String erro = "Não foi possível carregar o arquivo: o tamanho máximo permitido é de 1mb.";
+							JOptionPane.showMessageDialog(null, erro,
+									"Erro ao carregar o arquivo!",
+									JOptionPane.ERROR_MESSAGE);
+						} else {
+							Session session = HibernateUtil.getSessionFactory().openSession();
+							try {
+
+								FileInputStream fileStream = new FileInputStream(file);
+								LobHelper lobHelper = session.getLobHelper();
+								Blob imgBlob = lobHelper.createBlob(fileStream,
+										fileSize);
+
+								em.changePicture(prodId, imgBlob);
+
+								try {
+									Entrada ei = em.findOneWhere("id", String.valueOf(prodId));
+									BufferedImage bi = MyImageUtil.setMaxWidthHeight(ei.getImagemBlob(),
+											picProduto.getWidth(), picProduto.getHeight());
+									drawPicture(bi);
+								} catch (SQLException err) {
+									err.printStackTrace();
+								} catch (IOException err) {
+									err.printStackTrace();
+								}
+							} catch (FileNotFoundException ex) {
+								// TODO Auto-generated catch block
+								ex.printStackTrace();
+							}
+						}
+					} else {
+						System.out.println("Não Abriu");
+					}
+				}
+			}
+		});
 		mnEditar.add(mntmAlterarImagem);
 
 		JMenuItem mntmAlterarProdutoSelecionado = new JMenuItem(
 				"Alterar produto selecionado");
+		mntmAlterarProdutoSelecionado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (prodId > 0) {
+					ProdutoCadastroDialog pcDiag = new ProdutoCadastroDialog(prodId);
+					pcDiag.setVisible(true);
+					atualizarTabela();
+				} else {
+					JOptionPane.showMessageDialog(null, "Não há nenhum produto selecionado para a edição");
+				}
+			}
+		});
 		mnEditar.add(mntmAlterarProdutoSelecionado);
 
 		JMenuItem mntmExcluirProdutoSelecionado = new JMenuItem(
 				"Excluir produto selecionado");
-		mnEditar.add(mntmExcluirProdutoSelecionado);
+		mntmExcluirProdutoSelecionado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO
+				int opcao;
+				opcao = JOptionPane
+						.showConfirmDialog(null,
+								"Deseja Realmente excluir o produto "
+										+ prodId + "?", "Atencão",
+								JOptionPane.YES_NO_OPTION);
+				if (opcao == JOptionPane.YES_OPTION) {
+					try {
+						em.deleteById(prodId);
+						prodId = 0;
+						picProduto.setIcon(null);
+						
+						atualizarTabela();
+						
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
 
-		JMenuItem mntmExcluirTodosDo = new JMenuItem("Excluir todos do filtro");
-		mnEditar.add(mntmExcluirTodosDo);
+			}
+		});
+		mnEditar.add(mntmExcluirProdutoSelecionado);
 
 		JMenu mnTabela = new JMenu("Tabela");
 		menuBar.add(mnTabela);
 
 		JMenuItem mntmAtualizarTabela = new JMenuItem("Atualizar tabela");
+		mntmAtualizarTabela.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				atualizarTabela();
+			}
+		});
 		mnTabela.add(mntmAtualizarTabela);
+		
+		JSeparator separator = new JSeparator();
+		mnTabela.add(separator);
 
 		JMenuItem mntmLimparFiltros = new JMenuItem("Limpar filtros");
+		mntmLimparFiltros.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				resetarFiltro();
+				
+				filtrar();
+			}
+		});
 		mnTabela.add(mntmLimparFiltros);
 
 		JMenuItem mntmFiltrarTabela = new JMenuItem("Filtrar tabela");
+		mntmFiltrarTabela.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				filtrar();
+			}
+		});
 		mnTabela.add(mntmFiltrarTabela);
 
 		JMenu mnRelatrios = new JMenu("Relat\u00F3rios");
@@ -588,16 +762,183 @@ public class ConsultarProduto extends JInternalFrame {
 
 		JMenuItem mntmGerarRelatrioDo = new JMenuItem(
 				"Gerar relat\u00F3rio do filtro");
+		mntmGerarRelatrioDo.addActionListener(new ActionListener() {
+			
+			
+			public void actionPerformed(ActionEvent e) {
+				List produtos = new ArrayList();
+				
+				for (int i = 0; i < table.getRowCount(); i += 1) {
+					produtos.add(em.findOneWhere("id", String.valueOf(table.getValueAt(i, 0))));
+				}
+				
+				boolean proceed = false;
+				
+				if (produtos.size() > 100) {
+					JOptionPane.showMessageDialog(null, "Atenção! Há uma enorme quantidade de produtos. O relatório demorará alguns minutos para ser gerado. Tem certeza de que deseja continuar?");
+					proceed = true;
+				} else {
+					proceed = true;
+				}
+				
+				if (proceed) {
+					gerarRelatorio(produtos);
+				}
+			}
+		});
 		mnRelatrios.add(mntmGerarRelatrioDo);
 
-		JMenuItem mntmGerarVencidos = new JMenuItem("Gerar vencidos");
-		mnRelatrios.add(mntmGerarVencidos);
-
 		JMenuItem mntmGerarTodos = new JMenuItem("Gerar todos");
+		mntmGerarTodos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				List produtos = em.findAll();
+				
+				boolean proceed = false;
+				
+				if (produtos.size() > 100) {
+					JOptionPane.showMessageDialog(null, "Atenção! Há uma enorme quantidade de produtos. O relatório demorará alguns minutos para ser gerado. Tem certeza de que deseja continuar?");
+					proceed = true;
+				} else {
+					proceed = true;
+				}
+				
+				if (proceed) {
+					gerarRelatorio(produtos);
+				}
+			}
+		});
 		mnRelatrios.add(mntmGerarTodos);
 
 		atualizarCombos();
 
+	}
+	
+	private void atualizarTabela() {
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		
+		if (model.getRowCount() > 0) {
+		    for (int i = model.getRowCount() - 1; i > -1; i--) {
+		    	model.removeRow(i);
+		    }
+		}
+		
+		for (Object o : EntradaModel.findAll()) {
+			Entrada e = (Entrada) o;
+
+			boolean hasSaida = sm.hasSaida(e.getId());
+			int qtdeDisponivel = 0;
+
+			if (hasSaida) {
+				qtdeDisponivel = e.getQuantidate() - e.getnEncontrado()
+						- e.getDevolvido() - sm.getQtdeSaida();
+			} else {
+				qtdeDisponivel = e.getQuantidate() - e.getnEncontrado()
+						- e.getDevolvido();
+			}
+			
+			Vector<Object> oneRow = new Vector<Object>();
+
+			oneRow.add(e.getId()); 									// 0
+			oneRow.add(e.getDescricao()); 							// 1
+			oneRow.add(e.getConsignatario().getNome());				// 2
+			oneRow.add(e.getCategoria().getName());		 			// 3
+			oneRow.add(e.getMarca().getName()); 					// 4
+			oneRow.add(e.getTamanho().getName()); 					// 5
+			oneRow.add(e.getCor().getName()); 						// 6
+			oneRow.add(String.valueOf(e.getVenda())); 				// 7
+			oneRow.add(String.valueOf(qtdeDisponivel));				// 8
+			oneRow.add(String.valueOf(sm.getQtdeSaida()));			// 9
+			oneRow.add(String.valueOf(e.getDevolvido()));			// 10
+			oneRow.add(String.valueOf(e.getnEncontrado()));			// 11
+			oneRow.add(df.format(e.getDataEntrada())); 				// 12
+			oneRow.add(df.format(e.getDataInicio())); 				// 13
+			oneRow.add(df.format(e.getDataVencimento())); 			// 14
+			oneRow.add(e.getSituacao().getName()); 					// 15
+			oneRow.add(e.getTipo().getName()); 						// 16
+
+			model.addRow(oneRow);
+		}
+		
+		table.setModel(model);
+		
+	}
+
+	private void populateModel() {
+		Vector<String> colunas = new Vector();
+
+		colunas.add("Cód. Produto"); 		// 0
+		colunas.add("Descrição");			// 1
+		colunas.add("Consignatário");		// 2
+		colunas.add("Categoria");			// 3
+		colunas.add("Marca");				// 4
+		colunas.add("Tamanho");				// 5
+		colunas.add("Cor");					// 6
+		colunas.add("Preço");				// 7
+		colunas.add("estoque");				// 8
+		colunas.add("vendidos");			// 9
+		colunas.add("devolvidos");			// 10
+		colunas.add("ñ encontrados");		// 11
+		colunas.add("Data Entrada");		// 12
+		colunas.add("Data Início");			// 13
+		colunas.add("Data Vencim.");		// 14
+		colunas.add("Situação");			// 15
+		colunas.add("Tipo");				// 16
+
+		Vector tableData = new Vector();
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+
+		for (Object o : EntradaModel.findAll()) {
+			Entrada e = (Entrada) o;
+
+			boolean hasSaida = sm.hasSaida(e.getId());
+			int qtdeDisponivel = 0;
+
+			if (hasSaida) {
+				qtdeDisponivel = e.getQuantidate() - e.getnEncontrado()
+						- e.getDevolvido() - sm.getQtdeSaida();
+			} else {
+				qtdeDisponivel = e.getQuantidate() - e.getnEncontrado()
+						- e.getDevolvido();
+			}
+			
+			Vector<Object> oneRow = new Vector<Object>();
+
+			oneRow.add(e.getId()); 								// 0
+			oneRow.add(e.getDescricao()); 						// 1
+			oneRow.add(e.getConsignatario().getNome());			// 2
+			oneRow.add(e.getCategoria().getName());		 		// 3
+			oneRow.add(e.getMarca().getName()); 				// 4
+			oneRow.add(e.getTamanho().getName()); 				// 5
+			oneRow.add(e.getCor().getName()); 					// 6
+			oneRow.add(String.format("%.2f", e.getVenda())); 	// 7
+			oneRow.add(qtdeDisponivel);							// 8
+			oneRow.add(sm.getQtdeSaida());						// 9
+			oneRow.add(e.getDevolvido());						// 10
+			oneRow.add(e.getnEncontrado());						// 11
+			oneRow.add(df.format(e.getDataEntrada())); 			// 12
+			oneRow.add(df.format(e.getDataInicio())); 			// 13
+			oneRow.add(df.format(e.getDataVencimento())); 		// 14
+			oneRow.add(e.getSituacao().getName()); 				// 15
+			oneRow.add(e.getTipo().getName()); 					// 16
+
+			tableData.add(oneRow);
+		}
+
+		model = new DefaultTableModel(tableData, colunas) {
+			public Class<?> getColumnClass(int column) {
+				return getValueAt(0, column).getClass();
+			}
+
+			boolean[] columnEditables = new boolean[] { false, false, false,
+					false, false, false, false, false, false, false, false, false, false, false, false, false, false };
+
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+
+		};
+		
+		table.setModel(model);
 	}
 
 	protected void selecionarItem(long idRow) {
@@ -609,6 +950,7 @@ public class ConsultarProduto extends JInternalFrame {
 			BufferedImage bi = MyImageUtil.setMaxWidthHeight(blob_img,
 					picProduto.getWidth(), picProduto.getHeight());
 			drawPicture(bi);
+			lblDescrioDoProduto.setText(eSelecionada.getDescricao());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -620,6 +962,7 @@ public class ConsultarProduto extends JInternalFrame {
 		if (bi != null) {
 			picProduto.setText("");
 			picProduto.setIcon(new ImageIcon(bi));
+			
 		}
 	}
 
@@ -715,6 +1058,18 @@ public class ConsultarProduto extends JInternalFrame {
 		if (!cmbTipo.getSelectedItem().equals("todos")) {
 			filtro.put("tipo", cmbTipo.getSelectedItem());
 		}
+		if (ckDevolvidos.isSelected()) {
+			filtro.put("devolvidos", true);
+		}
+		if (ckEstoque.isSelected()) {
+			filtro.put("estoque", true);
+		}
+		if (ckNEncontrados.isSelected()) {
+			filtro.put("nencontrados", true);
+		}
+		if (ckVencidos.isSelected()) {
+			filtro.put("vencidos", true);
+		}
 		return filtro;
 	}
 
@@ -723,6 +1078,7 @@ public class ConsultarProduto extends JInternalFrame {
 			public boolean include(Entry entry) {
 				HashMap<String, Object> filter = verificarDataFiltro();
 				boolean isValid = true;
+				Entrada ef = em.findOneWhere("id", String.valueOf( (long) entry.getValue(0) ) );
 
 				if (filter.containsKey("descricao")) {
 					isValid = (((String) entry.getValue(1)).toLowerCase().contains(((String) filter.get("descricao")).toLowerCase()) && isValid);
@@ -807,7 +1163,7 @@ public class ConsultarProduto extends JInternalFrame {
 								&& cal1.get(Calendar.DAY_OF_YEAR) == cal2
 										.get(Calendar.DAY_OF_YEAR);
 
-						isValid = (sameDay);
+						isValid = (sameDay) && isValid;
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -818,7 +1174,34 @@ public class ConsultarProduto extends JInternalFrame {
 					isValid = (((String) entry.getValue(12))
 							.equals((String) filter.get("tipo")) && isValid);
 				}
+				
+				if (filter.containsKey("devolvidos")) {
+					isValid = (int) entry.getValue(10) > 0;
+				}
+				if (filter.containsKey("estoque")) {					
+					
+					isValid = (int) entry.getValue(8) > 0;
+				}
+				if (filter.containsKey("vencidos")) {
+					isValid = (int) entry.getValue(8) > 0;
+					
+					Calendar cal1 = Calendar.getInstance();
+					Calendar cal2 = Calendar.getInstance();
 
+					cal1.setTime(new Date());
+					cal2.setTime(ef.getDataVencimento());
+
+					boolean sameDay = cal1.get(Calendar.YEAR) == cal2
+							.get(Calendar.YEAR)
+							&& cal1.get(Calendar.DAY_OF_YEAR) == cal2
+									.get(Calendar.DAY_OF_YEAR);
+
+					isValid = ( cal1.after(cal2) || (sameDay) ) && isValid;
+				}
+				if (filter.containsKey("nencontrados")) {
+					isValid = (int) entry.getValue(11) > 0;
+				}
+				
 				return isValid;
 			}
 		};
@@ -828,9 +1211,84 @@ public class ConsultarProduto extends JInternalFrame {
 		table.setRowSorter(sorter);
 	}
 
-	private static class __Tmp {
-		private static void __tmp() {
-			javax.swing.JPanel __wbp_panel = new javax.swing.JPanel();
+	private void gerarRelatorio(List produtos) {
+		List dataReport = new ArrayList();
+		Map<String, Object> data;
+		
+		SimpleDateFormat df = new SimpleDateFormat(
+				"dd/MM/yyyy");
+		
+		for (Object o : produtos) {
+			Entrada e = (Entrada) o;
+			
+			boolean hasSaida = sm.hasSaida(e.getId());
+			int qtdeDisponivel = 0;
+
+			if (hasSaida) {
+				qtdeDisponivel = e.getQuantidate() - e.getnEncontrado()
+						- e.getDevolvido() - sm.getQtdeSaida();
+			} else {
+				qtdeDisponivel = e.getQuantidate() - e.getnEncontrado()
+						- e.getDevolvido();
+			}
+			
+			data = new HashMap<>();
+			
+			data.put("codigo", String.valueOf(e.getId()));
+			data.put("descricao", e.getDescricao());
+			data.put("consig", e.getConsignatario().getNome());
+			data.put("preco", "R$ " + String.format("%.2f", (e.getVenda())));
+			data.put("estoque", String.valueOf(qtdeDisponivel));
+			data.put("vendidos", String.valueOf(sm.getQtdeSaida()));
+			data.put("devolvidos", String.valueOf(e.getDevolvido()));
+			data.put("nencontrados", String.valueOf(e.getnEncontrado()));
+			data.put("dataEntrada", df.format(e.getDataEntrada()));
+			data.put("dataInicio", df.format(e.getDataInicio()));
+			data.put("dataVencimento", df.format(e.getDataVencimento()));
+			
+			Blob blob_img = e.getImagemBlob();
+			data.put("image", null);
+			try {
+				BufferedImage bi = MyImageUtil.setMaxWidthHeight(blob_img,
+						170, 120);
+				data.put("image", bi);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			dataReport.add(data);
 		}
+		
+		RelatorioProdutos.gerarFiltro(dataReport);
+		
+		File pdf = new File("relatorios/RelatorioProdutos.pdf");  
+        try {  
+          Desktop.getDesktop().open(pdf);  
+        } catch(Exception ex) {  
+          ex.printStackTrace();  
+          JOptionPane.showMessageDialog(null, "Erro no Desktop: " + ex);  
+        } 
+	}
+
+	private void resetarFiltro() {
+		txtDesc.setText("");
+		cmbMarca.setSelectedItem("todos");
+		cmbCat.setSelectedItem("todos");
+		cmbTam.setSelectedItem("todos");
+		cmbCor.setSelectedItem("todos");
+		cmbSit.setSelectedItem("todos");
+		txtVendaMaiorQ.setText("");
+		txtConsig.setText("");
+		txtDataInicio.setText("");
+		txtDataVenc.setText("");
+		cmbTipo.setSelectedItem("todos");
+		ckDevolvidos.setSelected(false);
+		ckEstoque.setSelected(false);
+		ckNEncontrados.setSelected(false);
+		ckVencidos.setSelected(false);
 	}
 }

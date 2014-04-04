@@ -584,9 +584,9 @@ public class CadastroConsignatario extends JInternalFrame {
 
 		txtNome.setText("");
 		txtTelefone.setText("");
-		txtTelefone.setText(format("####-####", "        "));
+		txtTelefone.setText("");
 		txtCelular.setText("");
-		txtCelular.setText(format("####-####", "        "));		
+		txtCelular.setText("");		
 		txtEmail.setText("");
 		txtSite.setText("");
 		txtLogra.setText("");
@@ -606,8 +606,8 @@ public class CadastroConsignatario extends JInternalFrame {
 				String.valueOf(this.theId));
 		lblSubtitle.setText("Cód. Consignatário: " + c.getId());
 		txtNome.setText(c.getNome());
-		txtTelefone.setText(format("####-####", c.getTelefone()));
-		txtCelular.setText(format("####-####", c.getCelular()));
+		txtTelefone.setText(c.getTelefone());
+		txtCelular.setText(c.getCelular());
 		txtEmail.setText(c.getEmail());
 		txtSite.setText(c.getSite());
 		txtLogra.setText(c.getLogradouro());

@@ -33,6 +33,8 @@ public class EntradaModel {
 		
 		entity.setId(id);
 		entity.setDataEntrada(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+		entity.setDevolvido(0);
+		entity.setnEncontrado(0);
 		session = HibernateUtil.getSessionFactory().openSession();
 		
 		session.beginTransaction();
@@ -66,7 +68,13 @@ public class EntradaModel {
 		entity.setObservacao((String) data.get("observ"));
 		if (data.containsKey("image")) {
 			entity.setImagemBlob((Blob) data.get("image"));
-		}		
+		}
+		if (data.containsKey("qtdeDevolvido")) {
+			entity.setDevolvido((int) data.get("qtdeDevolvido"));
+		}
+		if (data.containsKey("qtdeNEncontrado")) {
+			entity.setnEncontrado((int) data.get("qtdeNEncontrado"));
+		}
 		entity.setLocalizacao((String) data.get("local"));
 	}
 	
@@ -113,9 +121,6 @@ public class EntradaModel {
 			CatLastIdModel.updateLastId(cat);
 		} else {
 			if (!entity.getCategoria().getName().contains(((Categoria) data.get("categoria")).getName())) {
-				System.out.println("POOOOOOORRRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-				System.out.println("ENTIDADE " + entity.getCategoria().getName());
-				System.out.println("DATA GET " + ((Categoria) data.get("categoria")).getName());
 				int cat = ((Categoria) data.get("categoria")).getId();
 				long clid = CatLastIdModel.getLastId(cat);
 				entity.setId((cat * 1000000) + clid);
@@ -134,7 +139,9 @@ public class EntradaModel {
 		if (oldId != newId) {
 			System.out.println("ID NOVO");
 			session.save(entity);
-			// deleteById(oldId);
+			String hql =  "FROM Entrada where id = " + oldId;
+			Entrada e = (Entrada) session.createQuery(hql).uniqueResult();
+			session.delete(e);
 		} else {
 			System.out.println("ID VELHO");
 			session.update(entity);
@@ -150,7 +157,7 @@ public class EntradaModel {
 	private Entrada findOneWhereDisponivel(String id) {
 		session = HibernateUtil.getSessionFactory().openSession();
 		
-		String hql =  "FROM Entrada where id  = " + id + " and situacao_fk = 4";
+		String hql =  "FROM Entrada where id  = " + id + " and situacao_fk = 2";
 		Entrada e = (Entrada) session.createQuery(hql).uniqueResult();
 		
 		close();
@@ -158,13 +165,17 @@ public class EntradaModel {
 		return (Entrada) e;
 	}
 
-	public boolean hasEntrada(int productId) {
-		Entrada entrada =  findOneWhereDisponivel(String.valueOf(productId));
+	public boolean hasEntrada(long prodId) {
+		Entrada entrada =  findOneWhereDisponivel(String.valueOf(prodId));
 		long entradaId = 0;
+
 		
 		try {
+
 			entradaId = entrada.getId();
+			
 		} catch (NullPointerException ex) {
+			System.out.println("WHY???????????????????????");
 			ex.printStackTrace();
 		}
 		
@@ -183,5 +194,22 @@ public class EntradaModel {
 		close();
 		
 		return estados;
+	}
+
+	public void changePicture(Long id, Blob imgBlob) {
+		entity = findOneWhere("id", String.valueOf(id));
+		
+		entity.setImagemBlob(imgBlob);
+		
+		session = HibernateUtil.getSessionFactory().openSession();
+		
+		session.beginTransaction();
+		
+		session.update(entity);
+		
+		session.getTransaction().commit();
+		
+		close();
+		
 	}
 }

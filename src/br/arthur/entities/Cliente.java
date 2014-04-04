@@ -38,10 +38,6 @@ public class Cliente {
 	@Column(name="observacao", columnDefinition="TEXT")
 	private String observacao;
 	
-	@ManyToOne
-	@JoinColumn(name="ultima_compra_fk")
-	private Entrada ultimaCompra;
-	
 	public Cliente() {
 		
 	}
@@ -126,14 +122,6 @@ public class Cliente {
 		this.observacao = observacao;
 	}
 
-	public Entrada getUltimaCompra() {
-		return ultimaCompra;
-	}
-
-	public void setUltimaCompra(Entrada ultimaCompra) {
-		this.ultimaCompra = ultimaCompra;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -152,8 +140,6 @@ public class Cliente {
 		result = prime * result + ((site == null) ? 0 : site.hashCode());
 		result = prime * result
 				+ ((telefone == null) ? 0 : telefone.hashCode());
-		result = prime * result
-				+ ((ultimaCompra == null) ? 0 : ultimaCompra.hashCode());
 		return result;
 	}
 
@@ -210,12 +196,9 @@ public class Cliente {
 				return false;
 		} else if (!telefone.equals(other.telefone))
 			return false;
-		if (ultimaCompra == null) {
-			if (other.ultimaCompra != null)
-				return false;
-		} else if (!ultimaCompra.equals(other.ultimaCompra))
-			return false;
 		return true;
 	}
+
+	
 	
 }

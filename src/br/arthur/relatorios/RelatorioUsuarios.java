@@ -21,9 +21,11 @@ import br.arthur.utils.RelatorioUtil;
 public class RelatorioUsuarios {	
 	public static void gerarTodos() {		
 		UserModel um = new UserModel();
+		
 		List users = um.findAll();
 		List dataReport = new ArrayList();
 		Map<String, String> theUser;
+		
 		for (Object o : users) {
 			User u = (User) o;
 			theUser = new HashMap<>();
