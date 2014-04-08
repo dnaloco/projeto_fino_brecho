@@ -61,5 +61,9 @@
 	<classpathentry kind="lib" path="libs/ireports/servlet-api-2.4.jar"/>
 	<classpathentry kind="lib" path="forms-1.3.0.jar" sourcepath="forms-1.3.0-src.zip"/>
 	<classpathentry kind="lib" path="libs/PDFRenderer-0.9.0.jar"/>
+	<classpathentry kind="lib" path="libs/jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="libs/jgoodies-common-1.2.0.jar"/>
+	<classpathentry kind="lib" path="libs/jgoodies-looks-2.4.1.jar"/>
+	<classpathentry kind="lib" path="libs/junit-4.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

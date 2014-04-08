@@ -452,13 +452,15 @@ public class FinalizarVendaDialog extends JDialog {
 							dataReceber.put("dataVencimento", new java.sql.Date(cal2.getTimeInMillis()));
 							dataReceber.put("valor", valorPago);
 							
-							dataReceber.put("dataPagto", null);
+							
 							dataReceber.put("parcela", (byte) (i + 1) );
 							
 							if (sameDay && i == 0) {
 								dataReceber.put("pagto", true);
+								dataReceber.put("dataPagto", new java.sql.Date(new Date().getTime()));
 							} else {
 								dataReceber.put("pagto", false);
+								dataReceber.put("dataPagto", null);
 							}
 							
 							crm.criarContaReceber(dataReceber);

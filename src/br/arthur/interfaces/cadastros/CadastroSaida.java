@@ -370,7 +370,7 @@ public class CadastroSaida extends JInternalFrame {
 		panel_2.setLayout(new CardLayout(0, 0));
 
 		String[] colunas = new String[] { "Cód. Produto", "Descrição", "Qtde",
-				"Preço Un", "Subtotal" };
+				"Preço Un", "Total" };
 		String[][] dataProdutoTable = new String[][] {};
 
 		model = new DefaultTableModel(dataProdutoTable, colunas) {

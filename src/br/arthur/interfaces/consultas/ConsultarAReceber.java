@@ -5,11 +5,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -40,10 +40,10 @@ import br.arthur.utils.ButtonDoubleValueEditorUtil;
 import br.arthur.utils.ButtonRendererUtil;
 import br.arthur.utils.CheckBoxHeaderUtil;
 
+import com.toedter.calendar.JDateChooser;
+
 public class ConsultarAReceber extends JInternalFrame {
 	private JTextField txtCliente;
-	private JTextField txtDataVencInicio;
-	private JTextField txtDataVencFim;
 
 	private Object colNames[] = { 
 			"Cód. NF/Série", // 0
@@ -53,10 +53,11 @@ public class ConsultarAReceber extends JInternalFrame {
 			"Vencimento", // 4
 			"Valor Parc.", // 5
 			"Valor Total", // 6
-			"Parcela", // 7
-			"Total Parc.", // 8
-			"", // 9
-			"Valor Pago" // 10
+			"Data Pagamento", //7
+			"Parcela", // 8
+			"Total Parc.", // 9
+			"", // 10
+			"Valor Pago" // 11
 	};
 
 	private Object[][] data = {};
@@ -103,56 +104,24 @@ public class ConsultarAReceber extends JInternalFrame {
 		getContentPane().add(lblCliente);
 
 		txtCliente = new JTextField();
+		springLayout.putConstraint(SpringLayout.NORTH, txtCliente, 10, SpringLayout.NORTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, txtCliente, 6, SpringLayout.EAST, lblCliente);
 		getContentPane().add(txtCliente);
 		txtCliente.setColumns(10);
 
 		JLabel label = new JLabel("Vencimento:");
+		springLayout.putConstraint(SpringLayout.EAST, label, -749, SpringLayout.EAST, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, txtCliente, -6,
 				SpringLayout.WEST, label);
 		springLayout.putConstraint(SpringLayout.NORTH, label, 16,
 				SpringLayout.NORTH, getContentPane());
 		getContentPane().add(label);
 
-		try {
-			txtDataVencInicio = new JFormattedTextField(new MaskFormatter("##/##/####"));
-		} catch (ParseException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		springLayout.putConstraint(SpringLayout.NORTH, txtCliente, 0, SpringLayout.NORTH, txtDataVencInicio);
-		springLayout.putConstraint(SpringLayout.NORTH, txtDataVencInicio, 10,
-				SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, txtDataVencInicio, 373,
-				SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, label, -6,
-				SpringLayout.WEST, txtDataVencInicio);
-		txtDataVencInicio.setColumns(10);
-		getContentPane().add(txtDataVencInicio);
-
-		JLabel label_1 = new JLabel("at\u00E9");
-		springLayout.putConstraint(SpringLayout.NORTH, label_1, 16,
-				SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, label_1, 456,
-				SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, txtDataVencInicio, -6,
-				SpringLayout.WEST, label_1);
-		getContentPane().add(label_1);
-
-		try {
-			txtDataVencFim = new JFormattedTextField(new MaskFormatter("##/##/####"));
-		} catch (ParseException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		springLayout.putConstraint(SpringLayout.NORTH, txtDataVencFim, 10,
-				SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, txtDataVencFim, 6,
-				SpringLayout.EAST, label_1);
-		springLayout.putConstraint(SpringLayout.EAST, txtDataVencFim, -560,
-				SpringLayout.EAST, getContentPane());
-		txtDataVencFim.setColumns(10);
-		getContentPane().add(txtDataVencFim);
+		JDateChooser chooser = new JDateChooser();
+		chooser.setDate(new Date());
+		springLayout.putConstraint(SpringLayout.WEST, chooser, 6, SpringLayout.EAST, label);
+		springLayout.putConstraint(SpringLayout.SOUTH, chooser, 0, SpringLayout.SOUTH, txtCliente);
+		getContentPane().add(chooser);
 
 		JButton btnNewButton = new JButton("Filtrar Resultados");
 		springLayout.putConstraint(SpringLayout.WEST, btnNewButton, 820, SpringLayout.WEST, getContentPane());
@@ -195,9 +164,9 @@ public class ConsultarAReceber extends JInternalFrame {
 					long idDuplicata = (int) table.getValueAt(i, 1);					
 							
 					// verificar se checado para receber!
-					boolean pagarIntegral = (boolean) table.getValueAt(i, 9);
+					boolean pagarIntegral = (boolean) table.getValueAt(i, 10);
 					
-					byte totalParcela = (byte) table.getValueAt(i, 8);
+					byte totalParcela = (byte) table.getValueAt(i, 9);
 
 					if (pagarIntegral) {
 						// atualizar duplicata...
@@ -212,12 +181,12 @@ public class ConsultarAReceber extends JInternalFrame {
 					} else {
 						System.out.println("Não será pago INTEGRALMENTE...");
 						
-						if (table.getValueAt(i, 10).getClass().getName()
+						if (table.getValueAt(i, 11).getClass().getName()
 								.contains("String")) {
 							valorPago = Double.parseDouble((String) table
-									.getValueAt(i, 10));
+									.getValueAt(i, 11));
 						} else {
-							valorPago = (Double) table.getValueAt(i, 10);
+							valorPago = (Double) table.getValueAt(i, 11);
 						}
 
 						Double valorParcel = (Double) table.getValueAt(i, 5);
@@ -319,7 +288,7 @@ public class ConsultarAReceber extends JInternalFrame {
 			}
 
 			boolean[] columnEditables = new boolean[] { false, false, false,
-					false, false, false, false, false, false, true, true };
+					false, false, false, false, false, false, false, true, true };
 
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
@@ -374,13 +343,13 @@ public class ConsultarAReceber extends JInternalFrame {
 				SpringLayout.WEST, scrollPane);
 		getContentPane().add(lblNumNf);
 
-		TableColumn tcCheckBox = table.getColumnModel().getColumn(9);
+		TableColumn tcCheckBox = table.getColumnModel().getColumn(10);
 		tcCheckBox.setCellEditor(table.getDefaultEditor(Boolean.class));
 		tcCheckBox.setCellRenderer(table.getDefaultRenderer(Boolean.class));
 		tcCheckBox.setHeaderRenderer(new CheckBoxHeaderUtil(
 				new MyItemListener(), "Receber Todos"));
 
-		TableColumn tcButton = table.getColumnModel().getColumn(10);
+		TableColumn tcButton = table.getColumnModel().getColumn(11);
 		tcButton.setCellRenderer(new ButtonRendererUtil());
 		tcButton.setCellEditor(new ButtonDoubleValueEditorUtil(new JCheckBox()));
 	}
@@ -406,6 +375,11 @@ public class ConsultarAReceber extends JInternalFrame {
 			oneRow.add(df.format(cr.getDataVencimento()));
 			oneRow.add(cr.getValor());
 			oneRow.add(cr.getHeaderSaida().getTotalVenda());
+			if (cr.getDataPagto() != null) {
+				oneRow.add(df.format(cr.getDataPagto()));
+			} else {
+				oneRow.add("sem data");
+			}
 			oneRow.add(cr.getParcela());
 			oneRow.add(cr.getHeaderSaida().getTotalParcela());
 			oneRow.add(cr.isPagto());
@@ -433,13 +407,13 @@ public class ConsultarAReceber extends JInternalFrame {
 			filtro.put("cliente", txtCliente.getText());
 		}
 
-		if (!txtDataVencInicio.getText().trim().isEmpty() && txtDataVencInicio.getText().trim().length() == 10) {
-			filtro.put("dataVencInicio", txtDataVencInicio.getText());
-		}
-		
-		if (!txtDataVencFim.getText().trim().isEmpty() && txtDataVencFim.getText().trim().length() == 10) {
-			filtro.put("dataVencFim", txtDataVencFim.getText());
-		}
+//		if (!txtDataVencInicio.getText().trim().isEmpty() && txtDataVencInicio.getText().trim().length() == 10) {
+//			filtro.put("dataVencInicio", txtDataVencInicio.getText());
+//		}
+//		
+//		if (!txtDataVencFim.getText().trim().isEmpty() && txtDataVencFim.getText().trim().length() == 10) {
+//			filtro.put("dataVencFim", txtDataVencFim.getText());
+//		}
 		
 		return filtro;
 	}
@@ -509,9 +483,9 @@ public class ConsultarAReceber extends JInternalFrame {
 
 				if (!rdbtnTodos.isSelected()) {
 					if (rdbtnRecebidos.isSelected()) {
-						isValid = (boolean) entry.getValue(9) && isValid;
+						isValid = (boolean) entry.getValue(10) && isValid;
 					} else {
-						isValid = !(boolean) entry.getValue(9) && isValid;
+						isValid = !(boolean) entry.getValue(10) && isValid;
 					}
 				}
 
@@ -530,7 +504,7 @@ public class ConsultarAReceber extends JInternalFrame {
 				return;
 			boolean checked = e.getStateChange() == ItemEvent.SELECTED;
 			for (int x = 0, y = table.getRowCount(); x < y; x++) {
-				table.setValueAt(new Boolean(checked), x, 9);
+				table.setValueAt(new Boolean(checked), x, 10);
 			}
 		}
 	}

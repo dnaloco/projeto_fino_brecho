@@ -874,10 +874,10 @@ public class ConsultarProduto extends JInternalFrame {
 		colunas.add("Tamanho");				// 5
 		colunas.add("Cor");					// 6
 		colunas.add("Preço");				// 7
-		colunas.add("estoque");				// 8
-		colunas.add("vendidos");			// 9
-		colunas.add("devolvidos");			// 10
-		colunas.add("ñ encontrados");		// 11
+		colunas.add("qt. estoque");				// 8
+		colunas.add("qt. vendidos");			// 9
+		colunas.add("qt. devolvidos");			// 10
+		colunas.add("qt. não encontrados");		// 11
 		colunas.add("Data Entrada");		// 12
 		colunas.add("Data Início");			// 13
 		colunas.add("Data Vencim.");		// 14

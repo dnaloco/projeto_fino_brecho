@@ -24,6 +24,7 @@ public class ContaReceberModel {
 		entity.setValor((double) data.get("valor"));
 		entity.setParcela((byte) data.get("parcela"));
 		entity.setPagto((boolean) data.get("pagto"));
+		entity.setDataPagto((Date) data.get("dataPagto"));
 		
 		session = HibernateUtil.getSessionFactory().openSession();
 		
@@ -71,6 +72,16 @@ public class ContaReceberModel {
 		close();
 		
 		return estados;
+	}
+	
+	public List findWhereCliente (String id) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		
+		List entities = session.createQuery("FROM ContaReceber cr fetch all properties where cr.headerSaida.cliente = " + id).list();
+		
+		close();
+		
+		return entities;
 	}
 	
 	public static ContaReceber getEntity () {

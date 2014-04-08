@@ -212,7 +212,7 @@ public class SplashScreen extends JFrame {
 		login.checkUser(user, pass);
 		
 		if (login.isLogged()) {			
-			dispose();
+			dispose();	
 			
 			new Principal(login);
 

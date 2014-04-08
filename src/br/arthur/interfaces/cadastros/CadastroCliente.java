@@ -12,6 +12,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,9 +27,13 @@ import javax.swing.SpringLayout;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.MaskFormatter;
 
+import org.hibernate.Session;
+
 import br.arthur.entities.Cliente;
+import br.arthur.entities.ContaReceber;
 import br.arthur.interfaces.cadastros.dialogs.ClienteDialog;
 import br.arthur.models.ClienteModel;
+import br.arthur.utils.HibernateUtil;
 
 public class CadastroCliente extends JInternalFrame {
 	private JTextField txtCelular;
@@ -392,7 +397,21 @@ public class CadastroCliente extends JInternalFrame {
 			txtAniversario.setText(df.format(c.getAniversario()));
 		}
 		
-		if (c.isPendencia()) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		
+		List entities = session.createQuery("FROM ContaReceber cr fetch all properties where cr.headerSaida.cliente = " + String.valueOf(theId)).list();
+		
+		boolean possuiPendencia = false;
+		
+		for(Object o : entities) {
+			ContaReceber cr = (ContaReceber) o;
+			if (cr.getDataPagto() == null) {
+				possuiPendencia = true;
+				break;
+			}
+		}
+		
+		if (possuiPendencia) {
 			lblPend.setText("Sim");
 			lblPend.setForeground (Color.red);
 		} else {
