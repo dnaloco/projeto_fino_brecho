@@ -45,7 +45,7 @@ public class PicZoomDialog extends JDialog {
 	public PicZoomDialog(Blob blob_img, String descricao) {
 		setTitle(descricao);
 		setModal(true);
-		setBounds(100, 100, 820, 620);
+		setBounds(100, 100, 830, 655);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -60,7 +60,7 @@ public class PicZoomDialog extends JDialog {
 			}
 		});
 		picZoom.setHorizontalAlignment(SwingConstants.CENTER);
-		picZoom.setBounds(0, 0, 804, 582);
+		picZoom.setBounds(0, 0, 828, 630);
 		contentPanel.add(picZoom);
 		
 		try {

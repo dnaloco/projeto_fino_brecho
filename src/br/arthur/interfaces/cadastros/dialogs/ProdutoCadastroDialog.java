@@ -109,13 +109,13 @@ public class ProdutoCadastroDialog extends JDialog {
 	private EntradaModel em = new EntradaModel();
 	private SaidaModel sm = new SaidaModel();
 	private JTextField txtQtdeDevolvido;
-	private JLabel lblQtdeNEncontrado;
-	private JLabel lblQtdeDevolvido;
 	private JLabel lblQuantidadeEmEstoque;
 	private JLabel lblQtdeEstoque;
 	private JLabel lblQtdeDevolvidaP;
 	private JLabel lblQtdeNoEncontrada;
 	private JLabel lblVendidas;
+	private JLabel lblQtdeNEncontrado;
+	private JLabel lblQtdeDevolvido;
 
 	/**
 	 * Launch the application.
@@ -140,7 +140,7 @@ public class ProdutoCadastroDialog extends JDialog {
 		this.theId = theId;
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 601, 662);
+		setBounds(100, 100, 691, 662);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -148,23 +148,21 @@ public class ProdutoCadastroDialog extends JDialog {
 		contentPanel.setLayout(sl_contentPanel);
 		{
 			lblCodProd = new JLabel("C\u00F3d. Produto");
+			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblCodProd, 5, SpringLayout.NORTH, contentPanel);
 			lblCodProd.setFont(new Font("SansSerif", Font.BOLD, 14));
 			contentPanel.add(lblCodProd);
 		}
 		{
 			lblConsigName = new JLabel("Consignat\u00E1rio Nome");
-			sl_contentPanel.putConstraint(SpringLayout.EAST, lblConsigName,
-					-10, SpringLayout.EAST, contentPanel);
-			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblCodProd, -2,
-					SpringLayout.NORTH, lblConsigName);
-			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblConsigName, 7,
-					SpringLayout.NORTH, contentPanel);
-			lblConsigName.setFont(new Font("SansSerif", Font.BOLD, 12));
+			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblConsigName, 1,
+					SpringLayout.NORTH, lblCodProd);
+			lblConsigName.setFont(new Font("SansSerif", Font.BOLD, 14));
 			lblConsigName.setHorizontalAlignment(SwingConstants.RIGHT);
 			contentPanel.add(lblConsigName);
 		}
 		{
 			panel_1 = new JPanel();
+			sl_contentPanel.putConstraint(SpringLayout.EAST, lblConsigName, 0, SpringLayout.EAST, panel_1);
 			sl_contentPanel.putConstraint(SpringLayout.NORTH, panel_1, 11,
 					SpringLayout.SOUTH, lblCodProd);
 			sl_contentPanel.putConstraint(SpringLayout.WEST, panel_1, 10,
@@ -700,38 +698,29 @@ public class ProdutoCadastroDialog extends JDialog {
 		}
 		{
 			lblEntrada = new JLabel("00/00/0000");
-			sl_contentPanel.putConstraint(SpringLayout.WEST, lblEntrada, 11,
-					SpringLayout.EAST, lblDataEnt);
-			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblDataEnt, 0,
-					SpringLayout.NORTH, lblEntrada);
+			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblEntrada, 0, SpringLayout.NORTH, lblDataEnt);
+			sl_contentPanel.putConstraint(SpringLayout.WEST, lblEntrada, 6, SpringLayout.EAST, lblDataEnt);
 			contentPanel.add(lblEntrada);
 		}
 		{
-			lblDataVenc = new JLabel("Data Venc:");
+			lblDataVenc = new JLabel("Venc.:");
 			contentPanel.add(lblDataVenc);
 		}
 		{
 			lblVencimento = new JLabel("00/00/0000");
+			sl_contentPanel.putConstraint(SpringLayout.EAST, lblVencimento, -10, SpringLayout.EAST, contentPanel);
 			sl_contentPanel.putConstraint(SpringLayout.EAST, lblDataVenc, -6,
 					SpringLayout.WEST, lblVencimento);
-			sl_contentPanel.putConstraint(SpringLayout.EAST, lblVencimento, 0,
-					SpringLayout.EAST, lblConsigName);
 			contentPanel.add(lblVencimento);
 		}
 		{
 			label_7 = new JLabel("Possui Devolu\u00E7\u00E3o:");
-			sl_contentPanel.putConstraint(SpringLayout.WEST, label_7, 6,
-					SpringLayout.EAST, panel);
+			sl_contentPanel.putConstraint(SpringLayout.WEST, label_7, 6, SpringLayout.EAST, panel);
 			contentPanel.add(label_7);
 		}
 		{
 			lblTemDevolucao = new JLabel("sim/n\u00E3o");
-			sl_contentPanel.putConstraint(SpringLayout.WEST, lblTemDevolucao,
-					21, SpringLayout.EAST, label_7);
-			sl_contentPanel.putConstraint(SpringLayout.NORTH, label_7, 0,
-					SpringLayout.NORTH, lblTemDevolucao);
-			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblTemDevolucao,
-					6, SpringLayout.SOUTH, lblDataVenc);
+			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblTemDevolucao, 6, SpringLayout.SOUTH, lblDataVenc);
 			contentPanel.add(lblTemDevolucao);
 		}
 		{
@@ -776,23 +765,21 @@ public class ProdutoCadastroDialog extends JDialog {
 		}
 
 		JLabel lblConsignatrio = new JLabel("Consignat\u00E1rio:");
-		sl_contentPanel.putConstraint(SpringLayout.EAST, lblConsignatrio, -156,
-				SpringLayout.EAST, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.WEST, lblConsigName, 6,
-				SpringLayout.EAST, lblConsignatrio);
-		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblConsignatrio, 7,
-				SpringLayout.NORTH, contentPanel);
-		lblConsignatrio.setFont(new Font("SansSerif", Font.BOLD, 12));
+		sl_contentPanel.putConstraint(SpringLayout.WEST, lblConsigName, 6, SpringLayout.EAST, lblConsignatrio);
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblConsignatrio, 1, SpringLayout.NORTH, lblCodProd);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, lblConsignatrio, 94, SpringLayout.EAST, lblCodProd);
+		lblConsignatrio.setFont(new Font("SansSerif", Font.BOLD, 14));
 		contentPanel.add(lblConsignatrio);
 		{
 			lblSituao = new JLabel("SITUA\u00C7\u00C3O:");
+			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblDataEnt, 6, SpringLayout.SOUTH, lblSituao);
 			sl_contentPanel.putConstraint(SpringLayout.WEST, lblSituao, 11,
 					SpringLayout.EAST, panel);
 			panel.setLayout(null);
 			{
 				picProduto = new JLabel("New label");
 				picProduto.setHorizontalAlignment(SwingConstants.CENTER);
-				picProduto.setBounds(6, 6, 281, 234);
+				picProduto.setBounds(6, 6, 381, 258);
 				panel.add(picProduto);
 			}
 			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblSituao, 6,
@@ -805,8 +792,6 @@ public class ProdutoCadastroDialog extends JDialog {
 				SpringLayout.SOUTH, cmbSituacao);
 		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblDataVenc, 1,
 				SpringLayout.SOUTH, cmbSituacao);
-		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblEntrada, 1,
-				SpringLayout.SOUTH, cmbSituacao);
 		sl_contentPanel.putConstraint(SpringLayout.NORTH, cmbSituacao, -5,
 				SpringLayout.NORTH, lblSituao);
 		sl_contentPanel.putConstraint(SpringLayout.WEST, cmbSituacao, 7,
@@ -816,8 +801,8 @@ public class ProdutoCadastroDialog extends JDialog {
 		contentPanel.add(cmbSituacao);
 
 		txtQtdeNEncontrado = new JTextField();
-		sl_contentPanel.putConstraint(SpringLayout.WEST, txtQtdeNEncontrado, 526, SpringLayout.WEST, contentPanel);
-		sl_contentPanel.putConstraint(SpringLayout.EAST, txtQtdeNEncontrado, 0, SpringLayout.EAST, lblConsigName);
+		sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtQtdeNEncontrado, -14, SpringLayout.NORTH, btnTrocarFoto);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, txtQtdeNEncontrado, -10, SpringLayout.EAST, contentPanel);
 		txtQtdeNEncontrado.setText("0");
 		txtQtdeNEncontrado.setFont(new Font("SansSerif", Font.PLAIN, 10));
 		txtQtdeNEncontrado.setColumns(10);
@@ -835,25 +820,12 @@ public class ProdutoCadastroDialog extends JDialog {
 		}
 		{
 			txtQtdeDevolvido = new JTextField();
-			sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtQtdeDevolvido, -2, SpringLayout.NORTH, txtQtdeNEncontrado);
+			sl_contentPanel.putConstraint(SpringLayout.SOUTH, txtQtdeDevolvido, -37, SpringLayout.NORTH, btnTrocarFoto);
 			sl_contentPanel.putConstraint(SpringLayout.EAST, txtQtdeDevolvido, -10, SpringLayout.EAST, contentPanel);
 			txtQtdeDevolvido.setText("0");
 			txtQtdeDevolvido.setFont(new Font("SansSerif", Font.PLAIN, 10));
 			txtQtdeDevolvido.setColumns(10);
 			contentPanel.add(txtQtdeDevolvido);
-		}
-		{
-			lblQtdeNEncontrado = new JLabel("0");
-			sl_contentPanel.putConstraint(SpringLayout.SOUTH, lblQtdeNEncontrado, -12, SpringLayout.NORTH, btnTrocarFoto);
-			sl_contentPanel.putConstraint(SpringLayout.EAST, lblQtdeNEncontrado, -10, SpringLayout.WEST, txtQtdeNEncontrado);
-			sl_contentPanel.putConstraint(SpringLayout.NORTH, txtQtdeNEncontrado, -4, SpringLayout.NORTH, lblQtdeNEncontrado);
-			contentPanel.add(lblQtdeNEncontrado);
-		}
-		{
-			lblQtdeDevolvido = new JLabel("0");
-			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblQtdeDevolvido, 4, SpringLayout.NORTH, txtQtdeDevolvido);
-			sl_contentPanel.putConstraint(SpringLayout.EAST, lblQtdeDevolvido, -6, SpringLayout.WEST, txtQtdeDevolvido);
-			contentPanel.add(lblQtdeDevolvido);
 		}
 		{
 			lblQuantidadeEmEstoque = new JLabel("Quantidade  em Estoque:");
@@ -863,37 +835,50 @@ public class ProdutoCadastroDialog extends JDialog {
 		{
 			lblQtdeEstoque = new JLabel("0");
 			sl_contentPanel.putConstraint(SpringLayout.WEST, lblQtdeEstoque, 33, SpringLayout.EAST, lblQuantidadeEmEstoque);
-			sl_contentPanel.putConstraint(SpringLayout.EAST, lblQtdeEstoque, -69, SpringLayout.EAST, contentPanel);
+			sl_contentPanel.putConstraint(SpringLayout.EAST, lblQtdeEstoque, -55, SpringLayout.EAST, contentPanel);
 			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblQtdeEstoque, 0, SpringLayout.NORTH, lblQuantidadeEmEstoque);
 			contentPanel.add(lblQtdeEstoque);
 		}
 		{
 			lblQtdeDevolvidaP = new JLabel("Qtde Devolvida p/ Consig.:");
-			sl_contentPanel.putConstraint(SpringLayout.WEST, lblQtdeDevolvido, 29, SpringLayout.EAST, lblQtdeDevolvidaP);
-			sl_contentPanel.putConstraint(SpringLayout.WEST, txtQtdeDevolvido, 73, SpringLayout.EAST, lblQtdeDevolvidaP);
-			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblQtdeDevolvidaP, 477, SpringLayout.NORTH, contentPanel);
-			sl_contentPanel.putConstraint(SpringLayout.SOUTH, lblQuantidadeEmEstoque, -6, SpringLayout.NORTH, lblQtdeDevolvidaP);
+			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblQtdeDevolvidaP, 4, SpringLayout.NORTH, txtQtdeDevolvido);
 			sl_contentPanel.putConstraint(SpringLayout.WEST, lblQtdeDevolvidaP, 6, SpringLayout.EAST, panel);
 			contentPanel.add(lblQtdeDevolvidaP);
 		}
 		{
 			lblQtdeNoEncontrada = new JLabel("Qtde N\u00E3o Encontrada:");
-			sl_contentPanel.putConstraint(SpringLayout.WEST, lblQtdeNEncontrado, 52, SpringLayout.EAST, lblQtdeNoEncontrada);
-			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblQtdeNoEncontrada, 11, SpringLayout.SOUTH, lblQtdeDevolvidaP);
-			sl_contentPanel.putConstraint(SpringLayout.WEST, lblQtdeNoEncontrada, 6, SpringLayout.EAST, panel);
-			sl_contentPanel.putConstraint(SpringLayout.SOUTH, lblQtdeNoEncontrada, -10, SpringLayout.NORTH, btnTrocarFoto);
+			sl_contentPanel.putConstraint(SpringLayout.WEST, lblQtdeNoEncontrada, 8, SpringLayout.EAST, panel);
+			sl_contentPanel.putConstraint(SpringLayout.NORTH, lblQtdeNoEncontrada, 4, SpringLayout.NORTH, txtQtdeNEncontrado);
 			contentPanel.add(lblQtdeNoEncontrada);
 		}
 		
 		JLabel lblQuantidadeVendida = new JLabel("Quantidade Vendida:");
+		sl_contentPanel.putConstraint(SpringLayout.SOUTH, lblQuantidadeVendida, -190, SpringLayout.SOUTH, contentPanel);
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblQuantidadeEmEstoque, 6, SpringLayout.SOUTH, lblQuantidadeVendida);
+		sl_contentPanel.putConstraint(SpringLayout.SOUTH, label_7, -6, SpringLayout.NORTH, lblQuantidadeVendida);
 		sl_contentPanel.putConstraint(SpringLayout.WEST, lblQuantidadeVendida, 6, SpringLayout.EAST, panel);
-		sl_contentPanel.putConstraint(SpringLayout.SOUTH, lblQuantidadeVendida, -6, SpringLayout.NORTH, lblQuantidadeEmEstoque);
 		contentPanel.add(lblQuantidadeVendida);
 		
 		lblVendidas = new JLabel("0");
-		sl_contentPanel.putConstraint(SpringLayout.WEST, lblVendidas, 58, SpringLayout.EAST, lblQuantidadeVendida);
-		sl_contentPanel.putConstraint(SpringLayout.SOUTH, lblVendidas, -6, SpringLayout.NORTH, lblQtdeEstoque);
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblVendidas, 2, SpringLayout.SOUTH, lblTemDevolucao);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, lblTemDevolucao, 0, SpringLayout.EAST, lblVendidas);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, lblVendidas, 62, SpringLayout.EAST, lblQuantidadeVendida);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, lblVendidas, -54, SpringLayout.EAST, contentPanel);
 		contentPanel.add(lblVendidas);
+		
+		lblQtdeDevolvido = new JLabel("0");
+		sl_contentPanel.putConstraint(SpringLayout.WEST, txtQtdeDevolvido, 6, SpringLayout.EAST, lblQtdeDevolvido);
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblQtdeDevolvido, 4, SpringLayout.NORTH, txtQtdeDevolvido);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, lblQtdeDevolvido, 0, SpringLayout.WEST, lblVencimento);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, lblQtdeDevolvido, -6, SpringLayout.WEST, txtQtdeNEncontrado);
+		contentPanel.add(lblQtdeDevolvido);
+		
+		lblQtdeNEncontrado = new JLabel("0");
+		sl_contentPanel.putConstraint(SpringLayout.WEST, txtQtdeNEncontrado, 11, SpringLayout.EAST, lblQtdeNEncontrado);
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, lblQtdeNEncontrado, 4, SpringLayout.NORTH, txtQtdeNEncontrado);
+		sl_contentPanel.putConstraint(SpringLayout.WEST, lblQtdeNEncontrado, 0, SpringLayout.WEST, lblVencimento);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, lblQtdeNEncontrado, -5, SpringLayout.EAST, lblTemDevolucao);
+		contentPanel.add(lblQtdeNEncontrado);
 
 		if (this.theId > 0) {
 			popularCombos();
@@ -935,8 +920,8 @@ public class ProdutoCadastroDialog extends JDialog {
 		lblEntrada.setText(sdf.format(p.getDataEntrada()));
 		lblVencimento.setText(sdf.format(p.getDataVencimento()));
 
-		// TODO LÓGICA PARA CONSULTAR A SAÍDA para ver se tem devolução
-		lblTemDevolucao.setText("não");
+		// TODO Lï¿½GICA PARA CONSULTAR A SAï¿½DA para ver se tem devoluï¿½ï¿½o
+		lblTemDevolucao.setText("nï¿½o");
 
 		if (p.getnEncontrado() > 0) {
 			lblQtdeNEncontrado.setText(String.valueOf(p.getnEncontrado()));
@@ -1141,7 +1126,7 @@ public class ProdutoCadastroDialog extends JDialog {
 			calendarConst = Calendar.DATE;
 			soma = 45;
 			break;
-		case "1 mês":
+		case "1 mï¿½s":
 			calendarConst = Calendar.MONTH;
 			soma = 1;
 			break;
@@ -1203,7 +1188,7 @@ public class ProdutoCadastroDialog extends JDialog {
 
 		data.put("local", txtLocal.getText());
 
-		// Campos devolvido e não encontrado
+		// Campos devolvido e nï¿½o encontrado
 
 		data.put("qtdeDevolvido", Integer.parseInt(txtQtdeDevolvido.getText()));
 
@@ -1223,7 +1208,7 @@ public class ProdutoCadastroDialog extends JDialog {
 		boolean isValid = true;
 
 		if (txtDescricao.getText().trim().isEmpty()) {
-			msgErro += "O campo 'título' deve ser informado!\n";
+			msgErro += "O campo 'tï¿½tulo' deve ser informado!\n";
 			isValid = false;
 		}
 
@@ -1257,7 +1242,7 @@ public class ProdutoCadastroDialog extends JDialog {
 		}*/
 
 		if (Double.parseDouble(txtComis.getText()) <= 0.0) {
-			msgErro += "O campo 'comissão' deve ser informado e ser maior do que zero!\n";
+			msgErro += "O campo 'comissï¿½o' deve ser informado e ser maior do que zero!\n";
 			isValid = false;
 		}
 
@@ -1302,7 +1287,7 @@ public class ProdutoCadastroDialog extends JDialog {
 		nEncontrado = Integer.parseInt(txtQtdeNEncontrado.getText());
 		
 		if (calcularEstoque && qtdeDisponivel < (devolvido + nEncontrado)) {
-			msgErro += "A quantidade de itens devolvidos e não encontrados não podem ser maior do que a quantidade disponível em estoque!\n";
+			msgErro += "A quantidade de itens devolvidos e nï¿½o encontrados nï¿½o podem ser maior do que a quantidade disponï¿½vel em estoque!\n";
 			isValid = false;
 		}
 		
@@ -1311,7 +1296,7 @@ public class ProdutoCadastroDialog extends JDialog {
 		
 		System.out.println("D + NE = " + (devolvido + nEncontrado));
 		
-		System.out.println("É V ou F ? " + (qtdeDisponivel < (devolvido + nEncontrado)));
+		System.out.println("ï¿½ V ou F ? " + (qtdeDisponivel < (devolvido + nEncontrado)));
 		
 		
 		
@@ -1320,7 +1305,7 @@ public class ProdutoCadastroDialog extends JDialog {
 				JOptionPane
 						.showMessageDialog(
 								null,
-								"ATENÇÃO! Você setou este produto como avaliando. Ele não estará disponível para venda, até que você o coloque como disponível");
+								"ATENï¿½ï¿½O! Vocï¿½ setou este produto como avaliando. Ele nï¿½o estarï¿½ disponï¿½vel para venda, atï¿½ que vocï¿½ o coloque como disponï¿½vel");
 			}
 
 			HashMap<String, Object> data = pegarValoresProduto(ce);

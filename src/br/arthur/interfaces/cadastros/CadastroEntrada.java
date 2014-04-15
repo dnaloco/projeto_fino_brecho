@@ -29,6 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -138,8 +140,8 @@ public class CadastroEntrada extends JInternalFrame {
 	private double custo;
 	private double comissao;
 
-	private String[] colunas = new String[] { "Cód. Produto", "Descricao",
-			"Consignatário", "Categoria", "Marca", "Situacao", "Venda", "Qtde",
+	private String[] colunas = new String[] { "Cï¿½d. Produto", "Descricao",
+			"Consignatï¿½rio", "Categoria", "Marca", "Situacao", "Venda", "Qtde",
 			"Vencimento" };
 
 	private String[][] dataTable = new String[][] {};
@@ -252,7 +254,7 @@ public class CadastroEntrada extends JInternalFrame {
 				} else {
 					JOptionPane
 							.showMessageDialog(null,
-									"Não existe ainda nenhum consignatário registrado no sistema!");
+									"Nï¿½o existe ainda nenhum consignatï¿½rio registrado no sistema!");
 				}
 
 			}
@@ -473,17 +475,33 @@ public class CadastroEntrada extends JInternalFrame {
 				limparProdutoData();
 				boolean hasImg = false;
 				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				
 				File fotos_produtos = new File("fotos_produtos/");
 				File[] listOfPics = fotos_produtos.listFiles();
-
-				for (File file : listOfPics) {
+				ArrayList paths = new ArrayList();
+				
+				for(Object o : listOfPics) {
+					File f = (File) o;
+					paths.add(f.getAbsolutePath());
+				}
+				
+				Collections.sort(paths, new Comparator() {  
+		            public int compare(Object o1, Object o2) {
+		                return ((String) o1).compareTo((String)o2);  
+		            }  
+		        });
+				
+				for (Object o : paths) {
+					File file = new File((String) o);
+					
 					String ext_file = "";
 					int i = file.getName().lastIndexOf('.');
+					
 					if (file.isFile() && i >= 0 && consigId > 0) {
 
 						ext_file = file.getName().substring(i + 1);
 						List<String> exts_prm = Arrays.asList("jpg", "jpeg",
-								"png", "gif");
+								"png", "gif", "JPG", "JPEG", "PNG", "GIF");
 
 						if (exts_prm.contains(ext_file)) {
 							hasImg = true;
@@ -547,7 +565,7 @@ public class CadastroEntrada extends JInternalFrame {
 				if (!hasImg) {
 					JOptionPane
 							.showMessageDialog(null,
-									"Não há nenhuma imagem na pasta 'fotos_produto' para ser inserida!");
+									"Nï¿½o hï¿½ nenhuma imagem na pasta 'fotos_produto' para ser inserida!");
 				} else {
 					pupularIterator();
 
@@ -641,7 +659,7 @@ public class CadastroEntrada extends JInternalFrame {
 				opcao = JOptionPane
 						.showConfirmDialog(null,
 								"Deseja Realmente excluir o produto "
-										+ entradaId + "?", "Atencão",
+										+ entradaId + "?", "Atencï¿½o",
 								JOptionPane.YES_NO_OPTION);
 				if (opcao == JOptionPane.YES_OPTION) {
 					try {
@@ -695,7 +713,7 @@ public class CadastroEntrada extends JInternalFrame {
 						long fileSize = file.length();
 
 						if ((fileSize / 1024) > (long) 1 * 1024) {
-							String erro = "Não foi possível carregar o arquivo: o tamanho máximo permitido é de 1mb.";
+							String erro = "Nï¿½o foi possï¿½vel carregar o arquivo: o tamanho mï¿½ximo permitido ï¿½ de 1mb.";
 							JOptionPane.showMessageDialog(null, erro,
 									"Erro ao carregar o arquivo!",
 									JOptionPane.ERROR_MESSAGE);
@@ -726,7 +744,7 @@ public class CadastroEntrada extends JInternalFrame {
 							}
 						}
 					} else {
-						System.out.println("Não Abriu");
+						System.out.println("Nï¿½o Abriu");
 					}
 				}
 			}
@@ -1124,7 +1142,7 @@ public class CadastroEntrada extends JInternalFrame {
 					long fileSize = file.length();
 					System.out.println(fileSize);
 					if ((fileSize / 1024) > (long) 1 * 1024) {
-						String erro = "Não foi possível carregar o arquivo: o tamanho máximo permitido é de 1mb.";
+						String erro = "Nï¿½o foi possï¿½vel carregar o arquivo: o tamanho mï¿½ximo permitido ï¿½ de 1mb.";
 						JOptionPane.showMessageDialog(null, erro,
 								"Erro ao carregar o arquivo!",
 								JOptionPane.ERROR_MESSAGE);
@@ -1173,7 +1191,7 @@ public class CadastroEntrada extends JInternalFrame {
 						}
 					}
 				} else {
-					System.out.println("Não Abriu");
+					System.out.println("Nï¿½o Abriu");
 				}
 			}
 		});
@@ -1201,7 +1219,7 @@ public class CadastroEntrada extends JInternalFrame {
 							.getPredefinedCursor(Cursor.HAND_CURSOR));
 				} else {
 					JOptionPane.showMessageDialog(null,
-							"Não há nenhuma imagem para ser visualizada!");
+							"Nï¿½o hï¿½ nenhuma imagem para ser visualizada!");
 				}
 			}
 		});
@@ -1226,7 +1244,7 @@ public class CadastroEntrada extends JInternalFrame {
 							String.valueOf(entradaId));
 
 					if (txtDescricao.getText().trim().isEmpty()) {
-						msgErro += "O campo 'título' deve ser informado!\n";
+						msgErro += "O campo 'tï¿½tulo' deve ser informado!\n";
 						isValid = false;
 					}
 
@@ -1261,12 +1279,12 @@ public class CadastroEntrada extends JInternalFrame {
 							isValid = false;
 						}
 					} else {
-						System.out.println("NÃO É VESTIMENTA????");
+						System.out.println("Nï¿½O ï¿½ VESTIMENTA????");
 						System.out.println(ee.getCategoria().isVestimenta());
 					}
 
 					if (Double.parseDouble(txtComis.getText()) <= 0.0) {
-						msgErro += "O campo 'comissão' deve ser informado e ser maior do que zero!\n";
+						msgErro += "O campo 'comissï¿½o' deve ser informado e ser maior do que zero!\n";
 						isValid = false;
 					}
 
@@ -1281,7 +1299,7 @@ public class CadastroEntrada extends JInternalFrame {
 					}
 
 					if (isValid) {
-						cmbSituacao.setSelectedItem("disponível");
+						cmbSituacao.setSelectedItem("disponï¿½vel");
 
 						HashMap<String, Object> data = pegarValoresProduto();
 
@@ -1568,11 +1586,11 @@ public class CadastroEntrada extends JInternalFrame {
 	private void limparProdutoData() {
 		cmbSituacao.setSelectedItem("avaliando");
 		txtDescricao.setText("");
-		cmbCategoria.setSelectedItem("genérica");
-		cmbMarca.setSelectedItem("genérica");
+		cmbCategoria.setSelectedItem("genï¿½rica");
+		cmbMarca.setSelectedItem("genï¿½rica");
 		txtQtde.setText("1");
-		cmbCor.setSelectedItem("genérica");
-		cmbTamanho.setSelectedItem("genérica");
+		cmbCor.setSelectedItem("genï¿½rica");
+		cmbTamanho.setSelectedItem("genï¿½rica");
 		textAreaObserv.setText("");
 		txtComis.setText("");
 		txtVenda.setText("");
@@ -1834,7 +1852,7 @@ public class CadastroEntrada extends JInternalFrame {
 			calendarConst = Calendar.DATE;
 			soma = 45;
 			break;
-		case "1 mês":
+		case "1 mï¿½s":
 			calendarConst = Calendar.MONTH;
 			soma = 1;
 			break;
@@ -1906,7 +1924,7 @@ public class CadastroEntrada extends JInternalFrame {
 			Categoria c = (Categoria) categorias.next();
 			cmbCategoria.addItem(c.getName());
 		}
-		cmbCategoria.setSelectedItem("genérica");
+		cmbCategoria.setSelectedItem("genï¿½rica");
 
 		cmbMarca.removeAllItems();
 		Iterator marcas = MarcaModel.findAll().iterator();
@@ -1914,7 +1932,7 @@ public class CadastroEntrada extends JInternalFrame {
 			Marca m = (Marca) marcas.next();
 			cmbMarca.addItem(m.getName());
 		}
-		cmbMarca.setSelectedItem("genérica");
+		cmbMarca.setSelectedItem("genï¿½rica");
 
 		cmbCor.removeAllItems();
 		Iterator cores = CorModel.findAll().iterator();
@@ -1922,7 +1940,7 @@ public class CadastroEntrada extends JInternalFrame {
 			Cor c = (Cor) cores.next();
 			cmbCor.addItem(c.getName());
 		}
-		cmbCor.setSelectedItem("genérica");
+		cmbCor.setSelectedItem("genï¿½rica");
 
 		cmbTamanho.removeAllItems();
 		Iterator tamanhos = TamanhoModel.findAll().iterator();
@@ -1930,7 +1948,7 @@ public class CadastroEntrada extends JInternalFrame {
 			Tamanho t = (Tamanho) tamanhos.next();
 			cmbTamanho.addItem(t.getName());
 		}
-		cmbTamanho.setSelectedItem("genérica");
+		cmbTamanho.setSelectedItem("genï¿½rica");
 
 		cmbTipo.removeAllItems();
 		Iterator tipos = TipoModel.findAll().iterator();

@@ -110,8 +110,8 @@ public class CadastroSaida extends JInternalFrame {
 	public CadastroSaida(final LoginController login) {
 		setIconifiable(true);
 		setClosable(true);
-		setTitle("Cadastro de Venda");
-		setBounds(100, 100, 724, 431);
+		setTitle("Venda");
+		setBounds(100, 100, 773, 448);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 
@@ -143,30 +143,24 @@ public class CadastroSaida extends JInternalFrame {
 		getContentPane().add(lblCliente);
 
 		lblNomeCliente = new JLabel("Selecione um cliente        >>>");
-		springLayout.putConstraint(SpringLayout.WEST, lblNomeCliente, 6,
-				SpringLayout.EAST, lblCliente);
 		springLayout.putConstraint(SpringLayout.NORTH, lblNomeCliente, 10,
 				SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, lblNomeCliente, 6, SpringLayout.EAST, lblCliente);
 		lblNomeCliente.setFont(new Font("SansSerif", Font.BOLD, 12));
 		getContentPane().add(lblNomeCliente);
 
 		JButton btnBuscarCliente = new JButton("Buscar Cliente");
-		springLayout.putConstraint(SpringLayout.EAST, lblNomeCliente, -6,
-				SpringLayout.WEST, btnBuscarCliente);
-		springLayout.putConstraint(SpringLayout.NORTH, btnBuscarCliente, -6,
-				SpringLayout.NORTH, lblData);
-		springLayout.putConstraint(SpringLayout.WEST, btnBuscarCliente, 435,
+		springLayout.putConstraint(SpringLayout.EAST, lblNomeCliente, -6, SpringLayout.WEST, btnBuscarCliente);
+		springLayout.putConstraint(SpringLayout.NORTH, btnBuscarCliente, -6, SpringLayout.NORTH, lblData);
+		springLayout.putConstraint(SpringLayout.WEST, btnBuscarCliente, 484,
 				SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, btnBuscarCliente, -10, SpringLayout.EAST, getContentPane());
 		getContentPane().add(btnBuscarCliente);
 		panel = new JPanel();
-		springLayout.putConstraint(SpringLayout.NORTH, panel, 0,
-				SpringLayout.SOUTH, btnBuscarCliente);
-		springLayout.putConstraint(SpringLayout.SOUTH, panel, -10,
-				SpringLayout.SOUTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, btnBuscarCliente, 0,
-				SpringLayout.EAST, panel);
-		springLayout.putConstraint(SpringLayout.EAST, panel, 702,
-				SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.NORTH, panel, 0, SpringLayout.SOUTH, btnBuscarCliente);
+		springLayout.putConstraint(SpringLayout.SOUTH, panel, -10, SpringLayout.SOUTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, panel, 0,
+				SpringLayout.EAST, btnBuscarCliente);
 		panel.setVisible(false);
 		panel.setBorder(new TitledBorder(null, "Venda", TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
@@ -192,7 +186,7 @@ public class CadastroSaida extends JInternalFrame {
 				} else {
 					JOptionPane
 							.showMessageDialog(null,
-									"Não existe ainda nenhum cliente registrado no sistema!");
+									"Nï¿½o existe ainda nenhum cliente registrado no sistema!");
 				}
 			}
 		});
@@ -240,6 +234,7 @@ public class CadastroSaida extends JInternalFrame {
 		panel.add(txtCodigoProduto);
 
 		txtQtde = new JNumericField();
+		txtQtde.setEnabled(false);
 		txtQtde.setMaxLength(3);
 		txtQtde.setFormat(JNumericField.NUMERIC);
 		txtQtde.setText("1");
@@ -257,7 +252,7 @@ public class CadastroSaida extends JInternalFrame {
 				opcao = JOptionPane
 						.showConfirmDialog(null,
 								"Deseja Realmente excluir o produto "
-										+ entradaId + "?", "Atencão",
+										+ entradaId + "?", "Atencï¿½o",
 								JOptionPane.YES_NO_OPTION);
 				if (opcao == JOptionPane.YES_OPTION) {
 					try {
@@ -311,9 +306,9 @@ public class CadastroSaida extends JInternalFrame {
 							null,
 							"Deseja Realmente excluir a venda "
 									+ String.format("%09d", hSaidaId) + "?",
-							"Atencão", JOptionPane.YES_NO_OPTION);
+							"Atencï¿½o", JOptionPane.YES_NO_OPTION);
 				} else {
-					JOptionPane.showMessageDialog(null, "Não existe ainda nenhuma venda gerada. Precisa existir ao menos um produto inserido!");
+					JOptionPane.showMessageDialog(null, "Nï¿½o existe ainda nenhuma venda gerada. Precisa existir ao menos um produto inserido!");
 				}
 				if (opcao == JOptionPane.YES_OPTION) {
 					List produtos = sm.findWhere("header_saida_fk",
@@ -334,10 +329,6 @@ public class CadastroSaida extends JInternalFrame {
 
 			}
 		});
-		sl_panel.putConstraint(SpringLayout.NORTH, btnCancelarVenda, 34,
-				SpringLayout.SOUTH, txtCodigoProduto);
-		sl_panel.putConstraint(SpringLayout.WEST, btnCancelarVenda, 0,
-				SpringLayout.WEST, txtCodigoProduto);
 		panel.add(btnCancelarVenda);
 
 		JLabel label_5 = new JLabel("Total:");
@@ -369,8 +360,8 @@ public class CadastroSaida extends JInternalFrame {
 		panel.add(panel_2);
 		panel_2.setLayout(new CardLayout(0, 0));
 
-		String[] colunas = new String[] { "Cód. Produto", "Descrição", "Qtde",
-				"Preço Un", "Total" };
+		String[] colunas = new String[] { "Cï¿½d. Produto", "Descriï¿½ï¿½o", "Qtde",
+				"Preï¿½o Un", "Total" };
 		String[][] dataProdutoTable = new String[][] {};
 
 		model = new DefaultTableModel(dataProdutoTable, colunas) {
@@ -463,7 +454,7 @@ public class CadastroSaida extends JInternalFrame {
 							.getPredefinedCursor(Cursor.HAND_CURSOR));
 				} else {
 					JOptionPane.showMessageDialog(null,
-							"Não há nenhuma imagem para ser visualizada!");
+							"Nï¿½o hï¿½ nenhuma imagem para ser visualizada!");
 				}
 			}
 		});
@@ -478,6 +469,8 @@ public class CadastroSaida extends JInternalFrame {
 		panel.add(lblNumVenda);
 
 		btnFinalizarVenda = new JButton("    * Finalizar Venda *   ");
+		sl_panel.putConstraint(SpringLayout.NORTH, btnCancelarVenda, 0, SpringLayout.NORTH, btnFinalizarVenda);
+		sl_panel.putConstraint(SpringLayout.EAST, btnCancelarVenda, -6, SpringLayout.WEST, btnFinalizarVenda);
 		sl_panel.putConstraint(SpringLayout.NORTH, btnFinalizarVenda, 6,
 				SpringLayout.SOUTH, btnExcluirProd);
 		btnFinalizarVenda.addActionListener(new ActionListener() {
@@ -501,7 +494,7 @@ public class CadastroSaida extends JInternalFrame {
 					}
 				} else {
 					JOptionPane.showMessageDialog(null,
-							"Não existe nenhuma N.F. gerada!");
+							"Nï¿½o existe nenhuma N.F. gerada!");
 				}
 			}
 		});
@@ -552,7 +545,7 @@ public class CadastroSaida extends JInternalFrame {
 		lblNomeCliente.setText("Selecione um cliente        >>>");
 		lblItensQtdeTotal.setText("0");
 		lblTotalVenda.setText("R$ 0,00");
-		lblDescProduto.setText("Descrição do Produto");
+		lblDescProduto.setText("Descriï¿½ï¿½o do Produto");
 		txtCodigoProduto.setText("");
 		btnExcluirProd.setEnabled(false);
 		btnFinalizarVenda.setEnabled(false);
@@ -608,7 +601,7 @@ public class CadastroSaida extends JInternalFrame {
 						JOptionPane
 								.showMessageDialog(
 										null,
-										"Novo número (N.F / Série) de venda gerado! ["
+										"Novo nï¿½mero (N.F / Sï¿½rie) de venda gerado! ["
 												+ String.format("%09d",
 														hSaidaId) + "]");
 
@@ -638,17 +631,17 @@ public class CadastroSaida extends JInternalFrame {
 					btnFinalizarVenda.setEnabled(true);
 				} else {
 					JOptionPane.showMessageDialog(null,
-							"Não há quantidade disponível deste produto");
+							"Nï¿½o hï¿½ quantidade disponï¿½vel deste produto");
 				}
 
 			} else {
 				JOptionPane
 						.showMessageDialog(
 								null,
-								"Erro ao tentar localizar o produto. Possíveis causas: o código pode ser inválido ou o produto não se encontra em situação disponível.");
+								"Erro ao tentar localizar o produto. Possï¿½veis causas: o cï¿½digo pode ser invï¿½lido ou o produto nï¿½o se encontra em situaï¿½ï¿½o disponï¿½vel.");
 			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Quantidade inválida");
+			JOptionPane.showMessageDialog(null, "Quantidade invï¿½lida");
 		}
 
 	}

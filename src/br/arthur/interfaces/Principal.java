@@ -23,7 +23,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
@@ -35,17 +34,17 @@ import br.arthur.entities.User;
 import br.arthur.interfaces.cadastros.CadastroCategoria;
 import br.arthur.interfaces.cadastros.CadastroCliente;
 import br.arthur.interfaces.cadastros.CadastroConsignatario;
+import br.arthur.interfaces.cadastros.CadastroEntrada;
 import br.arthur.interfaces.cadastros.CadastroMarca;
 import br.arthur.interfaces.cadastros.CadastroSaida;
 import br.arthur.interfaces.cadastros.CadastroTipo;
 // import br.arthur.interfaces.cadastros.CadastroPedido;
 import br.arthur.interfaces.cadastros.CadastroUsuario;
-import br.arthur.interfaces.cadastros.CadastroEntrada;
 import br.arthur.interfaces.consultas.ConsultarAPagar;
 import br.arthur.interfaces.consultas.ConsultarAReceber;
+import br.arthur.interfaces.consultas.ConsultarCaixar;
 import br.arthur.interfaces.consultas.ConsultarProduto;
 import br.arthur.interfaces.consultas.ConsultarVendas;
-import br.arthur.relatorios.RelatorioUsuarios;
 
 public class Principal extends JFrame {
 
@@ -59,7 +58,7 @@ public class Principal extends JFrame {
 		setIconImage((new ImageIcon(
 				"images/Store-icon.png").getImage()));
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		setTitle("Sitema de Loja Fino Brecho - [ ID: " + ulog.getId() + " | Usu�rio: " + ulog.getUser() + " | Grupo: " + ulog.getGroup().getName() +" ]");
+		setTitle("Sitema de Loja Fino Brecho - [ ID: " + ulog.getId() + " | Usu�rio: " + ulog.getUser() + " | Grupo: " + ulog.getGroup().getName() +" ]");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 890, 733);
 		setExtendedState( this.getExtendedState()|JFrame.MAXIMIZED_BOTH );
@@ -102,14 +101,14 @@ public class Principal extends JFrame {
 		btnNewButton.setVerticalAlignment(SwingConstants.TOP);
 		btnNewButton.setIcon(new ImageIcon(
 				"images/entradas.png"));
-		btnNewButton.setBounds(528, 393, 122, 109);
+		btnNewButton.setBounds(690, 393, 122, 109);
 		jDesktopPanelPrincipal.add(btnNewButton);
 		
 		JLabel lblSistemaLoja = new JLabel("Sistema de Loja - Fino Brech\u00F3");
 		lblSistemaLoja.setBackground(new Color(102, 51, 0));
 		lblSistemaLoja.setFont(new Font("Perpetua", Font.BOLD, 36));
 		lblSistemaLoja.setForeground(new Color(51, 0, 0));
-		lblSistemaLoja.setBounds(20, 11, 464, 48);
+		lblSistemaLoja.setBounds(20, 11, 613, 48);
 		jDesktopPanelPrincipal.add(lblSistemaLoja);
 		
 		JPanel panel = new JPanel();
@@ -117,7 +116,7 @@ public class Principal extends JFrame {
 		panel.setOpaque(false);
 		panel.setBackground(new Color(204, 153, 51));
 		panel.setForeground(UIManager.getColor("MenuBar:Menu[Enabled].textForeground"));
-		panel.setBounds(486, 11, 211, 128);
+		panel.setBounds(651, 11, 211, 128);
 		jDesktopPanelPrincipal.add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0};
@@ -228,10 +227,17 @@ public class Principal extends JFrame {
 		btnNewButton_2.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnNewButton_2.setIcon(new ImageIcon(
 				"images/reports.png"));
-		btnNewButton_2.setBounds(528, 272, 122, 109);
+		btnNewButton_2.setBounds(690, 272, 122, 109);
 		jDesktopPanelPrincipal.add(btnNewButton_2);
 		
 		JButton btnLogs = new JButton("Produtos");
+		btnLogs.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ConsultarProduto obj = new ConsultarProduto();				
+				jDesktopPanelPrincipal.add(obj);
+				obj.setVisible(true);
+			}
+		});
 		btnLogs.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnLogs.setIcon(new ImageIcon(
 				"images/products.jpg"));
@@ -239,21 +245,17 @@ public class Principal extends JFrame {
 		btnLogs.setVerticalAlignment(SwingConstants.TOP);
 		btnLogs.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnLogs.setBackground(Color.WHITE);
-		btnLogs.setBounds(394, 272, 122, 109);
+		btnLogs.setBounds(824, 151, 122, 109);
 		jDesktopPanelPrincipal.add(btnLogs);
 		
-		JButton btnNewButton_1 = new JButton("Consignat\u00E1rio");
-		btnNewButton_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btnNewButton_1.setBackground(new Color(255, 255, 255));
-		btnNewButton_1.setVerticalTextPosition(SwingConstants.BOTTOM);
-		btnNewButton_1.setVerticalAlignment(SwingConstants.TOP);
-		btnNewButton_1.setHorizontalTextPosition(SwingConstants.CENTER);
-		btnNewButton_1.setIcon(new ImageIcon(
-				"images/consigs.png"));
-		btnNewButton_1.setBounds(659, 151, 122, 109);
-		jDesktopPanelPrincipal.add(btnNewButton_1);
-		
 		JButton btnBackup = new JButton("Cliente");
+		btnBackup.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CadastroCliente obj = new CadastroCliente(0);				
+				jDesktopPanelPrincipal.add(obj);
+				obj.setVisible(true);
+			}
+		});
 		btnBackup.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnBackup.setIcon(new ImageIcon(
 				"images/clients-big.png"));
@@ -261,7 +263,7 @@ public class Principal extends JFrame {
 		btnBackup.setVerticalAlignment(SwingConstants.TOP);
 		btnBackup.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnBackup.setBackground(Color.WHITE);
-		btnBackup.setBounds(528, 151, 122, 109);
+		btnBackup.setBounds(690, 151, 122, 109);
 		jDesktopPanelPrincipal.add(btnBackup);
 		
 		JButton btnCaixa = new JButton("Venda");
@@ -279,7 +281,7 @@ public class Principal extends JFrame {
 		btnCaixa.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnCaixa.setIcon(new ImageIcon(
 				"images/vendas.png"));
-		btnCaixa.setBounds(397, 151, 119, 109);
+		btnCaixa.setBounds(559, 151, 119, 109);
 		jDesktopPanelPrincipal.add(btnCaixa);
 		
 		JButton btnTrocarUsurio = new JButton("Trocar Usu\u00E1rio");
@@ -295,7 +297,7 @@ public class Principal extends JFrame {
 		btnTrocarUsurio.setVerticalAlignment(SwingConstants.TOP);
 		btnTrocarUsurio.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnTrocarUsurio.setBackground(Color.WHITE);
-		btnTrocarUsurio.setBounds(659, 272, 122, 109);
+		btnTrocarUsurio.setBounds(556, 272, 122, 109);
 		jDesktopPanelPrincipal.add(btnTrocarUsurio);
 		
 		JButton btnNewButton_4 = new JButton("SAIR");
@@ -309,7 +311,7 @@ public class Principal extends JFrame {
 				System.exit(0);
 			}
 		});
-		btnNewButton_4.setBounds(709, 11, 72, 128);
+		btnNewButton_4.setBounds(824, 272, 122, 109);
 		jDesktopPanelPrincipal.add(btnNewButton_4);
 		
 		JButton btnNewButton_5 = new JButton("");
@@ -326,7 +328,7 @@ public class Principal extends JFrame {
 		btnNewButton_5.setBackground(Color.WHITE);
 		btnNewButton_5.setIcon(new ImageIcon(
 				"images/calculator.png"));
-		btnNewButton_5.setBounds(394, 55, 80, 84);
+		btnNewButton_5.setBounds(559, 55, 80, 84);
 		jDesktopPanelPrincipal.add(btnNewButton_5);
 		
 		JMenu mnCadastro = new JMenu("Cadastro");
@@ -465,6 +467,13 @@ public class Principal extends JFrame {
 		menuBar.add(mnFinanceiro);
 		
 		JMenuItem mntmCaixa = new JMenuItem("Caixa");
+		mntmCaixa.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ConsultarCaixar obj = new ConsultarCaixar();				
+				jDesktopPanelPrincipal.add(obj);
+				obj.setVisible(true);
+			}
+		});
 		mntmCaixa.setIcon(new ImageIcon("images/caixa.png"));
 		mnFinanceiro.add(mntmCaixa);
 		
@@ -511,14 +520,17 @@ public class Principal extends JFrame {
 		JSeparator separator_3 = new JSeparator();
 		mnFinanceiro.add(separator_3);
 		
-		JMenuItem mntmSaldoEmAberto = new JMenuItem("Saldo em Aberto");
+		JMenuItem mntmDbitoEmAberto = new JMenuItem("Débito em Aberto");
+		mnFinanceiro.add(mntmDbitoEmAberto);
+		
+		JMenuItem mntmSaldoEmAberto = new JMenuItem("Crédito em Aberto");
 		mnFinanceiro.add(mntmSaldoEmAberto);
 		
 		JMenu mnManuteno = new JMenu("Manuten\u00E7\u00E3o");
 		if (ulog.getGroup().getName().equals("gerente")) {
 			mnManuteno.setEnabled(true);
 		} else {
-			mnManuteno.setEnabled(false);
+			// mnManuteno.setEnabled(false);
 		}
 		menuBar.add(mnManuteno);
 		
@@ -526,11 +538,7 @@ public class Principal extends JFrame {
 		mntmEcf.setIcon(new ImageIcon("images/ecf.png"));
 		mnManuteno.add(mntmEcf);
 		
-		JMenuItem mntmBackup = new JMenuItem("Backup");
-		mntmBackup.setIcon(new ImageIcon("images/Backup-Folder-Ash-icon.png"));
-		mnManuteno.add(mntmBackup);
-		
-		JMenu mnBackup = new JMenu("Backup2");
+		JMenu mnBackup = new JMenu("Backup");
 		mnManuteno.add(mnBackup);
 		
 		JMenuItem mntmImportar = new JMenuItem("Importar");
@@ -579,30 +587,12 @@ public class Principal extends JFrame {
 		mntmProdutos_1.setIcon(new ImageIcon("images/reports-small.png"));
 		mnRelatrio.add(mntmProdutos_1);
 		
-		JMenuItem mntmVendas_1 = new JMenuItem("Vendas");
-		mntmVendas_1.setIcon(new ImageIcon("images/reports-small.png"));
-		mnRelatrio.add(mntmVendas_1);
-		
 		JMenuItem mntmClientes_1 = new JMenuItem("Clientes");
 		mntmClientes_1.setIcon(new ImageIcon("images/reports-small.png"));
 		mnRelatrio.add(mntmClientes_1);
 		
-		JMenuItem mntmUsurios_2 = new JMenuItem("Usu\u00E1rios");
-		mntmUsurios_2.setIcon(new ImageIcon("images/reports-small.png"));
-		mnRelatrio.add(mntmUsurios_2);
-		
 		JMenu mnUsurios = new JMenu("Usu\u00E1rios");
 		mnRelatrio.add(mnUsurios);
-		
-		JMenuItem mntmTodos = new JMenuItem("Todos");
-		mntmTodos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				RelatorioUsuarios ru = new RelatorioUsuarios();
-				
-				ru.gerarTodos();
-			}
-		});
-		mnUsurios.add(mntmTodos);
 		
 		JMenu mnSobre = new JMenu("Sobre");
 		menuBar.add(mnSobre);

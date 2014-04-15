@@ -1,57 +1,60 @@
 package br.arthur.temp.tests;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import javax.swing.JOptionPane;
+
+import br.arthur.utils.RelatorioUtil;
 
 public class anyTeste01 {
-	public static void main(String[] args) throws IOException {
-		String fileReports = "relatorios/reports/TestProdutos.jrxml";
-		String fileRelator = "relatorios/teste2.pdf";
-
-	    // A File object to represent the filename
-	    File f = new File(fileRelator);
-	    boolean success;
-	    // Make sure the file or directory exists and isn't write protected
-	    if (f.exists()) {
-			if (!f.canWrite())
-			      throw new IllegalArgumentException("Delete: write protected: "
-			      + fileRelator);
-
-			success = f.delete();
-	    } else {
-	    	success = true;
-	    }
-
-	    if (!success)
-	      throw new IllegalArgumentException("Delete: deletion failed");
-	    
-	    List dataReport = new ArrayList();
-	    HashMap<String, String> data = new HashMap<String, String>();
-	    
-	    //data.put("image", "images/add-icon.png");
-	    data.put("email", "qualquer coisa");
-	    
-	    dataReport.add(data);		
-
-	    
-		try {
-			JasperReport report = JasperCompileManager.compileReport(fileReports);
-			JasperPrint print = JasperFillManager.fillReport(report, null, new JRBeanCollectionDataSource(dataReport));
-			JasperExportManager.exportReportToPdfFile(print, fileRelator);
-		} catch (JRException e) {
-			e.printStackTrace();
+	// http://www.richardnichols.net/2010/02/simple-guide-to-sub-reports-in-jasperreports-ireport/
+	
+	public static class Pais {
+		private String pais;
+		
+		public Pais(String pais) {
+			this.pais = pais;
 		}
+		
+		public String getPais() {
+			return pais;
+		}
+	}
+	
+	public static class Teste {
+		private String nome;
+		private List<Pais> paises = Arrays.asList(new Pais("Buenos Aires"), new Pais("Córdoba"), new Pais("La Plata"));
+		
+		public Teste(String nome) {
+			this.nome = nome;
+		}
+		
+		public String getNome() {
+			return nome;
+		}
+		
+		public List<Pais> getPaises() {
+			return paises;
+		}
+	}
+	
+	public static void main(String[] args) throws IOException {
+		List data = new ArrayList();
+
+		data.add(new Teste("Arthur"));
+		
+
+		boolean isCreated = RelatorioUtil.gerarRelatorio(data, "Blank_A4");
+		
+		if(isCreated) {
+			JOptionPane.showMessageDialog(null, "Relatório criado com sucesso");
+		} else {
+			JOptionPane.showMessageDialog(null, "Não foi possível gerar o relatório. Verifique se o arquivo está aberto.");
+		}
+		
 	}
 }

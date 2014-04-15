@@ -151,7 +151,7 @@ public class ConsultarProduto extends JInternalFrame {
 		setIconifiable(true);
 		setClosable(true);
 		setTitle("Gerenciar Produtos");
-		setBounds(100, 100, 1185, 498);
+		setBounds(100, 100, 1241, 498);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 
@@ -171,8 +171,8 @@ public class ConsultarProduto extends JInternalFrame {
 				null, null));
 		getContentPane().add(panel_1);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] { 59, 160, 120, 90, 90, 81, 120,
-				90, 130, 0 };
+		gbl_panel.columnWidths = new int[] { 59, 120, 120, 90, 90, 81, 120,
+				90, 120, 0 };
 		gbl_panel.rowHeights = new int[] { 28, 28, 28, 0 };
 		gbl_panel.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 				0.0, 0.0, 0.0, 1.0 };
@@ -343,7 +343,7 @@ public class ConsultarProduto extends JInternalFrame {
 		gbc_ckDevolvidos.gridy = 1;
 		panel.add(ckDevolvidos, gbc_ckDevolvidos);
 		
-		ckEstoque = new JCheckBox("Em Estoque");
+		ckEstoque = new JCheckBox("Estoque");
 		GridBagConstraints gbc_ckEstoque = new GridBagConstraints();
 		gbc_ckEstoque.insets = new Insets(0, 0, 5, 0);
 		gbc_ckEstoque.gridx = 9;
@@ -441,7 +441,7 @@ public class ConsultarProduto extends JInternalFrame {
 							.getPredefinedCursor(Cursor.HAND_CURSOR));
 				} else {
 					JOptionPane.showMessageDialog(null,
-							"Não há nenhuma imagem para ser visualizada!");
+							"Nï¿½o hï¿½ nenhuma imagem para ser visualizada!");
 				}
 			}
 		});
@@ -644,7 +644,7 @@ public class ConsultarProduto extends JInternalFrame {
 						long fileSize = file.length();
 
 						if ((fileSize / 1024) > (long) 1 * 1024) {
-							String erro = "Não foi possível carregar o arquivo: o tamanho máximo permitido é de 1mb.";
+							String erro = "NÃ£o foi possï¿½vel carregar o arquivo: o tamanho mï¿½ximo permitido ï¿½ de 1mb.";
 							JOptionPane.showMessageDialog(null, erro,
 									"Erro ao carregar o arquivo!",
 									JOptionPane.ERROR_MESSAGE);
@@ -675,7 +675,7 @@ public class ConsultarProduto extends JInternalFrame {
 							}
 						}
 					} else {
-						System.out.println("Não Abriu");
+						System.out.println("Nï¿½o Abriu");
 					}
 				}
 			}
@@ -691,7 +691,7 @@ public class ConsultarProduto extends JInternalFrame {
 					pcDiag.setVisible(true);
 					atualizarTabela();
 				} else {
-					JOptionPane.showMessageDialog(null, "Não há nenhum produto selecionado para a edição");
+					JOptionPane.showMessageDialog(null, "Nï¿½o hï¿½ nenhum produto selecionado para a ediï¿½ï¿½o");
 				}
 			}
 		});
@@ -706,7 +706,7 @@ public class ConsultarProduto extends JInternalFrame {
 				opcao = JOptionPane
 						.showConfirmDialog(null,
 								"Deseja Realmente excluir o produto "
-										+ prodId + "?", "Atencão",
+										+ prodId + "?", "Atencï¿½o",
 								JOptionPane.YES_NO_OPTION);
 				if (opcao == JOptionPane.YES_OPTION) {
 					try {
@@ -775,7 +775,7 @@ public class ConsultarProduto extends JInternalFrame {
 				boolean proceed = false;
 				
 				if (produtos.size() > 100) {
-					JOptionPane.showMessageDialog(null, "Atenção! Há uma enorme quantidade de produtos. O relatório demorará alguns minutos para ser gerado. Tem certeza de que deseja continuar?");
+					JOptionPane.showMessageDialog(null, "Atenï¿½ï¿½o! Hï¿½ uma enorme quantidade de produtos. O relatï¿½rio demorarï¿½ alguns minutos para ser gerado. Tem certeza de que deseja continuar?");
 					proceed = true;
 				} else {
 					proceed = true;
@@ -796,7 +796,7 @@ public class ConsultarProduto extends JInternalFrame {
 				boolean proceed = false;
 				
 				if (produtos.size() > 100) {
-					JOptionPane.showMessageDialog(null, "Atenção! Há uma enorme quantidade de produtos. O relatório demorará alguns minutos para ser gerado. Tem certeza de que deseja continuar?");
+					JOptionPane.showMessageDialog(null, "Atenï¿½ï¿½o! Hï¿½ uma enorme quantidade de produtos. O relatï¿½rio demorarï¿½ alguns minutos para ser gerado. Tem certeza de que deseja continuar?");
 					proceed = true;
 				} else {
 					proceed = true;
@@ -866,22 +866,22 @@ public class ConsultarProduto extends JInternalFrame {
 	private void populateModel() {
 		Vector<String> colunas = new Vector();
 
-		colunas.add("Cód. Produto"); 		// 0
-		colunas.add("Descrição");			// 1
-		colunas.add("Consignatário");		// 2
+		colunas.add("Cï¿½d. Produto"); 		// 0
+		colunas.add("Descriï¿½ï¿½o");			// 1
+		colunas.add("Consignatï¿½rio");		// 2
 		colunas.add("Categoria");			// 3
 		colunas.add("Marca");				// 4
 		colunas.add("Tamanho");				// 5
 		colunas.add("Cor");					// 6
-		colunas.add("Preço");				// 7
+		colunas.add("Preï¿½o");				// 7
 		colunas.add("qt. estoque");				// 8
 		colunas.add("qt. vendidos");			// 9
 		colunas.add("qt. devolvidos");			// 10
-		colunas.add("qt. não encontrados");		// 11
+		colunas.add("qt. nï¿½o encontrados");		// 11
 		colunas.add("Data Entrada");		// 12
-		colunas.add("Data Início");			// 13
+		colunas.add("Data Inï¿½cio");			// 13
 		colunas.add("Data Vencim.");		// 14
-		colunas.add("Situação");			// 15
+		colunas.add("Situaï¿½ï¿½o");			// 15
 		colunas.add("Tipo");				// 16
 
 		Vector tableData = new Vector();
@@ -1105,7 +1105,7 @@ public class ConsultarProduto extends JInternalFrame {
 				}
 
 				if (filter.containsKey("situacao")) {
-					isValid = (((String) entry.getValue(11))
+					isValid = (((String) entry.getValue(15))
 							.equals((String) filter.get("situacao")) && isValid);
 				}
 

@@ -5,58 +5,58 @@
   "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
-  <session-factory>
-    <property name="hibernate.connection.username">
-      	root
-    </property>
-    <property name="hibernate.connection.password">
-		artdna
-    </property>
-    <property name="hibernate.connection.url">
-      	jdbc:mysql://localhost/r2_finobrecho_teste
-    </property>
-    <property name="hibernate.connection.driver_class">
-      	com.mysql.jdbc.Driver
-    </property>
-    <property name="hibernate.dialect">
-      	org.hibernate.dialect.MySQL5InnoDBDialect
-    </property>
-    
-    <property name="hibernate.hbm2ddl.auto">update</property>
-    
-    <property name="show_sql">true</property>
-    <property name="format_sql">true</property>
+	<session-factory>
+		<property name="hibernate.connection.username">
+			root
+		</property>
+		<property name="hibernate.connection.password">
+			artdna
+		</property>
+		<property name="hibernate.connection.url">
+			jdbc:mysql://localhost/r2_finobrecho_teste
+		</property>
+		<property name="hibernate.connection.driver_class">
+			com.mysql.jdbc.Driver
+		</property>
+		<property name="hibernate.dialect">
+			org.hibernate.dialect.MySQL5InnoDBDialect
+		</property>
 
-	<mapping class="br.arthur.entities.Estado"/>
-	
-	<mapping class="br.arthur.entities.Consignatario"/>
-	<mapping class="br.arthur.entities.Cliente"/>
-	
-	<mapping class="br.arthur.entities.CatLastId"/>
-	
-	<mapping class="br.arthur.entities.Cor"/>
-	<mapping class="br.arthur.entities.Tamanho"/>
-	
-	<mapping class="br.arthur.entities.Categoria"/>
-	<mapping class="br.arthur.entities.Marca"/>
-	<mapping class="br.arthur.entities.Tipo"/>
-	<mapping class="br.arthur.entities.Situacao"/>
-	<mapping class="br.arthur.entities.Imagem"/>
-	
-	<mapping class="br.arthur.entities.HeaderEntrada"/>
-	<mapping class="br.arthur.entities.Entrada"/>
-	
-	<mapping class="br.arthur.entities.FormaPagto"/>
-	<mapping class="br.arthur.entities.HeaderSaida"/>
-	<mapping class="br.arthur.entities.Saida"/>
-	
-	<mapping class="br.arthur.entities.ContaPagar"/>
-	<mapping class="br.arthur.entities.ContaReceber"/>
-	
-	<mapping class="br.arthur.entities.Permission"/>
-	<mapping class="br.arthur.entities.Group"/>
-	<mapping class="br.arthur.entities.Status"/>
-	<mapping class="br.arthur.entities.User"/>
+		<property name="hibernate.hbm2ddl.auto">update</property>
 
-  </session-factory>
+		<property name="show_sql">true</property>
+		<property name="format_sql">true</property>
+
+		<mapping class="br.arthur.entities.Estado" />
+
+		<mapping class="br.arthur.entities.Consignatario" />
+		<mapping class="br.arthur.entities.Cliente" />
+
+		<mapping class="br.arthur.entities.CatLastId" />
+
+		<mapping class="br.arthur.entities.Cor" />
+		<mapping class="br.arthur.entities.Tamanho" />
+
+		<mapping class="br.arthur.entities.Categoria" />
+		<mapping class="br.arthur.entities.Marca" />
+		<mapping class="br.arthur.entities.Tipo" />
+		<mapping class="br.arthur.entities.Situacao" />
+		<mapping class="br.arthur.entities.Imagem" />
+
+		<mapping class="br.arthur.entities.HeaderEntrada" />
+		<mapping class="br.arthur.entities.Entrada" />
+
+		<mapping class="br.arthur.entities.FormaPagto" />
+		<mapping class="br.arthur.entities.HeaderSaida" />
+		<mapping class="br.arthur.entities.Saida" />
+
+		<mapping class="br.arthur.entities.ContaPagar" />
+		<mapping class="br.arthur.entities.ContaReceber" />
+
+		<mapping class="br.arthur.entities.Permission" />
+		<mapping class="br.arthur.entities.Group" />
+		<mapping class="br.arthur.entities.Status" />
+		<mapping class="br.arthur.entities.User" />
+
+	</session-factory>
 </hibernate-configuration>

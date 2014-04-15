@@ -261,7 +261,7 @@ public class ConsultarVendas extends JInternalFrame {
 		System.out.println(idVenda);
 		crm.deleteWhere("headerSaida", String.valueOf(idVenda));
 		cpm.deleteWhere("headerVenda", String.valueOf(idVenda));
-		sm.deleteWhere("headerSaida", String.valueOf(idVenda));
+		sm.devolverWhere("headerSaida", String.valueOf(idVenda));
 		hsm.deleteById(idVenda);
 		
 		popularTabela();

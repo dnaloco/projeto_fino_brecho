@@ -41,12 +41,12 @@ public class ConsultarAPagar extends JInternalFrame {
 	private JTextField txtVencFim;
 	
 	private Object colNames[] = {
-		"Consignat·rio", 	// 0
-		"CÛd. Venda", 		// 1
-		"CÛd. Duplicata",	// 2
+		"Consignat√°rio", 	// 0
+		"C√≥d. Venda", 		// 1
+		"C√≥d. Duplicata",	// 2
 		"Data Pagto", 		// 3
 		"Vencimento", 		// 4
-		"Comiss„o",			// 5
+		"Comiss√£o",			// 5
 		"" 					// 6
 	};
 	
@@ -85,86 +85,86 @@ public class ConsultarAPagar extends JInternalFrame {
 		setIconifiable(true);
 		setClosable(true);
 		setTitle("Consultar Contas \u00E0 Pagar");
-		setBounds(100, 100, 1083, 446);
+		setBounds(100, 100, 1160, 446);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 		
 		JLabel lblConsignatrio = new JLabel("Consignat\u00E1rio:");
+		springLayout.putConstraint(SpringLayout.NORTH, lblConsignatrio, 16, SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, lblConsignatrio, 10, SpringLayout.WEST, getContentPane());
 		getContentPane().add(lblConsignatrio);
 		
 		txtConsig = new JTextField();
+		springLayout.putConstraint(SpringLayout.WEST, txtConsig, 6, SpringLayout.EAST, lblConsignatrio);
 		springLayout.putConstraint(SpringLayout.NORTH, txtConsig, 10, SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, txtConsig, 94, SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.NORTH, lblConsignatrio, 6, SpringLayout.NORTH, txtConsig);
-		springLayout.putConstraint(SpringLayout.EAST, lblConsignatrio, -6, SpringLayout.WEST, txtConsig);
 		getContentPane().add(txtConsig);
 		txtConsig.setColumns(10);
 		
 		JLabel lblVencimento = new JLabel("Vencimento:");
-		springLayout.putConstraint(SpringLayout.NORTH, lblVencimento, 0, SpringLayout.NORTH, lblConsignatrio);
-		springLayout.putConstraint(SpringLayout.WEST, lblVencimento, 26, SpringLayout.EAST, txtConsig);
+		springLayout.putConstraint(SpringLayout.NORTH, lblVencimento, 16, SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, txtConsig, -6, SpringLayout.WEST, lblVencimento);
 		getContentPane().add(lblVencimento);
 		
 		JLabel lblAt = new JLabel("at\u00E9");
-		springLayout.putConstraint(SpringLayout.NORTH, lblAt, 0, SpringLayout.NORTH, lblConsignatrio);
+		springLayout.putConstraint(SpringLayout.NORTH, lblAt, 16, SpringLayout.NORTH, getContentPane());
 		getContentPane().add(lblAt);
 		
 		try {
 			txtVencInicio = new JFormattedTextField(new MaskFormatter("##/##/####"));
+			springLayout.putConstraint(SpringLayout.NORTH, txtVencInicio, 10, SpringLayout.NORTH, getContentPane());
+			springLayout.putConstraint(SpringLayout.WEST, txtVencInicio, 355, SpringLayout.WEST, getContentPane());
+			springLayout.putConstraint(SpringLayout.EAST, txtVencInicio, -6, SpringLayout.WEST, lblAt);
+			springLayout.putConstraint(SpringLayout.EAST, lblVencimento, -6, SpringLayout.WEST, txtVencInicio);
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		springLayout.putConstraint(SpringLayout.WEST, lblAt, 6, SpringLayout.EAST, txtVencInicio);
-		springLayout.putConstraint(SpringLayout.NORTH, txtVencInicio, 10, SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.WEST, txtVencInicio, 6, SpringLayout.EAST, lblVencimento);
-		springLayout.putConstraint(SpringLayout.EAST, txtVencInicio, 87, SpringLayout.EAST, lblVencimento);
 		getContentPane().add(txtVencInicio);
 		txtVencInicio.setColumns(10);
 		
 		try {
 			txtVencFim = new JFormattedTextField(new MaskFormatter("##/##/####"));
+			springLayout.putConstraint(SpringLayout.NORTH, txtVencFim, 10, SpringLayout.NORTH, getContentPane());
+			springLayout.putConstraint(SpringLayout.WEST, txtVencFim, 469, SpringLayout.WEST, getContentPane());
+			springLayout.putConstraint(SpringLayout.EAST, lblAt, -6, SpringLayout.WEST, txtVencFim);
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		springLayout.putConstraint(SpringLayout.NORTH, txtVencFim, -6, SpringLayout.NORTH, lblConsignatrio);
-		springLayout.putConstraint(SpringLayout.WEST, txtVencFim, 6, SpringLayout.EAST, lblAt);
-		springLayout.putConstraint(SpringLayout.EAST, txtVencFim, 507, SpringLayout.WEST, getContentPane());
 		txtVencFim.setColumns(10);
 		getContentPane().add(txtVencFim);
 		
 		JButton btnFiltrarResultados = new JButton("Filtrar Resultados");
+		springLayout.putConstraint(SpringLayout.WEST, btnFiltrarResultados, 814, SpringLayout.WEST, getContentPane());
 		btnFiltrarResultados.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				filtrar();
 			}
 		});
 		springLayout.putConstraint(SpringLayout.NORTH, btnFiltrarResultados, 10, SpringLayout.NORTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, btnFiltrarResultados, -175, SpringLayout.EAST, getContentPane());
 		getContentPane().add(btnFiltrarResultados);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		springLayout.putConstraint(SpringLayout.NORTH, scrollPane, 6, SpringLayout.SOUTH, txtConsig);
 		springLayout.putConstraint(SpringLayout.WEST, scrollPane, 7, SpringLayout.WEST, getContentPane());
-		springLayout.putConstraint(SpringLayout.SOUTH, scrollPane, 367, SpringLayout.SOUTH, txtConsig);
+		springLayout.putConstraint(SpringLayout.SOUTH, scrollPane, -11, SpringLayout.SOUTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, scrollPane, -10, SpringLayout.EAST, getContentPane());
 		getContentPane().add(scrollPane);
 		
 		rbPagados = new JRadioButton("Pagados");
-		springLayout.putConstraint(SpringLayout.NORTH, rbPagados, -1, SpringLayout.NORTH, lblConsignatrio);
+		springLayout.putConstraint(SpringLayout.NORTH, rbPagados, 14, SpringLayout.NORTH, getContentPane());
 		getContentPane().add(rbPagados);
 		
 		rbNoPagados = new JRadioButton("N\u00E3o pagados");
-		springLayout.putConstraint(SpringLayout.WEST, rbPagados, 6, SpringLayout.EAST, rbNoPagados);
-		springLayout.putConstraint(SpringLayout.NORTH, rbNoPagados, -1, SpringLayout.NORTH, lblConsignatrio);
-		springLayout.putConstraint(SpringLayout.WEST, rbNoPagados, 6, SpringLayout.EAST, txtVencFim);
+		springLayout.putConstraint(SpringLayout.NORTH, rbNoPagados, 14, SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, txtVencFim, -6, SpringLayout.WEST, rbNoPagados);
+		springLayout.putConstraint(SpringLayout.EAST, rbNoPagados, -6, SpringLayout.WEST, rbPagados);
 		getContentPane().add(rbNoPagados);
 		
 		rbTodos = new JRadioButton("Todos");
-		springLayout.putConstraint(SpringLayout.WEST, btnFiltrarResultados, 6, SpringLayout.EAST, rbTodos);
-		springLayout.putConstraint(SpringLayout.NORTH, rbTodos, -1, SpringLayout.NORTH, lblConsignatrio);
-		springLayout.putConstraint(SpringLayout.WEST, rbTodos, 6, SpringLayout.EAST, rbPagados);
+		springLayout.putConstraint(SpringLayout.NORTH, rbTodos, 14, SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, rbPagados, -6, SpringLayout.WEST, rbTodos);
+		springLayout.putConstraint(SpringLayout.EAST, rbTodos, -6, SpringLayout.WEST, btnFiltrarResultados);
 		rbTodos.setSelected(true);
 		getContentPane().add(rbTodos);
 		
@@ -174,6 +174,9 @@ public class ConsultarAPagar extends JInternalFrame {
 		grupoPagados.add(rbTodos);
 		
 		JButton btnAtualizarContas = new JButton("Atualizar Contas");
+		springLayout.putConstraint(SpringLayout.WEST, btnAtualizarContas, 979, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, btnFiltrarResultados, -6, SpringLayout.WEST, btnAtualizarContas);
+		springLayout.putConstraint(SpringLayout.EAST, btnAtualizarContas, -10, SpringLayout.EAST, getContentPane());
 		btnAtualizarContas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				HashMap<String, Object> duplicata = new HashMap<String, Object>();
@@ -218,10 +221,7 @@ public class ConsultarAPagar extends JInternalFrame {
 		popularTabela();
 		
 		scrollPane.setViewportView(table);
-		
-		springLayout.putConstraint(SpringLayout.WEST, btnAtualizarContas, 6, SpringLayout.EAST, btnFiltrarResultados);
 		springLayout.putConstraint(SpringLayout.SOUTH, btnAtualizarContas, -6, SpringLayout.NORTH, scrollPane);
-		springLayout.putConstraint(SpringLayout.EAST, btnAtualizarContas, 0, SpringLayout.EAST, scrollPane);
 		getContentPane().add(btnAtualizarContas);
 		
 		TableColumn tcCheckBox = table.getColumnModel().getColumn(6);

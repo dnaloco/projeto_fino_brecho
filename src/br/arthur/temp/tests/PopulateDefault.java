@@ -57,7 +57,7 @@ public class PopulateDefault {
 				"GO",
 				"DF"
 		};
-		
+
 		session.beginTransaction();
 		
 		for(String uf : UFs) {
@@ -74,21 +74,21 @@ public class PopulateDefault {
 		
 		String[] situacoesStr = {
 			"avaliando",
-			"disponível"
+			"disponï¿½vel"
 		};
 		
 		String[] tiposStr = {
 				"novo",
 				"semi novo",
 				"usado",
-				"de época",
+				"de ï¿½poca",
 				"artesanal",
 				"raro"
 		};
 		
 		String[] marcasStr = {
 				"selecionar",
-				"genérica",
+				"genï¿½rica",
 				"prada",
 				"gucci",
 				"giorgio armani",
@@ -139,9 +139,9 @@ public class PopulateDefault {
 		
 		String[] catsStr = {
 				"selecionar",
-				"genérica",
-				"calçados",
-				"acessório",
+				"genï¿½rica",
+				"calï¿½ados",
+				"acessï¿½rio",
 				"bandana",
 				"quimono",
 				"farda",
@@ -149,7 +149,7 @@ public class PopulateDefault {
 				"cinto",
 				"gravata borboleta",
 				"calcinha",
-				"calça",
+				"calï¿½a",
 				"camisa",
 				"camiseta",
 				"corpete",
@@ -166,7 +166,7 @@ public class PopulateDefault {
 				"minissaia",
 				"meia",
 				"biquini",
-				"maiô",
+				"maiï¿½",
 				"blusa",
 				"legging",
 				"regata",
@@ -184,13 +184,13 @@ public class PopulateDefault {
 		
 		String [] formasPagto = {
 				"dinheiro",
-				"débido",
-				"crédito"
+				"dï¿½bido",
+				"crï¿½dito"
 		};
 
 		String [] cores = {
 				"selecionar",
-				"genérica",
+				"genï¿½rica",
 				"azul",
 				"amarelo",
 				"verde",
@@ -199,7 +199,7 @@ public class PopulateDefault {
 		
 		String [] tamanhos = {
 				"selecionar",
-				"genérica",
+				"genï¿½rica",
 				"30",
 				"32",
 				"34",
@@ -269,15 +269,15 @@ public class PopulateDefault {
 				"excluir produto",
 				"visualizar produto",
 				
-				"criar consignatário",
-				"atualizar consignatário",
-				"excluir consignatário",
-				"visualizar consignatário",
+				"criar consignatï¿½rio",
+				"atualizar consignatï¿½rio",
+				"excluir consignatï¿½rio",
+				"visualizar consignatï¿½rio",
 				
-				"criar usuário",
-				"atualizar usuário",
-				"excluir usuário",
-				"visualizar usuário",
+				"criar usuï¿½rio",
+				"atualizar usuï¿½rio",
+				"excluir usuï¿½rio",
+				"visualizar usuï¿½rio",
 				
 				"atualizar grupo",
 				"visualizar grupo",

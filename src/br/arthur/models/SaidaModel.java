@@ -146,4 +146,23 @@ public class SaidaModel {
 		
 		close();
 	}
+
+	public void devolverWhere(String prop, String val) {
+		// TODO Auto-generated method stub
+		session = HibernateUtil.getSessionFactory().openSession();
+		
+		Iterator saidas = session.createQuery("FROM Saida where " + prop + " = " + val).list().iterator();
+		
+		while (saidas.hasNext()) {
+			Saida entity = (Saida) saidas.next();
+			entity.setDisponivel(true);
+			session.update(entity);
+		}		
+		
+		session.getTransaction().commit();
+		
+		close();
+		
+		
+	}
 }
