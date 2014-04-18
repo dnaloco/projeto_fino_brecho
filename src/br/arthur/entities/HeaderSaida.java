@@ -37,10 +37,6 @@ public class HeaderSaida {
 	@Column(name="desconto")
 	private double desconto;
 	
-	@ManyToOne
-	@JoinColumn(name="forma_pagto_fk")
-	private FormaPagto formaPagto;
-	
 	@Column(name="total_parcela")
 	private byte totalParcela;
 	
@@ -96,14 +92,6 @@ public class HeaderSaida {
 		this.desconto = desconto;
 	}
 
-	public FormaPagto getFormaPagto() {
-		return formaPagto;
-	}
-
-	public void setFormaPagto(FormaPagto formaPagto) {
-		this.formaPagto = formaPagto;
-	}
-
 	public byte getTotalParcela() {
 		return totalParcela;
 	}
@@ -122,8 +110,6 @@ public class HeaderSaida {
 		long temp;
 		temp = Double.doubleToLongBits(desconto);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result
-				+ ((formaPagto == null) ? 0 : formaPagto.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + totalParcela;
 		temp = Double.doubleToLongBits(totalVenda);
@@ -154,11 +140,6 @@ public class HeaderSaida {
 			return false;
 		if (Double.doubleToLongBits(desconto) != Double
 				.doubleToLongBits(other.desconto))
-			return false;
-		if (formaPagto == null) {
-			if (other.formaPagto != null)
-				return false;
-		} else if (!formaPagto.equals(other.formaPagto))
 			return false;
 		if (id != other.id)
 			return false;

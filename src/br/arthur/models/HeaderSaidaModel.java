@@ -41,7 +41,6 @@ public class HeaderSaidaModel {
 		entity = findOneWhere("id", String.valueOf(id));
 
 		entity.setTotalVenda((double) data.get("totalVenda"));
-		entity.setFormaPagto((FormaPagto) data.get("formaPagto"));
 		entity.setDesconto((double) data.get("desconto"));
 		entity.setTotalParcela((byte) data.get("totalParcela"));
 

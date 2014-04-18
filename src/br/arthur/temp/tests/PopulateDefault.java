@@ -183,9 +183,11 @@ public class PopulateDefault {
 		};
 		
 		String [] formasPagto = {
-				"dinheiro",
-				"dï¿½bido",
-				"crï¿½dito"
+				"Dinheiro",
+				"Débito",
+				"Crédito",
+				"Cheque",
+				"Pendência"
 		};
 
 		String [] cores = {

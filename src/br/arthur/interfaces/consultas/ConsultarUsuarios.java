@@ -9,6 +9,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import br.arthur.models.UserModel;
+import javax.swing.SpringLayout;
 
 public class ConsultarUsuarios extends JInternalFrame {
 	private JTable table;
@@ -40,8 +41,8 @@ public class ConsultarUsuarios extends JInternalFrame {
 	 * Create the frame.
 	 */
 	public ConsultarUsuarios() {
-		setBounds(100, 100, 827, 300);
-		getContentPane().setLayout(new BorderLayout(0, 0));
+		setBounds(100, 100, 667, 376);
+		getContentPane().setLayout(new SpringLayout());
 
 		
 	}

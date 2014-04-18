@@ -33,8 +33,6 @@ public class Cliente {
 	private Date aniversario;
 	@Column(name="created_at")
 	private Timestamp createdAt;
-	@Column(name="pendencia")
-	private boolean pendencia;
 	@Column(name="observacao", columnDefinition="TEXT")
 	private String observacao;
 	
@@ -106,14 +104,6 @@ public class Cliente {
 		this.createdAt = createdAt;
 	}
 
-	public boolean isPendencia() {
-		return pendencia;
-	}
-
-	public void setPendencia(boolean pendencia) {
-		this.pendencia = pendencia;
-	}
-
 	public String getObservacao() {
 		return observacao;
 	}
@@ -136,7 +126,6 @@ public class Cliente {
 		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
 		result = prime * result
 				+ ((observacao == null) ? 0 : observacao.hashCode());
-		result = prime * result + (pendencia ? 1231 : 1237);
 		result = prime * result + ((site == null) ? 0 : site.hashCode());
 		result = prime * result
 				+ ((telefone == null) ? 0 : telefone.hashCode());
@@ -184,8 +173,6 @@ public class Cliente {
 				return false;
 		} else if (!observacao.equals(other.observacao))
 			return false;
-		if (pendencia != other.pendencia)
-			return false;
 		if (site == null) {
 			if (other.site != null)
 				return false;
@@ -198,7 +185,5 @@ public class Cliente {
 			return false;
 		return true;
 	}
-
-	
 	
 }

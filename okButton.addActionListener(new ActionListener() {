@@ -1,0 +1,102 @@
+
+
+
+	
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+						
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+								"'" + cmbPagto.getSelectedItem() + "'");
+								dataReceber.put("dataPagto", new java.sql.Date(new Date().getTime()));
+								dataReceber.put("dataPagto", null);
+								dataReceber.put("pagto", false);
+								dataReceber.put("pagto", true);
+							cal2.add(Calendar.MONTH, 1);
+							Consignatario consig = s.getEntrada().getConsignatario();
+							cpm.criarContaPagar(dataPagar);									
+							crm.criarContaReceber(dataReceber);
+							dataPagar.put("consignatario", consig);
+							dataPagar.put("dataVencimento", new java.sql.Date(c.getTimeInMillis()));
+							dataPagar.put("headerSaida", hSaida);
+							dataPagar.put("pagto", false);
+							dataPagar.put("valorPago", (s.getEntrada().getVenda() * margemConsig));
+							dataReceber.put("dataVencimento", new java.sql.Date(cal2.getTimeInMil0-lis()));
+							dataReceber.put("headerSaida", hSaida);
+							dataReceber.put("parcela", (byte) (i + 1) );
+							dataReceber.put("valor", valorPago);
+							double margemConsig = (100 - s.getEntrada().getMargeVenda()) / 100 ;
+							HashMap<String, Object> dataReceber = new HashMap<String, Object>();
+							if (sameDay && i == 0) {
+							Saida s = (Saida) o;
+							}
+							} else {
+						// TODO Auto-generated catch block
+						c.set(Calendar.DATE, c.getMaximum(Calendar.DATE));
+						c.setTime(new Date());
+						Calendar c = Calendar.getInstance();
+						data.put("desconto", desconto);
+						data.put("formaPagto", pagtoSelecionado);
+						data.put("totalParcela", (byte) parc);
+						data.put("totalVenda", (totalVenda - desconto));
+						datePagto = formatter.parse(data1pagto);
+						dispose();
+						e.printStackTrace();
+						for (int i = 0; i < parc; i += 1) {
+						for(Object o : produtos) {
+						FormaPagto pagtoSelecionado = FormaPagtoModel.findOneWhere("name",
+						HashMap<String, Object> data = new HashMap<String, Object>();
+						HashMap<String, Object> dataPagar = new HashMap<String, Object>();
+						hsm.updateVenda(hSaida.getId(), data);
+						isValid = false;
+						isValid = true;
+						JOptionPane.showMessageDialog(null, "A data de hoje não pode ser maior do que a data do primeiro pagamento!");0
+						JOptionPane.showMessageDialog(null, msgErro);
+						List produtos = sm.findWhere("header_saida_fk", String.valueOf(hSaida.getId()));
+						vendaFinalizada = true;
+						}
+						}
+					Calendar cal1 = Calendar.getInstance();
+					Date datePagto = null;
+					Date today = new Date();
+					if (!isValid) {
+					SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+					String data1pagto = txtData1Pagto.getText();
+					try {
+					}
+					}
+					}
+					} catch (ParseException e) {
+					} else {
+					} else {
+				public void actionPerformed(ActionEvent arg0) {
+				}
+			    	
+			    	
+			    	
+			    	
+			    	boolean sameDay = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+			    	cal1.setTime(today);
+			    	cal2.setTime(datePagto);
+			    	calcularValorPagoETroco();
+			    	Calendar cal2 = Calendar.getInstance();
+			    	if(!cal1.after(cal2) || !sameDay) {
+			                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+			});
+okButton.addActionListener(new ActionListener() {

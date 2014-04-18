@@ -9,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -26,8 +27,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.hibernate.Session;
+
 import br.arthur.entities.Cliente;
+import br.arthur.entities.ContaReceber;
 import br.arthur.models.ClienteModel;
+import br.arthur.utils.HibernateUtil;
 
 public class ClienteDialog extends JDialog {
 
@@ -95,7 +100,21 @@ public class ClienteDialog extends JDialog {
 				oneRow.add("");
 			}
 			
-			if(c.isPendencia()) {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			
+			List entities = session.createQuery("FROM ContaReceber cr fetch all properties where cr.headerSaida.cliente = " + String.valueOf(theId)).list();
+			
+			boolean possuiPendencia = false;
+			
+			for(Object o2 : entities) {
+				ContaReceber cr = (ContaReceber) o2;
+				if (cr.getDataPagto() == null) {
+					possuiPendencia = true;
+					break;
+				}
+			}
+			
+			if (possuiPendencia) {
 				oneRow.add("sim");
 			} else {
 				oneRow.add("não");

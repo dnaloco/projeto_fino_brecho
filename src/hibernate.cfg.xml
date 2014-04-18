@@ -43,12 +43,12 @@
 		<mapping class="br.arthur.entities.Situacao" />
 		<mapping class="br.arthur.entities.Imagem" />
 
-		<mapping class="br.arthur.entities.HeaderEntrada" />
 		<mapping class="br.arthur.entities.Entrada" />
 
 		<mapping class="br.arthur.entities.FormaPagto" />
 		<mapping class="br.arthur.entities.HeaderSaida" />
 		<mapping class="br.arthur.entities.Saida" />
+		<mapping class="br.arthur.entities.Caixa" />
 
 		<mapping class="br.arthur.entities.ContaPagar" />
 		<mapping class="br.arthur.entities.ContaReceber" />

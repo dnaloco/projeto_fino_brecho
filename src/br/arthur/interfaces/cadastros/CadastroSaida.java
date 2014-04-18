@@ -581,11 +581,11 @@ public class CadastroSaida extends JInternalFrame {
 				int qtdeDisponivel = 0;
 
 				if (hasSaida) {
-					qtdeDisponivel = ee.getQuantidate() - ee.getnEncontrado()
-							- ee.getDevolvido() - sm.getQtdeSaida();
+					qtdeDisponivel = ee.getQuantidate() - sm.getnEncontrado()
+							- sm.getDevolvido() - sm.getQtdeSaida();
 				} else {
-					qtdeDisponivel = ee.getQuantidate() - ee.getnEncontrado()
-							- ee.getDevolvido();
+					qtdeDisponivel = ee.getQuantidate() - sm.getnEncontrado()
+							- sm.getDevolvido();
 				}
 
 				if (qtdeDisponivel >= Integer.parseInt(txtQtde.getText())) {

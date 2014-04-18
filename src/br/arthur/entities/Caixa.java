@@ -1,86 +1,92 @@
 package br.arthur.entities;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="caixa")
+@IdClass(FormaDataPK.class)
 public class Caixa {
 	@Id
-	@Column(name="caixa_id")
-	@GeneratedValue
-	private int id;
+	private Integer formaPagto;
+	@Id
+	private String dataCaixa;
 	
-	@Column(name="data_insercao", nullable=false)
-	private Timestamp dataInsercao;
+	@ManyToOne
+	@JoinColumn(name="responsavel", nullable=false)
+	private User responsavel;
 	
-	@Column(name="especie", nullable=false)
-	private Especie especie;
+	@Column(name="conferido")
+	private double conferido;
 	
-	@Column(name="tipo", nullable=false)
-	private boolean tipo;
+	@Column(name="observacao")
+	private String observacao;
 	
-	@Column(name="motivo", columnDefinition="TEXT")
-	private String motivo;
+	public Caixa() {}
 
-	public int getId() {
-		return id;
+	public Integer getFormaPagto() {
+		return formaPagto;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setFormaPagto(Integer formaPagto) {
+		this.formaPagto = formaPagto;
 	}
 
-	public Timestamp getDataInsercao() {
-		return dataInsercao;
+	public String getDataCaixa() {
+		return dataCaixa;
 	}
 
-	public void setDataInsercao(Timestamp dataInsercao) {
-		this.dataInsercao = dataInsercao;
-	}
-	
-	@Enumerated(EnumType.STRING)
-	public Especie getEspecie() {
-		return especie;
+	public void setDataCaixa(String dataCaixa) {
+		this.dataCaixa = dataCaixa;
 	}
 
-	public void setEspecie(Especie especie) {
-		this.especie = especie;
+	public User getResponsavel() {
+		return responsavel;
 	}
 
-	public boolean isTipo() {
-		return tipo;
+	public void setResponsavel(User responsavel) {
+		this.responsavel = responsavel;
 	}
 
-	public void setTipo(boolean tipo) {
-		this.tipo = tipo;
+	public double getConferido() {
+		return conferido;
 	}
 
-	public String getMotivo() {
-		return motivo;
+	public void setConferido(double conferido) {
+		this.conferido = conferido;
 	}
 
-	public void setMotivo(String motivo) {
-		this.motivo = motivo;
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(conferido);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result
-				+ ((dataInsercao == null) ? 0 : dataInsercao.hashCode());
-		result = prime * result + ((especie == null) ? 0 : especie.hashCode());
-		result = prime * result + id;
-		result = prime * result + ((motivo == null) ? 0 : motivo.hashCode());
-		result = prime * result + (tipo ? 1231 : 1237);
+				+ ((dataCaixa == null) ? 0 : dataCaixa.hashCode());
+		result = prime * result
+				+ ((formaPagto == null) ? 0 : formaPagto.hashCode());
+		result = prime * result
+				+ ((observacao == null) ? 0 : observacao.hashCode());
+		result = prime * result
+				+ ((responsavel == null) ? 0 : responsavel.hashCode());
 		return result;
 	}
 
@@ -93,21 +99,28 @@ public class Caixa {
 		if (getClass() != obj.getClass())
 			return false;
 		Caixa other = (Caixa) obj;
-		if (dataInsercao == null) {
-			if (other.dataInsercao != null)
+		if (Double.doubleToLongBits(conferido) != Double
+				.doubleToLongBits(other.conferido))
+			return false;
+		if (dataCaixa == null) {
+			if (other.dataCaixa != null)
 				return false;
-		} else if (!dataInsercao.equals(other.dataInsercao))
+		} else if (!dataCaixa.equals(other.dataCaixa))
 			return false;
-		if (especie != other.especie)
-			return false;
-		if (id != other.id)
-			return false;
-		if (motivo == null) {
-			if (other.motivo != null)
+		if (formaPagto == null) {
+			if (other.formaPagto != null)
 				return false;
-		} else if (!motivo.equals(other.motivo))
+		} else if (!formaPagto.equals(other.formaPagto))
 			return false;
-		if (tipo != other.tipo)
+		if (observacao == null) {
+			if (other.observacao != null)
+				return false;
+		} else if (!observacao.equals(other.observacao))
+			return false;
+		if (responsavel == null) {
+			if (other.responsavel != null)
+				return false;
+		} else if (!responsavel.equals(other.responsavel))
 			return false;
 		return true;
 	}

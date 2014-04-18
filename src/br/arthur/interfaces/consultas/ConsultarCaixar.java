@@ -165,10 +165,10 @@ public class ConsultarCaixar extends JInternalFrame {
 		String[] colunas = new String[] { 
 				"Forma Pagto",
 				"Qtde Mov",
-				"LÃ­quido",
+				"Líquido",
 				"Conferido",
-				"DiferenÃ§a",
-				"ObservaÃ§Ã£o"
+				"Diferença",
+				"Observação"
 			};
 
 		String[][] dataTable = new String[][] {};

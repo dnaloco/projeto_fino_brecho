@@ -86,7 +86,17 @@ public class SaidaModel {
 		return saidas;
 	}
 
-	
+	public List findWhereDevolvido(long entradaId) {
+		session = HibernateUtil.getSessionFactory().openSession();
+		
+		String hql = "FROM Saida where entrada_fk = " + String.valueOf(entradaId) + " and isDevolvido = true";
+		
+		List saidas = session.createQuery(hql).list();
+		
+		close();
+		
+		return saidas;
+	}
 
 	private static void close() {
 		session.close();
@@ -164,5 +174,15 @@ public class SaidaModel {
 		close();
 		
 		
+	}
+
+	public int getnEncontrado() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int getDevolvido() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

@@ -33,8 +33,6 @@ public class EntradaModel {
 		
 		entity.setId(id);
 		entity.setDataEntrada(new Timestamp(Calendar.getInstance().getTimeInMillis()));
-		entity.setDevolvido(0);
-		entity.setnEncontrado(0);
 		session = HibernateUtil.getSessionFactory().openSession();
 		
 		session.beginTransaction();
@@ -69,12 +67,12 @@ public class EntradaModel {
 		if (data.containsKey("image")) {
 			entity.setImagemBlob((Blob) data.get("image"));
 		}
-		if (data.containsKey("qtdeDevolvido")) {
+/*		if (data.containsKey("qtdeDevolvido")) {
 			entity.setDevolvido((int) data.get("qtdeDevolvido"));
 		}
 		if (data.containsKey("qtdeNEncontrado")) {
 			entity.setnEncontrado((int) data.get("qtdeNEncontrado"));
-		}
+		}*/
 		entity.setLocalizacao((String) data.get("local"));
 	}
 	

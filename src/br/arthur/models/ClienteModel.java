@@ -54,7 +54,6 @@ public class ClienteModel {
 		entity.setEmail((String) data.get("email"));
 		entity.setSite((String) data.get("site"));
 		entity.setAniversario((Date) data.get("aniver"));
-		entity.setPendencia((Boolean) data.get("pendencia"));
 		entity.setObservacao((String) data.get("observ"));
 	}
 	

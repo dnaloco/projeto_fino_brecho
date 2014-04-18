@@ -39,6 +39,10 @@ public class ContaReceber {
 	@Column(name="pagto")
 	private boolean pagto;
 	
+	@ManyToOne
+	@JoinColumn(name="formaPagto", nullable=false)
+	private FormaPagto formaPagto;
+	
 	public ContaReceber() {
 		
 	}
@@ -99,6 +103,14 @@ public class ContaReceber {
 		this.pagto = pagto;
 	}
 
+	public FormaPagto getFormaPagto() {
+		return formaPagto;
+	}
+
+	public void setFormaPagto(FormaPagto formaPagto) {
+		this.formaPagto = formaPagto;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -107,6 +119,8 @@ public class ContaReceber {
 				+ ((dataPagto == null) ? 0 : dataPagto.hashCode());
 		result = prime * result
 				+ ((dataVencimento == null) ? 0 : dataVencimento.hashCode());
+		result = prime * result
+				+ ((formaPagto == null) ? 0 : formaPagto.hashCode());
 		result = prime * result
 				+ ((headerSaida == null) ? 0 : headerSaida.hashCode());
 		result = prime * result + id;
@@ -136,6 +150,11 @@ public class ContaReceber {
 			if (other.dataVencimento != null)
 				return false;
 		} else if (!dataVencimento.equals(other.dataVencimento))
+			return false;
+		if (formaPagto == null) {
+			if (other.formaPagto != null)
+				return false;
+		} else if (!formaPagto.equals(other.formaPagto))
 			return false;
 		if (headerSaida == null) {
 			if (other.headerSaida != null)

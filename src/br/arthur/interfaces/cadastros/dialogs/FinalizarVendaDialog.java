@@ -1,13 +1,12 @@
 package br.arthur.interfaces.cadastros.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,22 +15,27 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
+import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.text.MaskFormatter;
 
 import br.arthur.entities.Cliente;
@@ -45,18 +49,17 @@ import br.arthur.models.ContaReceberModel;
 import br.arthur.models.FormaPagtoModel;
 import br.arthur.models.HeaderSaidaModel;
 import br.arthur.models.SaidaModel;
+import br.arthur.utils.ButtonDoubleValueEditorUtil;
+import br.arthur.utils.ButtonRendererUtil;
 import br.arthur.utils.JNumericField;
 
 public class FinalizarVendaDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JNumericField txtValorPago;
 	private JNumericField txtDesconto;
 	private JPanel panel_1;
 	private JButton cancelButton;
-	private JPanel panel;
-	private JTextField txtData1Pagto;
-	
+
 	private static HeaderSaida hSaida;
 	private static Cliente cliente;
 	private static User vendedor;
@@ -65,36 +68,44 @@ public class FinalizarVendaDialog extends JDialog {
 	private JLabel lblNomeCli;
 	private JLabel lblTotalQtde;
 	private JLabel lblTotalVenda;
-	private JComboBox cmbPagto;
-	private JComboBox cmbParcela;
 	private JLabel lblTroco;
 	private static double totalVenda = 0;
 	private int totalQtde = 0;
 	private double desconto = 0;
 	private double totalPago = 0;
 	private byte parc = 1;
-	private double valorPago;
-	
+	private Vector<Double> valores = new Vector();
+
 	public boolean vendaFinalizada = false;
-	
+
 	private JLabel lblTotalPago;
-	
+
 	private HeaderSaidaModel hsm = new HeaderSaidaModel();
 	private SaidaModel sm = new SaidaModel();
 	private FormaPagtoModel fpm = new FormaPagtoModel();
-	
+
 	private ContaPagarModel cpm = new ContaPagarModel();
 	private ContaReceberModel crm = new ContaReceberModel();
-	
+
 	private boolean isValid = true;
 	private String msgErro = "";
+	private JTable table;
+
+	private Object colNames[] = { "Cód. Venda", "Valor Pago" };
+
+	private Object[][] data = { { "Dinheiro", 0.0 }, { "Débito", 0.0 },
+			{ "Crédito", 0.0 }, { "Cheque", 0.0 }, { "Pendência", 0.0 } };
+
+	private DefaultTableModel dtm;
+	private JTextField txtData1Pagto;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
-			FinalizarVendaDialog dialog = new FinalizarVendaDialog(hSaida, cliente, vendedor);
+			FinalizarVendaDialog dialog = new FinalizarVendaDialog(hSaida,
+					cliente, vendedor);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -105,26 +116,25 @@ public class FinalizarVendaDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public FinalizarVendaDialog(final HeaderSaida hSaida, Cliente cliente, User vendedor) {
-		List produtos = sm.findWhere("header_saida_fk", String.valueOf(hSaida.getId()));
-		
+	public FinalizarVendaDialog(final HeaderSaida hSaida, Cliente cliente,
+			User vendedor) {
+		List produtos = sm.findWhere("header_saida_fk",
+				String.valueOf(hSaida.getId()));
+
 		totalVenda = 0;
 		totalQtde = 0;
-		for(Object o : produtos) {
+		for (Object o : produtos) {
 			Saida s = (Saida) o;
-			
+
 			totalVenda += s.getEntrada().getVenda() * s.getQuantidate();
 			totalQtde += s.getQuantidate();
 		}
-		
-		valorPago = totalVenda;
-		
+
 		setTitle("Finalizar venda");
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-	
-		
-		setBounds(100, 100, 523, 258);
+
+		setBounds(100, 100, 523, 366);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -132,16 +142,21 @@ public class FinalizarVendaDialog extends JDialog {
 		contentPanel.setLayout(sl_contentPanel);
 		{
 			panel_1 = new JPanel();
-			sl_contentPanel.putConstraint(SpringLayout.NORTH, panel_1, 5, SpringLayout.NORTH, contentPanel);
-			sl_contentPanel.putConstraint(SpringLayout.WEST, panel_1, 5, SpringLayout.WEST, contentPanel);
-			sl_contentPanel.putConstraint(SpringLayout.EAST, panel_1, -5, SpringLayout.EAST, contentPanel);
-			panel_1.setBorder(new TitledBorder(null, "Resumo da Venda", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			sl_contentPanel.putConstraint(SpringLayout.NORTH, panel_1, 5,
+					SpringLayout.NORTH, contentPanel);
+			sl_contentPanel.putConstraint(SpringLayout.WEST, panel_1, 5,
+					SpringLayout.WEST, contentPanel);
+			sl_contentPanel.putConstraint(SpringLayout.EAST, panel_1, -5,
+					SpringLayout.EAST, contentPanel);
+			panel_1.setBorder(new TitledBorder(null, "Resumo da Venda",
+					TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			contentPanel.add(panel_1);
 			GridBagLayout gbl_panel_1 = new GridBagLayout();
-			gbl_panel_1.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
-			gbl_panel_1.rowHeights = new int[]{0, 0, 0};
-			gbl_panel_1.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-			gbl_panel_1.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gbl_panel_1.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+			gbl_panel_1.rowHeights = new int[] { 0, 0, 0 };
+			gbl_panel_1.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0,
+					0.0, 0.0, Double.MIN_VALUE };
+			gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
 			panel_1.setLayout(gbl_panel_1);
 			{
 				JLabel label = new JLabel("Num. NF / S\u00E9rie:");
@@ -155,6 +170,8 @@ public class FinalizarVendaDialog extends JDialog {
 			{
 				lblNumNF = new JLabel("000000");
 				GridBagConstraints gbc_lblNumNF = new GridBagConstraints();
+				gbc_lblNumNF.anchor = GridBagConstraints.WEST;
+				gbc_lblNumNF.gridwidth = 3;
 				gbc_lblNumNF.insets = new Insets(0, 0, 5, 5);
 				gbc_lblNumNF.gridx = 1;
 				gbc_lblNumNF.gridy = 0;
@@ -165,18 +182,19 @@ public class FinalizarVendaDialog extends JDialog {
 				GridBagConstraints gbc_label = new GridBagConstraints();
 				gbc_label.anchor = GridBagConstraints.EAST;
 				gbc_label.insets = new Insets(0, 0, 5, 5);
-				gbc_label.gridx = 3;
+				gbc_label.gridx = 5;
 				gbc_label.gridy = 0;
 				panel_1.add(label, gbc_label);
 			}
 			{
 				lblNomeCli = new JLabel("Arthur Santos Costa de Alcantara");
 				GridBagConstraints gbc_lblNomeCli = new GridBagConstraints();
-				gbc_lblNomeCli.insets = new Insets(0, 0, 5, 5);
-				gbc_lblNomeCli.gridx = 4;
+				gbc_lblNomeCli.insets = new Insets(0, 0, 5, 0);
+				gbc_lblNomeCli.gridx = 6;
 				gbc_lblNomeCli.gridy = 0;
 				panel_1.add(lblNomeCli, gbc_lblNomeCli);
 			}
+			lblNomeCli.setText(hSaida.getCliente().getNome());
 			{
 				JLabel label = new JLabel("Quantidade Itens:");
 				GridBagConstraints gbc_label = new GridBagConstraints();
@@ -213,409 +231,398 @@ public class FinalizarVendaDialog extends JDialog {
 			}
 		}
 		{
-			panel = new JPanel();
-			sl_contentPanel.putConstraint(SpringLayout.NORTH, panel, 6, SpringLayout.SOUTH, panel_1);
-			sl_contentPanel.putConstraint(SpringLayout.WEST, panel, 0, SpringLayout.WEST, panel_1);
-			sl_contentPanel.putConstraint(SpringLayout.SOUTH, panel, -5, SpringLayout.SOUTH, contentPanel);
-			sl_contentPanel.putConstraint(SpringLayout.EAST, panel, -5, SpringLayout.EAST, contentPanel);
-			panel.setBorder(new TitledBorder(null, "Forma de Pagamento", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			contentPanel.add(panel);
-			GridBagLayout gbl_panel = new GridBagLayout();
-			gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-			gbl_panel.rowHeights = new int[]{0, 0, 0, 0};
-			gbl_panel.columnWeights = new double[]{0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
-			gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-			panel.setLayout(gbl_panel);
 			{
-				JLabel label = new JLabel("Forma Pagto:");
-				GridBagConstraints gbc_label = new GridBagConstraints();
-				gbc_label.anchor = GridBagConstraints.EAST;
-				gbc_label.insets = new Insets(0, 0, 5, 5);
-				gbc_label.gridx = 0;
-				gbc_label.gridy = 0;
-				panel.add(label, gbc_label);
-			}
-			{
-				
-				cmbPagto = new JComboBox();
-				
+
 				Iterator formasPgto = fpm.findAll().iterator();
-				
-				while(formasPgto.hasNext()) {
+
+				while (formasPgto.hasNext()) {
 					FormaPagto fp = (FormaPagto) formasPgto.next();
-					cmbPagto.addItem(fp.getName());
+					// cmbPagto.addItem(fp.getName());
 				}
-				
-				cmbPagto.setSelectedItem("dinheiro");
-				GridBagConstraints gbc_cmbPagto = new GridBagConstraints();
-				gbc_cmbPagto.fill = GridBagConstraints.HORIZONTAL;
-				gbc_cmbPagto.gridwidth = 4;
-				gbc_cmbPagto.insets = new Insets(0, 0, 5, 5);
-				gbc_cmbPagto.gridx = 1;
-				gbc_cmbPagto.gridy = 0;
-				panel.add(cmbPagto, gbc_cmbPagto);
-			}
-			{
-				JLabel label = new JLabel("Parcelas:");
-				GridBagConstraints gbc_label = new GridBagConstraints();
-				gbc_label.anchor = GridBagConstraints.EAST;
-				gbc_label.insets = new Insets(0, 0, 5, 5);
-				gbc_label.gridx = 5;
-				gbc_label.gridy = 0;
-				panel.add(label, gbc_label);
-			}
-			{
-				cmbParcela = new JComboBox();
-				cmbParcela.addItemListener(new ItemListener() {
-			        public void itemStateChanged(ItemEvent arg0) {
-			        	if (!txtValorPago.getText().trim().isEmpty() && !txtDesconto.getText().trim().isEmpty()) {
-			        		calcularValorPagoETroco();
-				        	txtValorPago.setText( String.format(Locale.US, "%.2f" , ( (totalVenda - desconto) / parc) ) );
-			        	}			        	
-			        }
-			    });
-				cmbParcela.setModel(new DefaultComboBoxModel(new String[] {"1x", "2x", "3x", "4x", "5x", "6x", "7x", "8x", "9x", "10x", "11x", "12x"}));
-				GridBagConstraints gbc_cmbParcela = new GridBagConstraints();
-				gbc_cmbParcela.fill = GridBagConstraints.HORIZONTAL;
-				gbc_cmbParcela.insets = new Insets(0, 0, 5, 5);
-				gbc_cmbParcela.gridx = 6;
-				gbc_cmbParcela.gridy = 0;
-				panel.add(cmbParcela, gbc_cmbParcela);
-			}
-			{
-				JLabel label = new JLabel("Valor Pago:");
-				GridBagConstraints gbc_label = new GridBagConstraints();
-				gbc_label.anchor = GridBagConstraints.EAST;
-				gbc_label.insets = new Insets(0, 0, 5, 5);
-				gbc_label.gridx = 7;
-				gbc_label.gridy = 0;
-				panel.add(label, gbc_label);
-			}
-			{
-				txtValorPago = new JNumericField();
-				txtValorPago.setMaxLength(6);
-				txtValorPago.setText("0.00");
-				txtValorPago.setColumns(10);
-				GridBagConstraints gbc_txtValorPago = new GridBagConstraints();
-				gbc_txtValorPago.fill = GridBagConstraints.HORIZONTAL;
-				gbc_txtValorPago.insets = new Insets(0, 0, 5, 0);
-				gbc_txtValorPago.gridx = 8;
-				gbc_txtValorPago.gridy = 0;
-				panel.add(txtValorPago, gbc_txtValorPago);
-			}
-			{
-				JLabel label = new JLabel("Desconto:");
-				GridBagConstraints gbc_label = new GridBagConstraints();
-				gbc_label.anchor = GridBagConstraints.EAST;
-				gbc_label.insets = new Insets(0, 0, 5, 5);
-				gbc_label.gridx = 0;
-				gbc_label.gridy = 1;
-				panel.add(label, gbc_label);
-			}
-			{
-				txtDesconto = new JNumericField();
-				txtDesconto.setMaxLength(6);
-				
-				txtDesconto.setText("0.00");
-				txtDesconto.setColumns(10);
-				GridBagConstraints gbc_txtDesconto = new GridBagConstraints();
-				gbc_txtDesconto.fill = GridBagConstraints.HORIZONTAL;
-				gbc_txtDesconto.gridwidth = 4;
-				gbc_txtDesconto.insets = new Insets(0, 0, 5, 5);
-				gbc_txtDesconto.gridx = 1;
-				gbc_txtDesconto.gridy = 1;
-				panel.add(txtDesconto, gbc_txtDesconto);
-			}
-			{
-				JLabel label = new JLabel("Total Pago:");
-				GridBagConstraints gbc_label = new GridBagConstraints();
-				gbc_label.anchor = GridBagConstraints.EAST;
-				gbc_label.insets = new Insets(0, 0, 5, 5);
-				gbc_label.gridx = 5;
-				gbc_label.gridy = 1;
-				panel.add(label, gbc_label);
-			}
-			{
-				lblTotalPago = new JLabel("R$ 0,00");
-				GridBagConstraints gbc_lblTotalPago = new GridBagConstraints();
-				gbc_lblTotalPago.insets = new Insets(0, 0, 5, 5);
-				gbc_lblTotalPago.gridx = 6;
-				gbc_lblTotalPago.gridy = 1;
-				panel.add(lblTotalPago, gbc_lblTotalPago);
-			}
-			{
-				JLabel label = new JLabel("Troco:");
-				GridBagConstraints gbc_label = new GridBagConstraints();
-				gbc_label.anchor = GridBagConstraints.EAST;
-				gbc_label.insets = new Insets(0, 0, 5, 5);
-				gbc_label.gridx = 7;
-				gbc_label.gridy = 1;
-				panel.add(label, gbc_label);
-			}
-			{
-				lblTroco = new JLabel("R$ 0,00");
-				GridBagConstraints gbc_lblTroco = new GridBagConstraints();
-				gbc_lblTroco.insets = new Insets(0, 0, 5, 0);
-				gbc_lblTroco.gridx = 8;
-				gbc_lblTroco.gridy = 1;
-				panel.add(lblTroco, gbc_lblTroco);
 			}
 		}
-		{
-			
-			JLabel lblNewLabel = new JLabel("Data 1\u00BA Pagto:");
-			GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-			gbc_lblNewLabel.insets = new Insets(0, 0, 0, 5);
-			gbc_lblNewLabel.gridx = 0;
-			gbc_lblNewLabel.gridy = 2;
-			panel.add(lblNewLabel, gbc_lblNewLabel);
-		}
-		{
-			
-			try {
-				txtData1Pagto = new JFormattedTextField(new MaskFormatter("##/##/####"));
-			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			GridBagConstraints gbc_txtData1Pagto = new GridBagConstraints();
-			gbc_txtData1Pagto.gridwidth = 4;
-			gbc_txtData1Pagto.insets = new Insets(0, 0, 0, 5);
-			gbc_txtData1Pagto.fill = GridBagConstraints.HORIZONTAL;
-			gbc_txtData1Pagto.gridx = 1;
-			gbc_txtData1Pagto.gridy = 2;
-			panel.add(txtData1Pagto, gbc_txtData1Pagto);
-			txtData1Pagto.setColumns(10);
-			cancelButton = new JButton("Retornar p/ Venda");
-			GridBagConstraints gbc_cancelButton = new GridBagConstraints();
-			gbc_cancelButton.fill = GridBagConstraints.HORIZONTAL;
-			gbc_cancelButton.gridwidth = 2;
-			gbc_cancelButton.insets = new Insets(0, 0, 0, 5);
-			gbc_cancelButton.gridx = 5;
-			gbc_cancelButton.gridy = 2;
-			panel.add(cancelButton, gbc_cancelButton);
-			sl_contentPanel.putConstraint(SpringLayout.SOUTH, cancelButton, 0, SpringLayout.SOUTH, contentPanel);
-			cancelButton.setActionCommand("Cancel");
-			JButton okButton = new JButton("Confirmar Venda");
-			okButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					Date today = new Date();
-					
-					SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-					String data1pagto = txtData1Pagto.getText();
-					Date datePagto = null;
-					try {
-						datePagto = formatter.parse(data1pagto);
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					Calendar cal1 = Calendar.getInstance();
-			    	Calendar cal2 = Calendar.getInstance();
-
-			    	
-			    	cal1.setTime(today);
-			    	cal2.setTime(datePagto);
-			    	
-			    	boolean sameDay = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-			                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
-			    	
-			    	if(!cal1.after(cal2) || !sameDay) {
-						JOptionPane.showMessageDialog(null, "A data de hoje não pode ser maior do que a data do primeiro pagamento!");
-						isValid = false;
-					} else {
-						isValid = true;
-					}
-			    	
-			    	calcularValorPagoETroco();
-					
-					if (!isValid) {
-						JOptionPane.showMessageDialog(null, msgErro);
-					} else {
-						HashMap<String, Object> data = new HashMap<String, Object>();
-						
-						data.put("totalVenda", (totalVenda - desconto));
-
-						FormaPagto pagtoSelecionado = FormaPagtoModel.findOneWhere("name",
-								"'" + cmbPagto.getSelectedItem() + "'");
-						data.put("formaPagto", pagtoSelecionado);
-						data.put("totalParcela", (byte) parc);
-						data.put("desconto", desconto);
-						
-						hsm.updateVenda(hSaida.getId(), data);
-						
-						for (int i = 0; i < parc; i += 1) {
-							HashMap<String, Object> dataReceber = new HashMap<String, Object>();
-							
-							dataReceber.put("headerSaida", hSaida);
-							dataReceber.put("dataVencimento", new java.sql.Date(cal2.getTimeInMillis()));
-							dataReceber.put("valor", valorPago);
-							
-							
-							dataReceber.put("parcela", (byte) (i + 1) );
-							
-							if (sameDay && i == 0) {
-								dataReceber.put("pagto", true);
-								dataReceber.put("dataPagto", new java.sql.Date(new Date().getTime()));
-							} else {
-								dataReceber.put("pagto", false);
-								dataReceber.put("dataPagto", null);
-							}
-							
-							crm.criarContaReceber(dataReceber);
-	
-							cal2.add(Calendar.MONTH, 1);
-						}
-						
-						HashMap<String, Object> dataPagar = new HashMap<String, Object>();
-						
-						List produtos = sm.findWhere("header_saida_fk", String.valueOf(hSaida.getId()));
-						
-						Calendar c = Calendar.getInstance();
-						c.setTime(new Date());
-						c.set(Calendar.DATE, c.getMaximum(Calendar.DATE));
-						
-						for(Object o : produtos) {
-							
-							Saida s = (Saida) o;
-							
-							double margemConsig = (100 - s.getEntrada().getMargeVenda()) / 100 ;
-							
-							Consignatario consig = s.getEntrada().getConsignatario();
-							
-							dataPagar.put("consignatario", consig);
-							dataPagar.put("headerSaida", hSaida);
-							dataPagar.put("dataVencimento", new java.sql.Date(c.getTimeInMillis()));
-							dataPagar.put("pagto", false);
-							dataPagar.put("valorPago", (s.getEntrada().getVenda() * margemConsig));
-							
-							cpm.criarContaPagar(dataPagar);									
-						}
-						
-						vendaFinalizada = true;
-						dispose();
-					}
-				}
-			});
-			GridBagConstraints gbc_okButton = new GridBagConstraints();
-			gbc_okButton.fill = GridBagConstraints.HORIZONTAL;
-			gbc_okButton.gridwidth = 2;
-			gbc_okButton.gridx = 7;
-			gbc_okButton.gridy = 2;
-			panel.add(okButton, gbc_okButton);
-			sl_contentPanel.putConstraint(SpringLayout.NORTH, okButton, 215, SpringLayout.NORTH, contentPanel);
-			sl_contentPanel.putConstraint(SpringLayout.EAST, okButton, 0, SpringLayout.EAST, panel_1);
-			sl_contentPanel.putConstraint(SpringLayout.EAST, cancelButton, -129, SpringLayout.WEST, okButton);
-			okButton.setActionCommand("OK");
-			getRootPane().setDefaultButton(okButton);
-		}
-		
-		
 
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		Date today = Calendar.getInstance().getTime();
-		
-		txtData1Pagto.setText(df.format(today));
-		
-		txtValorPago.setText(String.format(Locale.US, "%.2f", totalVenda));
-		
+
 		lblNumNF.setText(String.valueOf(hSaida.getId()));
-		lblNomeCli.setText(hSaida.getCliente().getNome());
 		lblTotalQtde.setText(String.valueOf(totalQtde));
 		lblTotalVenda.setText("R$ " + totalVenda);
-		
+
 		JLabel lblVendedor = new JLabel("Vendedor:");
 		GridBagConstraints gbc_lblVendedor = new GridBagConstraints();
 		gbc_lblVendedor.insets = new Insets(0, 0, 0, 5);
 		gbc_lblVendedor.gridx = 5;
 		gbc_lblVendedor.gridy = 1;
 		panel_1.add(lblVendedor, gbc_lblVendedor);
-		
+
 		JLabel lblNewLabel_1 = new JLabel("New label");
 		lblNewLabel_1.setText(vendedor.getName());
 		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
 		gbc_lblNewLabel_1.gridx = 6;
 		gbc_lblNewLabel_1.gridy = 1;
 		panel_1.add(lblNewLabel_1, gbc_lblNewLabel_1);
-		
-		txtValorPago.getDocument().addDocumentListener(new DocumentListener() {
 
-			@Override
-			public void changedUpdate(DocumentEvent arg0) {
-				if (!txtValorPago.getText().trim().isEmpty() && totalVenda > 0) {
-					calcularValorPagoETroco();
-				} else {
-					lblTotalPago.setText("R$ 0.00");
-					lblTroco.setText("R$ 0.00");
+		JPanel panel_2 = new JPanel();
+		sl_contentPanel.putConstraint(SpringLayout.NORTH, panel_2, 6,
+				SpringLayout.SOUTH, panel_1);
+		panel_2.setBorder(new TitledBorder(null, "Formas de Pagamento",
+				TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		sl_contentPanel.putConstraint(SpringLayout.WEST, panel_2, 0,
+				SpringLayout.WEST, panel_1);
+		sl_contentPanel.putConstraint(SpringLayout.EAST, panel_2, 0,
+				SpringLayout.EAST, panel_1);
+		contentPanel.add(panel_2);
+		panel_2.setLayout(new CardLayout(0, 0));
+		{
+			JScrollPane scrollPane = new JScrollPane();
+			panel_2.add(scrollPane, "name_5280528436765");
+
+			dtm = new DefaultTableModel(data, colNames) {
+				public Class<?> getColumnClass(int column) {
+					return getValueAt(0, column).getClass();
 				}
+
+				boolean[] columnEditables = new boolean[] { false, true};
+
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+
+			};
+
+			table = new JTable(dtm);
+			
+			table.getModel().addTableModelListener(new TableModelListener() {
+
+				  public void tableChanged(TableModelEvent e) {
+					  if (e.getColumn() == 1) {
+						  Double val = Double.parseDouble( (String) table.getValueAt(e.getLastRow(), e.getColumn()));
+						  
+						  if (val >= 0.0) {
+							  valores.setElementAt(val, e.getLastRow());
+						  }
+						  
+						  totalPago = 0.0;
+						  
+						  for (int i = 0; i < valores.size(); i += 1) {
+							  totalPago +=  valores.get(i);
+						  }
+						 
+						  lblTotalPago.setText("R$ " + totalPago); 
+						  
+						  calcularValorPagoETroco();
+						  
+					  }
+				  }
+			    });
+
+			TableColumn tcButton = table.getColumnModel().getColumn(1);
+			
+			tcButton.setCellRenderer(new ButtonRendererUtil());
+			tcButton.setCellEditor(new ButtonDoubleValueEditorUtil(new JCheckBox()));
+			
+			for(int rc = 0; rc < table.getRowCount(); rc += 1) {
+				valores.add(0.0);
 			}
 
-			@Override
-			public void insertUpdate(DocumentEvent arg0) {
-				if (!txtValorPago.getText().trim().isEmpty() && totalVenda > 0) {
-					calcularValorPagoETroco();
-				} else {
-					lblTotalPago.setText("R$ 0.00");
-					lblTroco.setText("R$ 0.00");
-				}
+			scrollPane.setViewportView(table);
+		}
+		{
+			JPanel panel_3 = new JPanel();
+			sl_contentPanel.putConstraint(SpringLayout.NORTH, panel_3, 226,
+					SpringLayout.NORTH, contentPanel);
+			sl_contentPanel.putConstraint(SpringLayout.SOUTH, panel_3, -10,
+					SpringLayout.SOUTH, contentPanel);
+			sl_contentPanel.putConstraint(SpringLayout.SOUTH, panel_2, -6,
+					SpringLayout.NORTH, panel_3);
+			sl_contentPanel.putConstraint(SpringLayout.WEST, panel_3, 0,
+					SpringLayout.WEST, panel_1);
+			sl_contentPanel.putConstraint(SpringLayout.EAST, panel_3, 0,
+					SpringLayout.EAST, panel_1);
+			panel_3.setBorder(new TitledBorder(null, "Finalizando a Venda",
+					TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			contentPanel.add(panel_3);
+			GridBagLayout gbl_panel_3 = new GridBagLayout();
+			gbl_panel_3.columnWidths = new int[] { 0, 90, 0, 0, 0, 0, 0 };
+			gbl_panel_3.rowHeights = new int[] { 0, 0, 0 };
+			gbl_panel_3.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0,
+					0.0, Double.MIN_VALUE };
+			gbl_panel_3.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
+			panel_3.setLayout(gbl_panel_3);
+			{
+				JLabel label = new JLabel("Desconto:");
+				GridBagConstraints gbc_label = new GridBagConstraints();
+				gbc_label.insets = new Insets(0, 0, 5, 5);
+				gbc_label.gridx = 0;
+				gbc_label.gridy = 0;
+				panel_3.add(label, gbc_label);
+			}
+			{
+				txtDesconto = new JNumericField();
+				GridBagConstraints gbc_txtDesconto = new GridBagConstraints();
+				gbc_txtDesconto.fill = GridBagConstraints.HORIZONTAL;
+				gbc_txtDesconto.insets = new Insets(0, 0, 5, 5);
+				gbc_txtDesconto.gridx = 1;
+				gbc_txtDesconto.gridy = 0;
+				panel_3.add(txtDesconto, gbc_txtDesconto);
+				txtDesconto.setMaxLength(6);
+
+				txtDesconto.setText("0.00");
+				txtDesconto.setColumns(10);
+			}
+			{
+				JLabel label = new JLabel("Total Pago:");
+				GridBagConstraints gbc_label = new GridBagConstraints();
+				gbc_label.insets = new Insets(0, 0, 5, 5);
+				gbc_label.gridx = 2;
+				gbc_label.gridy = 0;
+				panel_3.add(label, gbc_label);
+			}
+			{
+				lblTotalPago = new JLabel("R$ 0,0");
+				GridBagConstraints gbc_lblTotalPago = new GridBagConstraints();
+				gbc_lblTotalPago.insets = new Insets(0, 0, 5, 5);
+				gbc_lblTotalPago.gridx = 3;
+				gbc_lblTotalPago.gridy = 0;
+				panel_3.add(lblTotalPago, gbc_lblTotalPago);
+			}
+			{
+				JLabel label = new JLabel("Troco:");
+				GridBagConstraints gbc_label = new GridBagConstraints();
+				gbc_label.insets = new Insets(0, 0, 5, 5);
+				gbc_label.gridx = 4;
+				gbc_label.gridy = 0;
+				panel_3.add(label, gbc_label);
+			}
+			{
+				lblTroco = new JLabel("R$ 0,0");
+				GridBagConstraints gbc_lblTroco = new GridBagConstraints();
+				gbc_lblTroco.insets = new Insets(0, 0, 5, 0);
+				gbc_lblTroco.gridx = 5;
+				gbc_lblTroco.gridy = 0;
+				panel_3.add(lblTroco, gbc_lblTroco);
+			}
+			{
+
+				JLabel lblNewLabel = new JLabel("Data 1\u00BA Pagto:");
+				GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+				gbc_lblNewLabel.insets = new Insets(0, 0, 0, 5);
+				gbc_lblNewLabel.gridx = 0;
+				gbc_lblNewLabel.gridy = 1;
+				panel_3.add(lblNewLabel, gbc_lblNewLabel);
 			}
 
-			@Override
-			public void removeUpdate(DocumentEvent arg0) {
-				if (!txtValorPago.getText().trim().isEmpty() && totalVenda > 0) {
-					calcularValorPagoETroco();
-				} else {
-					lblTotalPago.setText("R$ 0.00");
-					lblTroco.setText("R$ 0.00");
-				}
+			try {
+				txtData1Pagto = new JFormattedTextField(new MaskFormatter(
+						"##/##/####"));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
-		});
-		
-		txtDesconto.getDocument().addDocumentListener(new DocumentListener() {
+			txtData1Pagto.setText(df.format(today));
+			GridBagConstraints gbc_txtData1Pagto = new GridBagConstraints();
+			gbc_txtData1Pagto.fill = GridBagConstraints.HORIZONTAL;
+			gbc_txtData1Pagto.insets = new Insets(0, 0, 0, 5);
+			gbc_txtData1Pagto.gridx = 1;
+			gbc_txtData1Pagto.gridy = 1;
+			panel_3.add(txtData1Pagto, gbc_txtData1Pagto);
+			txtData1Pagto.setColumns(10);
 
-
-			@Override
-			public void changedUpdate(DocumentEvent arg0) {
-				if (!txtDesconto.getText().trim().isEmpty() && totalVenda > 0) {
-					calcularValorPagoETroco();
-				} else {
-					lblTotalPago.setText("R$ 0.00");
-					lblTroco.setText("R$ 0.00");
-				}
+			// txtData1Pagto.setText(df.format(today));
+			{
+				cancelButton = new JButton("Retornar para compras");
+				GridBagConstraints gbc_cancelButton = new GridBagConstraints();
+				gbc_cancelButton.fill = GridBagConstraints.HORIZONTAL;
+				gbc_cancelButton.gridwidth = 2;
+				gbc_cancelButton.insets = new Insets(0, 0, 0, 5);
+				gbc_cancelButton.gridx = 2;
+				gbc_cancelButton.gridy = 1;
+				panel_3.add(cancelButton, gbc_cancelButton);
+				sl_contentPanel.putConstraint(SpringLayout.SOUTH, cancelButton,
+						0, SpringLayout.SOUTH, contentPanel);
+				cancelButton.setActionCommand("Cancel");
 			}
+			JButton okButton = new JButton("Finalizar esta venda");
+			GridBagConstraints gbc_okButton = new GridBagConstraints();
+			gbc_okButton.fill = GridBagConstraints.HORIZONTAL;
+			gbc_okButton.gridwidth = 2;
+			gbc_okButton.insets = new Insets(0, 0, 0, 5);
+			gbc_okButton.gridx = 4;
+			gbc_okButton.gridy = 1;
+			panel_3.add(okButton, gbc_okButton);
+			okButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					Date today = new Date();
 
-			@Override
-			public void insertUpdate(DocumentEvent arg0) {
-				if (!txtDesconto.getText().trim().isEmpty() && totalVenda > 0) {
-					calcularValorPagoETroco();
-				} else {
-					lblTotalPago.setText("R$ 0.00");
-					lblTroco.setText("R$ 0.00");
+					SimpleDateFormat formatter = new SimpleDateFormat(
+							"dd/MM/yyyy");
+					String data1pagto = txtData1Pagto.getText();
+					Date datePagto = null;
+
+					try {
+						datePagto = formatter.parse(data1pagto);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Calendar cal1 = Calendar.getInstance();
+					Calendar cal2 = Calendar.getInstance();
+					
+					cal1.setTime(today);
+			    	cal2.setTime(datePagto);
+			    	
+			    	boolean sameDay = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+			                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+			    	
+			    	if(!cal1.after(cal2) || !sameDay) {
+						msgErro += "\nA data de hoje não pode ser maior do que a data do primeiro pagamento!\n";
+						isValid = false;
+					} else {
+						isValid = true;
+					}
+			    	
+			    	calcularValorPagoETroco();
+			    	
+			    	if (!isValid) {
+						JOptionPane.showMessageDialog(null, msgErro);
+					} else {
+						byte parc = 0;
+						
+						HashMap<String, Object> dataHSaida = new HashMap<String, Object>();
+						
+						for (int i = 0; i < table.getRowCount(); i += 1) {
+													
+							
+							System.out.println("\nForma Pagto = " + table.getValueAt(i, 0) +
+									"Valor Pago = " + table.getValueAt(i, 1) + "\n");
+							
+							System.out.println(table.getValueAt(i, 1).getClass().getName());
+							
+							if ( table.getValueAt(i, 1).getClass().getName().equals("java.lang.String") ) {
+								if (Double.parseDouble((String) table.getValueAt(i, 1)) > 0) {
+									HashMap<String, Object> dataReceber = new HashMap<String, Object>();
+									HashMap<String, Object> dataPagar = new HashMap<String, Object>();	
+									
+									double valorPago = Double.parseDouble((String) table.getValueAt(i, 1));
+											
+									parc += 1;
+
+									dataReceber.put("headerSaida", hSaida);
+									dataReceber.put("dataVencimento", new java.sql.Date(cal2.getTimeInMillis()));
+									dataReceber.put("formaPagto", fpm.findOneWhere("name", "'" +  table.getValueAt(i, 0) + "'"));
+									dataReceber.put("valor", valorPago);
+									dataReceber.put("parcela", parc);
+									
+									if (sameDay && !((String) table.getValueAt(i, 0)).equals("Pendência")) {
+										dataReceber.put("pagto", true);
+										dataReceber.put("dataPagto", new java.sql.Date(new Date().getTime()));
+										
+										List produtos = sm.findWhere("header_saida_fk", String.valueOf(hSaida.getId()));
+										
+										Calendar c = Calendar.getInstance();
+										c.setTime(new Date());
+										c.set(Calendar.DATE, c.getMaximum(Calendar.DATE));
+										
+										for(Object o : produtos) {
+											
+											Saida s = (Saida) o;
+											
+											double margemConsig = (100 - s.getEntrada().getMargeVenda()) / 100 ;
+											
+											Consignatario consig = s.getEntrada().getConsignatario();
+											
+											dataPagar.put("consignatario", consig);
+											dataPagar.put("headerSaida", hSaida);
+											dataPagar.put("dataVencimento", new java.sql.Date(c.getTimeInMillis()));
+											dataPagar.put("pagto", false);
+											dataPagar.put("valorPago", (s.getEntrada().getVenda() * margemConsig));
+											
+											cpm.criarContaPagar(dataPagar);									
+										}
+										
+									} else {
+										dataReceber.put("pagto", false);
+										dataReceber.put("dataPagto", null);
+									}
+									
+									crm.criarContaReceber(dataReceber);
+									
+								}
+
+							}
+							
+						}
+						
+						dataHSaida.put("totalVenda", totalPago);
+						dataHSaida.put("desconto", desconto);
+						dataHSaida.put("totalParcela", parc);
+						
+						hsm.updateVenda(hSaida.getId(), dataHSaida);
+						
+						vendaFinalizada = true;
+						dispose();
+						
+					} 
 				}
-			}
+			});
+			sl_contentPanel.putConstraint(SpringLayout.NORTH, okButton, 215,
+					SpringLayout.NORTH, contentPanel);
+			sl_contentPanel.putConstraint(SpringLayout.EAST, okButton, 0,
+					SpringLayout.EAST, panel_1);
+			okButton.setActionCommand("OK");
+			getRootPane().setDefaultButton(okButton);
+			sl_contentPanel.putConstraint(SpringLayout.EAST, cancelButton,
+					-129, SpringLayout.WEST, okButton);
 
-			@Override
-			public void removeUpdate(DocumentEvent arg0) {
-				if (!txtDesconto.getText().trim().isEmpty() && totalVenda > 0) {
-					calcularValorPagoETroco();
-				} else {
-					lblTotalPago.setText("R$ 0.00");
-					lblTroco.setText("R$ 0.00");
-				}
-			}
+			txtDesconto.getDocument().addDocumentListener(
+					new DocumentListener() {
 
-		});
+						@Override
+						public void changedUpdate(DocumentEvent arg0) {
+							calcularValorPagoETroco();
+							if (!txtDesconto.getText().trim().isEmpty()
+									&& totalVenda > 0) {
+								desconto = Double.parseDouble(txtDesconto.getText());
+								calcularValorPagoETroco();
+							} else {
+								lblTotalPago.setText("R$ 0.00");
+								lblTroco.setText("R$ 0.00");
+							}
+						}
+
+						@Override
+						public void insertUpdate(DocumentEvent arg0) {
+							calcularValorPagoETroco();
+							if (!txtDesconto.getText().trim().isEmpty()
+									&& totalVenda > 0) {
+								desconto = Double.parseDouble(txtDesconto.getText());
+								calcularValorPagoETroco();
+							} else {
+								lblTotalPago.setText("R$ 0.00");
+								lblTroco.setText("R$ 0.00");
+							}
+						}
+
+						@Override
+						public void removeUpdate(DocumentEvent arg0) {
+							calcularValorPagoETroco();
+							if (!txtDesconto.getText().trim().isEmpty()
+									&& totalVenda > 0) {
+								desconto = Double.parseDouble(txtDesconto.getText());
+								calcularValorPagoETroco();
+							} else {
+								lblTotalPago.setText("R$ 0.00");
+								lblTroco.setText("R$ 0.00");
+							}
+						}
+
+					});
+		}
 	}
-
+	
 	protected void calcularValorPagoETroco() {
-		String p = cmbParcela.getSelectedItem().toString();
-		parc = Byte.parseByte(p.substring(0, p.length() - 1));
-		desconto = Double.parseDouble(txtDesconto.getText());	
-		valorPago = Double.parseDouble(txtValorPago.getText());		
-		totalPago = valorPago * parc;
-		
 		double troco = (totalPago + desconto) - totalVenda;
 		
 		if ((totalPago + desconto) < totalVenda) {

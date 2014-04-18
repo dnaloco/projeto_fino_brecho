@@ -36,6 +36,12 @@ public class Saida {
 	@Column(name="isDisponivel")
 	private boolean disponivel;
 	
+	@Column(name="isDevolvido")
+	private boolean devolvido;
+	
+	@Column(name="isNencontrado")
+	private boolean nencontrado;
+	
 	public Saida() {
 		
 	}
@@ -88,17 +94,35 @@ public class Saida {
 		this.disponivel = disponivel;
 	}
 
+	public boolean isDevolvido() {
+		return devolvido;
+	}
+
+	public void setDevolvido(boolean devolvido) {
+		this.devolvido = devolvido;
+	}
+
+	public boolean isNencontrado() {
+		return nencontrado;
+	}
+
+	public void setNencontrado(boolean nencontrado) {
+		this.nencontrado = nencontrado;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
 				+ ((dataSaida == null) ? 0 : dataSaida.hashCode());
+		result = prime * result + (devolvido ? 1231 : 1237);
 		result = prime * result + (disponivel ? 1231 : 1237);
 		result = prime * result + ((entrada == null) ? 0 : entrada.hashCode());
 		result = prime * result
 				+ ((headerSaida == null) ? 0 : headerSaida.hashCode());
 		result = prime * result + id;
+		result = prime * result + (nencontrado ? 1231 : 1237);
 		result = prime * result + quantidate;
 		return result;
 	}
@@ -117,6 +141,8 @@ public class Saida {
 				return false;
 		} else if (!dataSaida.equals(other.dataSaida))
 			return false;
+		if (devolvido != other.devolvido)
+			return false;
 		if (disponivel != other.disponivel)
 			return false;
 		if (entrada == null) {
@@ -131,10 +157,11 @@ public class Saida {
 			return false;
 		if (id != other.id)
 			return false;
+		if (nencontrado != other.nencontrado)
+			return false;
 		if (quantidate != other.quantidate)
 			return false;
 		return true;
 	}
-
 	
 }

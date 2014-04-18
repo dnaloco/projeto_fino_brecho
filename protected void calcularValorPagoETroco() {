@@ -1,0 +1,27 @@
+protected void calcularValorPagoETroco() {
+		String p = cmbParcela.getSelectedItem().toString();
+		parc = Byte.parseByte(p.substring(0, p.length() - 1));
+		desconto = Double.parseDouble(txtDesconto.getText());	
+		valorPago = Double.parseDouble(txtValorPago.getText());		
+		totalPago = valorPago * parc;
+		
+		double troco = (totalPago + desconto) - totalVenda;
+		
+		if ((totalPago + desconto) < totalVenda) {
+			isValid = false;
+			msgErro = "O 'valor pago' não pode ser inferior ao 'total da venda'! \nValor Pago: " + totalPago + 
+					"\nDesconto Concedido: " + desconto + 
+					"\nValor Pago + Desconto: " + (totalPago + desconto) + 
+					"\nTotal da Venda: " + totalVenda;
+			lblTroco.setText("R$ 0.00");
+			lblTotalPago.setText("R$ " + String.format("%.2f", totalPago));
+		} else {
+			isValid = true;
+			lblTroco.setText("R$ " + String.format("%.2f", troco));
+			lblTotalPago.setText("R$ " + String.format("%.2f", totalPago));
+		}
+	}
+
+
+parcela
+saldo

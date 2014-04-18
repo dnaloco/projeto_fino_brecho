@@ -116,7 +116,7 @@ public class Principal extends JFrame {
 		panel.setOpaque(false);
 		panel.setBackground(new Color(204, 153, 51));
 		panel.setForeground(UIManager.getColor("MenuBar:Menu[Enabled].textForeground"));
-		panel.setBounds(651, 11, 211, 128);
+		panel.setBounds(651, 11, 295, 128);
 		jDesktopPanelPrincipal.add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0};
@@ -219,7 +219,7 @@ public class Principal extends JFrame {
 		gbc_btnNewButton_3.gridy = 4;
 		panel.add(btnNewButton_3, gbc_btnNewButton_3);
 		
-		JButton btnNewButton_2 = new JButton("Relat\u00F3rios");
+		JButton btnNewButton_2 = new JButton("Devolu\u00E7\u00E3o");
 		btnNewButton_2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnNewButton_2.setBackground(new Color(255, 255, 255));
 		btnNewButton_2.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -227,7 +227,7 @@ public class Principal extends JFrame {
 		btnNewButton_2.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnNewButton_2.setIcon(new ImageIcon(
 				"images/reports.png"));
-		btnNewButton_2.setBounds(690, 272, 122, 109);
+		btnNewButton_2.setBounds(559, 272, 122, 109);
 		jDesktopPanelPrincipal.add(btnNewButton_2);
 		
 		JButton btnLogs = new JButton("Produtos");
@@ -297,7 +297,7 @@ public class Principal extends JFrame {
 		btnTrocarUsurio.setVerticalAlignment(SwingConstants.TOP);
 		btnTrocarUsurio.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnTrocarUsurio.setBackground(Color.WHITE);
-		btnTrocarUsurio.setBounds(556, 272, 122, 109);
+		btnTrocarUsurio.setBounds(690, 272, 122, 109);
 		jDesktopPanelPrincipal.add(btnTrocarUsurio);
 		
 		JButton btnNewButton_4 = new JButton("SAIR");
@@ -350,24 +350,72 @@ public class Principal extends JFrame {
 			}
 		});
 		
-		JMenuItem mntmProdutos_2 = new JMenuItem("Gerenciar Produtos");
-		mnCadastro.add(mntmProdutos_2);
-		mntmProdutos_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ConsultarProduto obj = new ConsultarProduto();
-				jDesktopPanelPrincipal.add(obj);
-				obj.setVisible(true);
-			}
-		});
-		mntmProdutos_2.setIcon((new ImageIcon(
-				"images/products-small.jpg")));
-		
 		JMenuItem mntmCliente = new JMenuItem("Novo Cliente");
 		mntmCliente.setIcon((new ImageIcon(
 				"images/clients.png")));
 		mntmCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				CadastroCliente obj = new CadastroCliente(0);
+				jDesktopPanelPrincipal.add(obj);
+				obj.setVisible(true);
+			}
+		});
+		
+		JMenu mnNewMenu = new JMenu("Gerenciar Produtos");
+		mnCadastro.add(mnNewMenu);
+		
+		JMenuItem mntmConsultar = new JMenuItem("Consultar");
+		mnNewMenu.add(mntmConsultar);
+		
+		JMenu mnEstoque = new JMenu("Estoque");
+		mnNewMenu.add(mnEstoque);
+		
+		JMenuItem mntmEntrada = new JMenuItem("Nova Entrada");
+		mnEstoque.add(mntmEntrada);
+		
+		JMenuItem mntmSada = new JMenuItem("Nova Sa\u00EDda");
+		mnEstoque.add(mntmSada);
+		
+		JMenu mnClassificaes = new JMenu("Classifica\u00E7\u00F5es");
+		mnNewMenu.add(mnClassificaes);
+		
+		JMenuItem mntmCategoria = new JMenuItem("Nova Categoria");
+		mnClassificaes.add(mntmCategoria);
+		mntmCategoria.setIcon((new ImageIcon(
+				"images/Letter-C-blue-icon.png")));
+		
+		JMenuItem mntmMarca = new JMenuItem("Nova Marca");
+		mnClassificaes.add(mntmMarca);
+		mntmMarca.setIcon((new ImageIcon(
+				"images/Letter-M-blue-icon.png")));
+		
+		JMenuItem mntmCor = new JMenuItem("Nova Cor");
+		mnClassificaes.add(mntmCor);
+		
+		JMenuItem mntmTamanho = new JMenuItem("Novo Tamanho");
+		mnClassificaes.add(mntmTamanho);
+		
+		JMenuItem mntmStatusProduto = new JMenuItem("Novo Tipo");
+		mnClassificaes.add(mntmStatusProduto);
+		mntmStatusProduto.setIcon((new ImageIcon(
+				"images/Letter-T-blue-icon.png")));
+		mntmStatusProduto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				CadastroTipo obj = new CadastroTipo();				
+				jDesktopPanelPrincipal.add(obj);
+				obj.setVisible(true);
+			}
+		});
+		mntmMarca.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				CadastroMarca obj = new CadastroMarca();				
+				jDesktopPanelPrincipal.add(obj);
+				obj.setVisible(true);
+			}
+		});
+		mntmCategoria.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				CadastroCategoria obj = new CadastroCategoria();
 				jDesktopPanelPrincipal.add(obj);
 				obj.setVisible(true);
 			}
@@ -380,68 +428,11 @@ public class Principal extends JFrame {
 		JSeparator separator_6 = new JSeparator();
 		mnCadastro.add(separator_6);
 		mnCadastro.add(mntmConsignatrio);
-		
-		JMenuItem mntmPedido = new JMenuItem("Nova Entrada");
-		mntmPedido.setIcon((new ImageIcon(
-				"images/entradas-small.png")));
-		mntmPedido.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				CadastroEntrada obj = new CadastroEntrada();
-				jDesktopPanelPrincipal.add(obj);
-				obj.setVisible(true);
-			}
-		});
-		mnCadastro.add(mntmPedido);
-		
-		JSeparator separator_4 = new JSeparator();
-		mnCadastro.add(separator_4);
-		
-		JMenuItem mntmCategoria = new JMenuItem("Nova Categoria");
-		mntmCategoria.setIcon((new ImageIcon(
-				"images/Letter-C-blue-icon.png")));
-		mntmCategoria.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				CadastroCategoria obj = new CadastroCategoria();
-				jDesktopPanelPrincipal.add(obj);
-				obj.setVisible(true);
-			}
-		});
-		mnCadastro.add(mntmCategoria);
-		
-		JMenuItem mntmMarca = new JMenuItem("Nova Marca");
-		mntmMarca.setIcon((new ImageIcon(
-				"images/Letter-M-blue-icon.png")));
-		mntmMarca.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				CadastroMarca obj = new CadastroMarca();				
-				jDesktopPanelPrincipal.add(obj);
-				obj.setVisible(true);
-			}
-		});
-		mnCadastro.add(mntmMarca);
-		
-		JMenuItem mntmStatusProduto = new JMenuItem("Novo Tipo");
-		mntmStatusProduto.setIcon((new ImageIcon(
-				"images/Letter-T-blue-icon.png")));
-		mntmStatusProduto.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				CadastroTipo obj = new CadastroTipo();				
-				jDesktopPanelPrincipal.add(obj);
-				obj.setVisible(true);
-			}
-		});
-		
-		JMenuItem mntmCor = new JMenuItem("Nova Cor");
-		mnCadastro.add(mntmCor);
-		
-		JMenuItem mntmTamanho = new JMenuItem("Novo Tamanho");
-		mnCadastro.add(mntmTamanho);
-		mnCadastro.add(mntmStatusProduto);
 				
 				JSeparator separator = new JSeparator();
 				mnCadastro.add(separator);
 				
-				JMenuItem mntmAlterarSenha = new JMenuItem("Alterar Senha");
+				JMenuItem mntmAlterarSenha = new JMenuItem("Alterar Sua Senha");
 				mnCadastro.add(mntmAlterarSenha);
 				mntmAlterarSenha.setIcon(new ImageIcon("images/Status-dialog-password-icon.png"));
 				
@@ -466,7 +457,14 @@ public class Principal extends JFrame {
 		}
 		menuBar.add(mnFinanceiro);
 		
+		JSeparator separator_2 = new JSeparator();
+		mnFinanceiro.add(separator_2);
+		
+		JMenu mnConsultar = new JMenu("Consultar");
+		mnFinanceiro.add(mnConsultar);
+		
 		JMenuItem mntmCaixa = new JMenuItem("Caixa");
+		mnConsultar.add(mntmCaixa);
 		mntmCaixa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ConsultarCaixar obj = new ConsultarCaixar();				
@@ -475,9 +473,9 @@ public class Principal extends JFrame {
 			}
 		});
 		mntmCaixa.setIcon(new ImageIcon("images/caixa.png"));
-		mnFinanceiro.add(mntmCaixa);
 		
-		JMenuItem mntmVendas = new JMenuItem("Vendas");
+		JMenuItem mntmVendas = new JMenuItem("Sa\u00EDdas");
+		mnConsultar.add(mntmVendas);
 		mntmVendas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ConsultarVendas obj = new ConsultarVendas();				
@@ -486,16 +484,9 @@ public class Principal extends JFrame {
 			}
 		});
 		mntmVendas.setIcon(new ImageIcon("images/vendas-small.png"));
-		mnFinanceiro.add(mntmVendas);
-		
-		JMenuItem mntmExtorno = new JMenuItem("Extorno");
-		mntmExtorno.setIcon(new ImageIcon("images/coin-delete-icon.png"));
-		mnFinanceiro.add(mntmExtorno);
-		
-		JSeparator separator_2 = new JSeparator();
-		mnFinanceiro.add(separator_2);
 		
 		JMenuItem mntmContasPagar = new JMenuItem("Contas \u00E0 Pagar");
+		mnConsultar.add(mntmContasPagar);
 		mntmContasPagar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ConsultarAPagar obj = new ConsultarAPagar();
@@ -504,9 +495,9 @@ public class Principal extends JFrame {
 			}
 		});
 		mntmContasPagar.setIcon(new ImageIcon("images/balance-minus-icon.png"));
-		mnFinanceiro.add(mntmContasPagar);
 		
 		JMenuItem mntmContasReceber = new JMenuItem("Contas \u00E0 Receber");
+		mnConsultar.add(mntmContasReceber);
 		mntmContasReceber.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ConsultarAReceber obj = new ConsultarAReceber();
@@ -515,16 +506,22 @@ public class Principal extends JFrame {
 			}
 		});
 		mntmContasReceber.setIcon(new ImageIcon("images/balance-plus-icon.png"));
-		mnFinanceiro.add(mntmContasReceber);
 		
 		JSeparator separator_3 = new JSeparator();
 		mnFinanceiro.add(separator_3);
 		
-		JMenuItem mntmDbitoEmAberto = new JMenuItem("Débito em Aberto");
+		JMenuItem mntmDbitoEmAberto = new JMenuItem("D\u00E9bito em Aberto");
 		mnFinanceiro.add(mntmDbitoEmAberto);
 		
-		JMenuItem mntmSaldoEmAberto = new JMenuItem("Crédito em Aberto");
+		JMenuItem mntmSaldoEmAberto = new JMenuItem("Cr\u00E9dito em Aberto");
 		mnFinanceiro.add(mntmSaldoEmAberto);
+		
+		JSeparator separator_4 = new JSeparator();
+		mnFinanceiro.add(separator_4);
+		
+		JMenuItem mntmExtorno = new JMenuItem("Extorno de Produto");
+		mntmExtorno.setIcon(new ImageIcon("images/coin-delete-icon.png"));
+		mnFinanceiro.add(mntmExtorno);
 		
 		JMenu mnManuteno = new JMenu("Manuten\u00E7\u00E3o");
 		if (ulog.getGroup().getName().equals("gerente")) {
@@ -534,10 +531,6 @@ public class Principal extends JFrame {
 		}
 		menuBar.add(mnManuteno);
 		
-		JMenuItem mntmEcf = new JMenuItem("ECF");
-		mntmEcf.setIcon(new ImageIcon("images/ecf.png"));
-		mnManuteno.add(mntmEcf);
-		
 		JMenu mnBackup = new JMenu("Backup");
 		mnManuteno.add(mnBackup);
 		
@@ -546,10 +539,6 @@ public class Principal extends JFrame {
 		
 		JMenuItem mntmExportar = new JMenuItem("Exportar");
 		mnBackup.add(mntmExportar);
-		
-		JMenuItem mntmEventos = new JMenuItem("Eventos");
-		mntmEventos.setIcon(new ImageIcon("images/Apps-utilities-log-viewer-icon.png"));
-		mnManuteno.add(mntmEventos);
 		
 		JSeparator separator_7 = new JSeparator();
 		mnManuteno.add(separator_7);

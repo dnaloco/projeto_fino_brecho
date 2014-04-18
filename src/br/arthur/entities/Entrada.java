@@ -85,13 +85,6 @@ public class Entrada {
 	@Column(name="localizacao")
 	private String localizacao;
 
-
-	@Column(name="nEncontrado")
-	private int nEncontrado;
-	
-	@Column(name="devolvido")
-	private int devolvido;
-
 	public Entrada() {
 		
 	}
@@ -264,22 +257,6 @@ public class Entrada {
 		this.localizacao = localizacao;
 	}
 
-	public int getnEncontrado() {
-		return nEncontrado;
-	}
-
-	public void setnEncontrado(int nEncontrado) {
-		this.nEncontrado = nEncontrado;
-	}
-
-	public int getDevolvido() {
-		return devolvido;
-	}
-
-	public void setDevolvido(int devolvido) {
-		this.devolvido = devolvido;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -302,7 +279,6 @@ public class Entrada {
 				+ ((dataVencimento == null) ? 0 : dataVencimento.hashCode());
 		result = prime * result
 				+ ((descricao == null) ? 0 : descricao.hashCode());
-		result = prime * result + devolvido;
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result
 				+ ((localizacao == null) ? 0 : localizacao.hashCode());
@@ -311,7 +287,6 @@ public class Entrada {
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		temp = Double.doubleToLongBits(margemComissao);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + nEncontrado;
 		result = prime * result
 				+ ((observacao == null) ? 0 : observacao.hashCode());
 		result = prime * result + quantidate;
@@ -374,8 +349,6 @@ public class Entrada {
 				return false;
 		} else if (!descricao.equals(other.descricao))
 			return false;
-		if (devolvido != other.devolvido)
-			return false;
 		if (id != other.id)
 			return false;
 		if (localizacao == null) {
@@ -393,8 +366,6 @@ public class Entrada {
 			return false;
 		if (Double.doubleToLongBits(margemComissao) != Double
 				.doubleToLongBits(other.margemComissao))
-			return false;
-		if (nEncontrado != other.nEncontrado)
 			return false;
 		if (observacao == null) {
 			if (other.observacao != null)
@@ -423,7 +394,5 @@ public class Entrada {
 			return false;
 		return true;
 	}
-	
-	
 
 }
